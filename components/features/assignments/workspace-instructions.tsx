@@ -20,13 +20,13 @@ function getScoreColorClass(score: number) {
 
 export function WorkspaceInstructions({ title, instructorEmail, instructions, submission }: WorkspaceInstructionsProps) {
   return (
-    <div className="w-[33%] border-r border-zinc-800 bg-zinc-900/30 p-5 overflow-y-auto space-y-5 flex flex-col justify-between shrink-0">
+    <div className="w-[33%] border-r border-[#3d1f1f] bg-[#2a1515]/30 p-5 overflow-y-auto space-y-5 flex flex-col justify-between shrink-0">
       <div className="space-y-5">
         <div className="space-y-1">
           <h2 className="text-xl font-bold leading-tight">{title}</h2>
-          <p className="text-[10px] text-zinc-500">Instructor: {instructorEmail}</p>
+          <p className="text-[10px] text-muted-foreground">Instructor: {instructorEmail}</p>
         </div>
-        <div className="border-t border-zinc-800 pt-3 prose prose-invert max-w-none text-xs text-zinc-350 leading-relaxed whitespace-pre-wrap">
+        <div className="border-t border-[#3d1f1f] pt-3 prose prose-invert max-w-none text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">
           {instructions}
         </div>
       </div>

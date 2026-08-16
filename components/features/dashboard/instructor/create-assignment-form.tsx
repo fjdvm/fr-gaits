@@ -141,7 +141,7 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
                 {classes.map((cls) => (
                   <label key={cls.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                     <input type="checkbox" checked={selectedClasses.includes(cls.id)} onChange={() => handleClassToggle(cls.id)} disabled={isCreating}
-                      className="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" />
+                      className="rounded border-border text-primary focus:ring-primary" />
                     {cls.name}
                   </label>
                 ))}
@@ -168,7 +168,7 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
                   <div className="col-span-2 flex items-center justify-center h-9">
                     <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
                       <input type="checkbox" checked={tc.visible} onChange={(e) => updateTestCase(index, "visible", e.target.checked)} disabled={isCreating}
-                        className="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500" />
+                        className="rounded border-border text-primary focus:ring-primary" />
                       Visible
                     </label>
                   </div>

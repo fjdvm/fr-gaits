@@ -117,10 +117,14 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
     setChatInput("");
   };
 
-  const chatMsgs = messages.map((m: any) => ({ id: m.id, role: m.role, content: m.content }));
+  const chatMsgs = messages.map((m: any) => ({
+    id: m.id,
+    role: m.role,
+    content: m.parts?.filter((p: any) => p.type === "text").map((p: any) => p.text).join("") || m.content || "",
+  }));
 
   return (
-    <div className="flex flex-col h-screen bg-zinc-950 text-zinc-100 overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#1a0f0f] text-foreground overflow-hidden">
       <WorkspaceHeader title={assignment.title} language={assignment.language} dueDate={assignment.dueDate} heartsCount={hearts.currentCount} maxHearts={assignment.heartsCount} timeToRegen={timeToRegen} isSubmitted={!!submission} />
       <div className="flex flex-1 overflow-hidden">
         <WorkspaceInstructions title={assignment.title} instructorEmail={assignment.instructorEmail} instructions={assignment.instructions} submission={submission} />

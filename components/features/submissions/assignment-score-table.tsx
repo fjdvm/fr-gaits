@@ -54,7 +54,7 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
                           {s.hasSubmission ? (
                             <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Submitted</span>
                           ) : (
-                            <span className="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500">Not Submitted</span>
+                            <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">Not Submitted</span>
                           )}
                         </TableCell>
                         <TableCell className="text-right font-semibold">{s.score !== null ? `${s.score}%` : "—"}</TableCell>

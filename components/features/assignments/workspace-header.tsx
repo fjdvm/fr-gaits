@@ -23,17 +23,17 @@ export function WorkspaceHeader({
   isSubmitted,
 }: WorkspaceHeaderProps) {
   return (
-    <header className="flex h-14 items-center justify-between px-6 border-b border-zinc-800 bg-zinc-900 shrink-0">
+    <header className="flex h-14 items-center justify-between px-6 border-b border-[#3d1f1f] bg-[#2a1515] shrink-0">
       <div className="flex items-center gap-4 flex-wrap">
         <Link
           href="/dashboard/student"
-          className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1"
+          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
         >
           &larr; Back to Dashboard
         </Link>
-        <span className="text-zinc-650">|</span>
+        <span className="text-muted-foreground/50">|</span>
         <h1 className="text-sm font-bold tracking-tight">{title}</h1>
-        <span className="bg-zinc-800 text-[10px] px-2 py-0.5 rounded font-mono font-semibold">
+        <span className="bg-[#3d1f1f] text-[10px] px-2 py-0.5 rounded font-mono font-semibold">
           {language}
         </span>
         {isSubmitted && (
@@ -50,10 +50,10 @@ export function WorkspaceHeader({
           </svg>
           <span>{heartsCount} Hearts</span>
           {timeToRegen && (
-            <span className="text-[10px] text-zinc-500 font-normal">(Regen: {timeToRegen})</span>
+            <span className="text-[10px] text-muted-foreground font-normal">(Regen: {timeToRegen})</span>
           )}
         </div>
-        <div className="text-zinc-400">
+        <div className="text-muted-foreground">
           Due: {new Date(dueDate).toLocaleDateString()}
         </div>
       </div>

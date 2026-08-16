@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 
 interface ChatMessage {
@@ -41,11 +42,11 @@ export function WorkspaceChat({
   }, [messages]);
 
   return (
-    <div className="w-[25%] flex flex-col h-full bg-zinc-900/20 shrink-0">
-      <div className="flex h-11 items-center px-4 border-b border-zinc-800 bg-zinc-900/50 shrink-0">
+    <div className="w-[25%] flex flex-col h-full bg-[#2a1515]/20 shrink-0 min-w-0 overflow-hidden">
+      <div className="flex h-11 items-center px-4 border-b border-[#3d1f1f] bg-[#2a1515]/50 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold">AI Tutor</span>
-          <span className="rounded bg-indigo-900/30 border border-indigo-800/40 px-1.5 py-0.5 text-[8px] font-semibold text-indigo-400 uppercase tracking-wide">
+          <span className="rounded bg-primary/20 border border-primary/30 px-1.5 py-0.5 text-[8px] font-semibold text-primary-foreground uppercase tracking-wide">
             Help
           </span>
         </div>
@@ -53,63 +54,121 @@ export function WorkspaceChat({
 
       <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 select-text">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-4">
-            <div className="w-8 h-8 rounded-full bg-indigo-900/20 text-indigo-400 flex items-center justify-center mb-2">?</div>
-            <h5 className="text-xs font-semibold">Ask for coding help</h5>
-            <p className="text-[10px] text-zinc-500 mt-1 max-w-[180px] leading-normal">
-              Stuck? Chat with the AI tutor. Tiered hints will adapt to your needs!
-            </p>
-          </div>
+          <ChatEmptyState />
         ) : (
-          messages.map((msg, index) => {
-            const isAssistant = msg.role === "assistant";
-            return (
-              <div key={msg.id || index}
-                className={`flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs ${
-                  isAssistant ? "bg-zinc-800/50 border border-zinc-800 text-zinc-250 self-start" : "bg-indigo-600 text-white self-end"
-                }`}>
-                <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-wider mb-1 block">
-                  {isAssistant ? "AI Tutor" : "Me"}
-                </span>
-                <div className="whitespace-pre-wrap leading-normal font-sans prose prose-invert max-w-none text-xs">
-                  {msg.content}
-                </div>
-              </div>
-            );
-          })
+          messages.map((msg, index) => (
+            <ChatBubble key={msg.id || index} message={msg} />
+          ))
         )}
-        {isLoading && (
-          <div className="flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs bg-zinc-800/50 border border-zinc-800 text-zinc-300 self-start">
-            <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-wider mb-1 block">AI Tutor</span>
+        {isLoading && (!messages.length || messages[messages.length - 1]?.role !== "assistant" || !messages[messages.length - 1]?.content) && (
+          <div className="flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs bg-[#2a1515]/50 border border-[#3d1f1f] text-foreground/80 self-start">
+            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider mb-1 block">AI Tutor</span>
             <span className="animate-pulse">Thinking...</span>
           </div>
         )}
       </div>
 
-      <div className="p-3 border-t border-zinc-800 bg-zinc-900/60 shrink-0">
-        {isSubmitted ? (
-          <p className="text-[10px] text-zinc-500 text-center italic py-2">Chat is disabled after submission.</p>
-        ) : heartsCount <= 0 ? (
-          <div className="text-center py-2 space-y-1.5">
-            <p className="text-[10px] text-zinc-500 italic">0 Hearts left. Send disabled.</p>
-            {timeToRegen && <p className="text-[9px] font-bold text-rose-500">Next heart in: {timeToRegen}</p>}
-          </div>
-        ) : (
-          <form onSubmit={onSendMessage} className="flex gap-1.5">
-            <input
-              placeholder="Ask a question..."
-              value={chatInput}
-              onChange={(e) => onChatInputChange(e.target.value)}
-              disabled={isLoading}
-              className="flex-1 bg-zinc-950 border border-zinc-800 rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-zinc-600"
-            />
-            <Button type="submit" size="sm" disabled={isLoading || !chatInput.trim()}
-              className="bg-indigo-600 hover:bg-indigo-700 h-8 shrink-0 text-xs px-2.5">
-              Send
-            </Button>
-          </form>
-        )}
+      <ChatInput
+        isSubmitted={isSubmitted}
+        heartsCount={heartsCount}
+        timeToRegen={timeToRegen}
+        isLoading={isLoading}
+        chatInput={chatInput}
+        onChatInputChange={onChatInputChange}
+        onSendMessage={onSendMessage}
+      />
+    </div>
+  );
+}
+
+function ChatEmptyState() {
+  return (
+    <div className="h-full flex flex-col items-center justify-center text-center p-4">
+      <div className="w-8 h-8 rounded-full bg-primary/20 text-primary-foreground flex items-center justify-center mb-2">?</div>
+      <h5 className="text-xs font-semibold">Ask for coding help</h5>
+      <p className="text-[10px] text-muted-foreground mt-1 max-w-[180px] leading-normal">
+        Stuck? Chat with the AI tutor. Tiered hints will adapt to your needs!
+      </p>
+    </div>
+  );
+}
+
+function ChatBubble({ message }: { message: ChatMessage }) {
+  const isAssistant = message.role === "assistant";
+
+  return (
+    <div
+      className={`flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs overflow-hidden break-words ${
+        isAssistant
+          ? "bg-[#2a1515]/50 border border-[#3d1f1f] text-foreground/80 self-start"
+          : "bg-primary text-primary-foreground self-end"
+      }`}
+    >
+      <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider mb-1 block">
+        {isAssistant ? "AI Tutor" : "Me"}
+      </span>
+      {isAssistant ? (
+        <div className="prose prose-invert prose-xs max-w-none text-xs leading-normal overflow-hidden break-words [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0.5 [&_code]:bg-[#3d1f1f] [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-[10px] [&_pre]:bg-[#2a1515] [&_pre]:p-2 [&_pre]:rounded [&_pre]:text-[10px] [&_pre]:overflow-x-auto">
+          <ReactMarkdown>{message.content}</ReactMarkdown>
+        </div>
+      ) : (
+        <div className="whitespace-pre-wrap leading-normal break-words">{message.content}</div>
+      )}
+    </div>
+  );
+}
+
+function ChatInput({
+  isSubmitted,
+  heartsCount,
+  timeToRegen,
+  isLoading,
+  chatInput,
+  onChatInputChange,
+  onSendMessage,
+}: {
+  isSubmitted: boolean;
+  heartsCount: number;
+  timeToRegen: string;
+  isLoading: boolean;
+  chatInput: string;
+  onChatInputChange: (value: string) => void;
+  onSendMessage: (e: React.FormEvent) => void;
+}) {
+  if (isSubmitted) {
+    return (
+      <div className="p-3 border-t border-[#3d1f1f] bg-[#2a1515]/60 shrink-0">
+        <p className="text-[10px] text-muted-foreground text-center italic py-2">Chat is disabled after submission.</p>
       </div>
+    );
+  }
+
+  if (heartsCount <= 0) {
+    return (
+      <div className="p-3 border-t border-[#3d1f1f] bg-[#2a1515]/60 shrink-0">
+        <div className="text-center py-2 space-y-1.5">
+          <p className="text-[10px] text-muted-foreground italic">0 Hearts left. Send disabled.</p>
+          {timeToRegen && <p className="text-[9px] font-bold text-rose-500">Next heart in: {timeToRegen}</p>}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-3 border-t border-[#3d1f1f] bg-[#2a1515]/60 shrink-0">
+      <form onSubmit={onSendMessage} className="flex gap-1.5">
+        <input
+          placeholder="Ask a question..."
+          value={chatInput}
+          onChange={(e) => onChatInputChange(e.target.value)}
+          disabled={isLoading}
+          className="flex-1 bg-[#1a0f0f] border border-[#3d1f1f] rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/50"
+        />
+        <Button type="submit" size="sm" disabled={isLoading || !chatInput.trim()}
+          className="bg-primary hover:bg-primary/90 h-8 shrink-0 text-xs px-2.5">
+          Send
+        </Button>
+      </form>
     </div>
   );
 }
