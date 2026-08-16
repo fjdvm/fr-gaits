@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ export function SignupView() {
     try {
       const supabase = createClient();
       const approvalStatus = role === "instructor" ? "pending" : "approved";
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -66,31 +67,48 @@ export function SignupView() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-zinc-950 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md shadow-lg border border-zinc-200/80 dark:border-zinc-800">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight">Create an account</CardTitle>
-          <CardDescription>
-            Enter your details below to register on the GAIT platform
-          </CardDescription>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md shadow-lg border-2 border-border">
+        <CardHeader className="space-y-4 text-center pb-2">
+          <div className="flex justify-center">
+            <Image
+              src="/logo.png"
+              alt="GAITS Logo"
+              width={64}
+              height={64}
+              className="rounded-lg"
+            />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-primary font-[var(--font-heading)]">
+              GAITS
+            </h1>
+            <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mt-1">
+              Join the academy
+            </p>
+          </div>
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email" className="font-bold text-xs uppercase tracking-wide">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@university.edu"
+                placeholder="scholar@gaits.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="font-bold text-xs uppercase tracking-wide">
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
@@ -103,7 +121,7 @@ export function SignupView() {
             </div>
 
             <div className="space-y-2">
-              <Label>I am a...</Label>
+              <Label className="font-bold text-xs uppercase tracking-wide">I am a...</Label>
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <button
                   type="button"
@@ -111,12 +129,14 @@ export function SignupView() {
                   disabled={isLoading}
                   className={`flex flex-col items-center justify-center rounded-lg border-2 p-3 text-left transition-all ${
                     role === "student"
-                      ? "border-primary bg-zinc-50/50 dark:bg-zinc-900/50"
-                      : "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50 hover:bg-accent"
                   }`}
                 >
                   <span className="font-semibold text-sm">Student</span>
-                  <span className="text-[11px] text-zinc-500 mt-0.5">Solve assignments & learn</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">
+                    Solve assignments & learn
+                  </span>
                 </button>
                 <button
                   type="button"
@@ -124,24 +144,26 @@ export function SignupView() {
                   disabled={isLoading}
                   className={`flex flex-col items-center justify-center rounded-lg border-2 p-3 text-left transition-all ${
                     role === "instructor"
-                      ? "border-primary bg-zinc-50/50 dark:bg-zinc-900/50"
-                      : "border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50"
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50 hover:bg-accent"
                   }`}
                 >
                   <span className="font-semibold text-sm">Instructor</span>
-                  <span className="text-[11px] text-zinc-500 mt-0.5">Manage classes & view signals</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">
+                    Manage classes & view signals
+                  </span>
                 </button>
               </div>
             </div>
           </CardContent>
-          
+
           <CardFooter className="flex flex-col space-y-4">
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {isLoading ? "Creating account..." : "Sign up"}
+            <Button className="w-full text-base font-semibold py-5" type="submit" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Begin Quest"}
             </Button>
-            <div className="text-center text-sm text-zinc-600 dark:text-zinc-400">
-              Already have an account?{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
+            <div className="text-center text-sm text-muted-foreground">
+              Already enlisted?{" "}
+              <Link href="/login" className="font-bold text-primary hover:underline">
                 Log in
               </Link>
             </div>

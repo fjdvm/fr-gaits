@@ -10,6 +10,7 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -73,10 +74,18 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border p-4">
-        <div className="flex items-center gap-2">
-          <GraduationCap className="h-6 w-6 text-primary" />
-          <span className="text-lg font-bold tracking-tight">GAIT</span>
-          <span className="ml-auto rounded bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="GAITS Logo"
+            width={36}
+            height={36}
+            className="rounded-md"
+          />
+          <span className="text-lg font-bold tracking-tight font-[var(--font-heading)]">
+            GAITS
+          </span>
+          <span className="ml-auto rounded-full bg-sidebar-primary px-2 py-0.5 text-xs font-semibold text-sidebar-primary-foreground">
             {roleLabel}
           </span>
         </div>
@@ -100,7 +109,7 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border p-4">
         {userEmail && (
-          <p className="mb-2 truncate text-xs text-muted-foreground">{userEmail}</p>
+          <p className="mb-2 truncate text-xs text-sidebar-foreground/70">{userEmail}</p>
         )}
         <SidebarMenu>
           <SidebarMenuItem>

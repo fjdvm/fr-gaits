@@ -12,7 +12,7 @@ export function DashboardHeader({ title, description }: DashboardHeaderProps) {
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="flex flex-col">
-        <h1 className="text-sm font-semibold">{title}</h1>
+        <h1 className="text-sm font-bold tracking-tight">{title}</h1>
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>
         )}

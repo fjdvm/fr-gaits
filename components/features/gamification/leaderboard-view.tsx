@@ -53,7 +53,7 @@ export function LeaderboardView({ classLeaderboards, totalXp, level, currentLeve
             <CardContent>
               <p className="text-2xl font-bold">{level}</p>
               <div className="mt-2 h-2 w-full rounded-full bg-muted">
-                <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} />
+                <div className="h-full rounded-full bg-gold transition-all" style={{ width: `${progressPercent}%` }} />
               </div>
               <p className="mt-1 text-xs text-muted-foreground">{currentLevelXp} / {nextLevelXp} XP</p>
             </CardContent>
@@ -74,7 +74,7 @@ export function LeaderboardView({ classLeaderboards, totalXp, level, currentLeve
             <CardContent>
               <div className="flex flex-wrap gap-3">
                 {badges.map((b) => (
-                  <div key={b.name} className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium">
+                  <div key={b.name} className="flex items-center gap-2 rounded-full bg-gold/20 border border-gold px-3 py-1.5 text-xs font-bold">
                     <span>🏆</span>
                     <span>{b.name}</span>
                   </div>
