@@ -6,6 +6,7 @@ import Link from "next/link";
 import Editor from "@monaco-editor/react";
 import { toast } from "sonner";
 import { runCode } from "@/app/actions/run-code";
+import { submitCode } from "@/app/actions/submit-code";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -56,6 +57,7 @@ interface TestRunResult {
   compileOutput: string;
   status: { id: number; description: string };
   passed: boolean;
+  visible?: boolean;
 }
 
 const MONACO_LANGUAGE_MAP: Record<string, string> = {
@@ -82,11 +84,23 @@ export function WorkspaceView({
   const [code, setCode] = useState(
     initialSubmission?.code || DEFAULT_CODE_TEMPLATES[assignment.language] || ""
   );
+  
+  // Status states
   const [isRunning, setIsRunning] = useState(false);
-  const [runResults, setRunResults] = useState<TestRunResult[] | null>(null);
-  const [consoleOutput, setConsoleOutput] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submission, setSubmission] = useState<SubmissionData | null>(initialSubmission);
+  
+  // Execution output states
+  const [runResults, setRunResults] = useState<TestRunResult[] | null>(
+    initialSubmission ? (initialSubmission.testResults as TestRunResult[]) : null
+  );
+  const [consoleOutput, setConsoleOutput] = useState<string>(
+    initialSubmission
+      ? `Assignment submitted.\nScore: ${initialSubmission.score}%`
+      : ""
+  );
 
-  // Hearts state (local representation, to be linked with regen logic in next tickets)
+  // Hearts state
   const [hearts, setHearts] = useState(initialHearts);
 
   // Behavioral Tracking Refs
@@ -101,9 +115,11 @@ export function WorkspaceView({
 
   // Start editor focus tracking on load
   useEffect(() => {
+    // If already submitted, no need to track typing metrics
+    if (submission) return;
+
     trackingRef.current.focusStartTime = Date.now();
     
-    // Set up window blur/focus event handlers
     const handleWindowFocus = () => {
       trackingRef.current.focusStartTime = Date.now();
     };
@@ -122,24 +138,23 @@ export function WorkspaceView({
     return () => {
       window.removeEventListener("focus", handleWindowFocus);
       window.removeEventListener("blur", handleWindowBlur);
-      // Accumulate final time on unmount
       if (trackingRef.current.focusStartTime > 0) {
         const activeTime = (Date.now() - trackingRef.current.focusStartTime) / 1000;
         trackingRef.current.totalFocusTimeSecs += activeTime;
       }
     };
-  }, []);
+  }, [submission]);
 
-  // Track Monaco editor focus
+  // Track Monaco editor focus and paste events
   const handleEditorDidMount = (editor: any) => {
-    // Monitor paste events in the editor
+    if (submission) return;
+
     editor.onDidPaste((e: any) => {
       trackingRef.current.pasteCount += 1;
       const text = editor.getModel()?.getValueInRange(e.range) || "";
       trackingRef.current.pasteLength += text.length;
     });
 
-    // Monitor editor focus/blur
     editor.onDidFocusEditorText(() => {
       trackingRef.current.focusStartTime = Date.now();
     });
@@ -154,9 +169,9 @@ export function WorkspaceView({
   };
 
   const handleEditorChange = (value: string | undefined) => {
+    if (submission) return;
     setCode(value || "");
 
-    // Track keystroke counts and typing speed
     const now = Date.now();
     if (trackingRef.current.typingStartTime === 0) {
       trackingRef.current.typingStartTime = now;
@@ -164,18 +179,18 @@ export function WorkspaceView({
     trackingRef.current.keystrokeCount += 1;
   };
 
-  // Approximates WPM based on keystrokes and typing duration
   const getWPM = () => {
     const { typingStartTime, keystrokeCount } = trackingRef.current;
     if (typingStartTime === 0 || keystrokeCount === 0) return 0;
     const durationMins = (Date.now() - typingStartTime) / 60000;
     if (durationMins <= 0) return 0;
-    // Standard WPM: 5 characters per word
     const wpm = (keystrokeCount / 5) / durationMins;
     return Math.round(wpm);
   };
 
   const handleRunCode = async () => {
+    if (submission) return;
+
     setIsRunning(true);
     setRunResults(null);
     setConsoleOutput("");
@@ -185,7 +200,6 @@ export function WorkspaceView({
       if (response.success && response.results) {
         setRunResults(response.results as TestRunResult[]);
         
-        // Log compilation errors or general stderr to console output if any test case has them
         const compileErr = response.results.find((r: any) => r.compileOutput);
         const generalErr = response.results.find((r: any) => r.stderr);
 
@@ -218,6 +232,65 @@ export function WorkspaceView({
     }
   };
 
+  const handleSubmitCode = async () => {
+    if (submission) return;
+
+    const confirmSubmit = window.confirm(
+      "Are you sure you want to submit your code? You can only submit once, and the editor will become read-only."
+    );
+    if (!confirmSubmit) return;
+
+    setIsSubmitting(true);
+    setRunResults(null);
+    setConsoleOutput("");
+
+    // Finalize focus time tracking
+    if (trackingRef.current.focusStartTime > 0) {
+      const activeTime = (Date.now() - trackingRef.current.focusStartTime) / 1000;
+      trackingRef.current.totalFocusTimeSecs += activeTime;
+      trackingRef.current.focusStartTime = 0;
+    }
+
+    const wpm = getWPM();
+    const behavioralSignals = {
+      pasteCount: trackingRef.current.pasteCount,
+      pasteLength: trackingRef.current.pasteLength,
+      keystrokeCount: trackingRef.current.keystrokeCount,
+      wpm,
+      totalFocusTimeSecs: Math.round(trackingRef.current.totalFocusTimeSecs),
+    };
+
+    try {
+      const response = await submitCode(assignment.id, code, behavioralSignals);
+      if (response.success && response.submission) {
+        setSubmission(response.submission);
+        setRunResults(response.submission.testResults as TestRunResult[]);
+        setConsoleOutput(
+          `SUBMISSION SUCCESSFUL!\nScore: ${response.submission.score}%\nSubmitted on: ${new Date(
+            response.submission.submittedAt
+          ).toLocaleString()}`
+        );
+        toast.success(`Code submitted! Final Score: ${response.submission.score}%`);
+        router.refresh();
+      } else {
+        setConsoleOutput(`SUBMISSION ERROR: ${response.error || "Submit failed"}`);
+        toast.error(response.error || "Failed to submit assignment");
+      }
+    } catch (err) {
+      setConsoleOutput("Connection failed. Please check your network.");
+      toast.error("An unexpected error occurred during submission.");
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getScoreColorClass = (score: number) => {
+    if (score >= 90) return "text-emerald-500 bg-emerald-950/20 border-emerald-800/50";
+    if (score >= 70) return "text-amber-500 bg-amber-950/20 border-amber-800/50";
+    return "text-rose-500 bg-rose-950/20 border-rose-800/50";
+  };
+
   return (
     <div className="flex flex-col h-screen bg-zinc-950 text-zinc-100 overflow-hidden">
       {/* Header bar */}
@@ -234,6 +307,11 @@ export function WorkspaceView({
           <span className="bg-zinc-800 text-[10px] px-2 py-0.5 rounded font-mono font-semibold">
             {assignment.language}
           </span>
+          {submission && (
+            <span className="rounded-full bg-emerald-900/30 border border-emerald-800 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-400 uppercase tracking-wide">
+              Submitted
+            </span>
+          )}
         </div>
         
         {/* Hearts and Status */}
@@ -258,30 +336,63 @@ export function WorkspaceView({
       {/* Main workspace */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Pane: Instructions */}
-        <div className="w-1/2 border-r border-zinc-800 bg-zinc-900/40 p-6 overflow-y-auto space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold">{assignment.title}</h2>
-            <p className="text-xs text-zinc-500">Instructor: {assignment.instructorEmail}</p>
+        <div className="w-1/2 border-r border-zinc-800 bg-zinc-900/40 p-6 overflow-y-auto space-y-6 flex flex-col justify-between">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold">{assignment.title}</h2>
+              <p className="text-xs text-zinc-500">Instructor: {assignment.instructorEmail}</p>
+            </div>
+
+            <div className="border-t border-zinc-800 pt-4 prose prose-invert max-w-none text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
+              {assignment.instructions}
+            </div>
           </div>
 
-          <div className="border-t border-zinc-800 pt-4 prose prose-invert max-w-none text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
-            {assignment.instructions}
-          </div>
+          {/* Submission Score Card */}
+          {submission && (
+            <div className={`p-4 rounded-lg border flex flex-col gap-2 mt-6 ${getScoreColorClass(submission.score)}`}>
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold uppercase tracking-wider">Submission Results</span>
+                <span className="text-2xl font-extrabold">{submission.score}%</span>
+              </div>
+              <p className="text-[11px] opacity-80">
+                You successfully completed this assignment. Your code has been frozen and cannot be edited.
+              </p>
+              <p className="text-[10px] opacity-60">
+                Submitted on: {new Date(submission.submittedAt).toLocaleString()}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Right Pane: Code Editor + Outputs */}
         <div className="w-1/2 flex flex-col h-full overflow-hidden bg-zinc-950">
           {/* Editor Header */}
           <div className="flex h-11 items-center justify-between px-4 border-b border-zinc-800 bg-zinc-900/50 shrink-0">
-            <span className="text-xs font-semibold text-zinc-400">Workspace Editor</span>
-            <Button
-              size="sm"
-              onClick={handleRunCode}
-              disabled={isRunning}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
-            >
-              {isRunning ? "Running..." : "Run Code"}
-            </Button>
+            <span className="text-xs font-semibold text-zinc-400">
+              {submission ? "Freezed Source Code (Read-Only)" : "Workspace Editor"}
+            </span>
+            {!submission && (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleRunCode}
+                  disabled={isRunning || isSubmitting}
+                  className="bg-transparent border-zinc-700 hover:bg-zinc-800 hover:text-zinc-100"
+                >
+                  {isRunning ? "Running..." : "Run"}
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSubmitCode}
+                  disabled={isRunning || isSubmitting}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Monaco Editor Container */}
@@ -303,6 +414,7 @@ export function WorkspaceView({
                 scrollBeyondLastLine: false,
                 tabSize: 4,
                 cursorBlinking: "smooth",
+                readOnly: !!submission, // Make editor read-only if assignment is submitted
               }}
             />
           </div>
@@ -310,36 +422,43 @@ export function WorkspaceView({
           {/* Output Panel / Console */}
           <div className="h-64 flex flex-col overflow-hidden bg-zinc-900/60 shrink-0">
             <div className="flex h-9 items-center justify-between px-4 border-b border-zinc-800 bg-zinc-900/80 shrink-0">
-              <span className="text-xs font-semibold text-zinc-400">Console & Test Cases</span>
+              <span className="text-xs font-semibold text-zinc-400">
+                {submission ? "Test Cases (Revealed)" : "Console & Test Cases"}
+              </span>
             </div>
 
             <div className="flex-1 flex overflow-hidden">
               {/* Test Cases List */}
               <div className="w-1/2 border-r border-zinc-800 overflow-y-auto p-3 space-y-2">
-                <h4 className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider mb-2">Visible Test Cases</h4>
-                {visibleTestCases.length === 0 ? (
-                  <p className="text-xs text-zinc-500 italic">No visible test cases for this assignment.</p>
+                <h4 className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider mb-2">
+                  {submission ? "All Test Cases" : "Visible Test Cases"}
+                </h4>
+                {(!runResults || runResults.length === 0) ? (
+                  <p className="text-xs text-zinc-500 italic">
+                    {submission ? "No test results recorded." : "No test results yet. Click 'Run' to test your code."}
+                  </p>
                 ) : (
-                  visibleTestCases.map((tc, index) => {
-                    const result = runResults?.find((r) => r.testCaseId === tc.id);
+                  runResults.map((tc, index) => {
+                    const isHidden = tc.visible === false;
                     return (
                       <div
-                        key={tc.id}
+                        key={tc.testCaseId || index}
                         className={`p-2.5 rounded border text-xs space-y-1.5 transition-colors ${
-                          result
-                            ? result.passed
-                              ? "bg-emerald-950/20 border-emerald-800/60 text-emerald-300"
-                              : "bg-rose-950/20 border-rose-800/60 text-rose-300"
-                            : "bg-zinc-900/40 border-zinc-800 text-zinc-400"
+                          tc.passed
+                            ? "bg-emerald-950/20 border-emerald-800/60 text-emerald-300"
+                            : "bg-rose-950/20 border-rose-800/60 text-rose-300"
                         }`}
                       >
                         <div className="flex justify-between items-center font-semibold">
-                          <span>Test Case #{index + 1}</span>
-                          {result ? (
-                            <span>{result.passed ? "Passed" : "Failed"}</span>
-                          ) : (
-                            <span className="text-[10px] text-zinc-500">Not Run</span>
-                          )}
+                          <div className="flex items-center gap-1.5">
+                            <span>Test Case #{index + 1}</span>
+                            {isHidden && (
+                              <span className="bg-purple-900/50 border border-purple-800 text-purple-300 text-[8px] font-bold px-1.5 rounded uppercase tracking-wide">
+                                Hidden
+                              </span>
+                            )}
+                          </div>
+                          <span>{tc.passed ? "Passed" : "Failed"}</span>
                         </div>
                         {tc.input && (
                           <div className="text-[10px] font-mono text-zinc-500">
@@ -349,9 +468,9 @@ export function WorkspaceView({
                         <div className="text-[10px] font-mono text-zinc-500">
                           Expected: <span className="text-zinc-350">{tc.expectedOutput}</span>
                         </div>
-                        {result && !result.passed && (
+                        {(!tc.passed) && (
                           <div className="text-[10px] font-mono text-rose-400/80">
-                            Actual: <span className="text-rose-300 font-semibold">{result.actualOutput.trim()}</span>
+                            Actual: <span className="text-rose-300 font-semibold">{tc.actualOutput.trim()}</span>
                           </div>
                         )}
                       </div>
@@ -362,7 +481,7 @@ export function WorkspaceView({
 
               {/* Console Output */}
               <div className="w-1/2 overflow-y-auto p-4 bg-zinc-950/80 font-mono text-xs text-zinc-400 whitespace-pre-wrap select-text">
-                {consoleOutput || "No execution logs yet. Click 'Run Code' above."}
+                {consoleOutput || "No execution logs yet. Click 'Run' or 'Submit' above."}
               </div>
             </div>
           </div>
