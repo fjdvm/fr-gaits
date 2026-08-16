@@ -42,11 +42,11 @@ export function WorkspaceChat({
   }, [messages]);
 
   return (
-    <div className="w-[25%] flex flex-col h-full bg-[#2a1515]/20 shrink-0 min-w-0 overflow-hidden">
-      <div className="flex h-11 items-center px-4 border-b border-[#3d1f1f] bg-[#2a1515]/50 shrink-0">
+    <div className="w-[25%] flex flex-col h-full bg-card shrink-0 min-w-0 overflow-hidden">
+      <div className="flex h-11 items-center px-4 border-b border-border bg-muted/50 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold">AI Tutor</span>
-          <span className="rounded bg-primary/20 border border-primary/30 px-1.5 py-0.5 text-[8px] font-semibold text-primary-foreground uppercase tracking-wide">
+          <span className="rounded bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-[8px] font-semibold text-primary uppercase tracking-wide">
             Help
           </span>
         </div>
@@ -61,7 +61,7 @@ export function WorkspaceChat({
           ))
         )}
         {isLoading && (!messages.length || messages[messages.length - 1]?.role !== "assistant" || !messages[messages.length - 1]?.content) && (
-          <div className="flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs bg-[#2a1515]/50 border border-[#3d1f1f] text-foreground/80 self-start">
+          <div className="flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs bg-muted border border-border text-foreground self-start">
             <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider mb-1 block">AI Tutor</span>
             <span className="animate-pulse">Thinking...</span>
           </div>
@@ -84,7 +84,7 @@ export function WorkspaceChat({
 function ChatEmptyState() {
   return (
     <div className="h-full flex flex-col items-center justify-center text-center p-4">
-      <div className="w-8 h-8 rounded-full bg-primary/20 text-primary-foreground flex items-center justify-center mb-2">?</div>
+      <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-2">?</div>
       <h5 className="text-xs font-semibold">Ask for coding help</h5>
       <p className="text-[10px] text-muted-foreground mt-1 max-w-[180px] leading-normal">
         Stuck? Chat with the AI tutor. Tiered hints will adapt to your needs!
@@ -100,7 +100,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
     <div
       className={`flex flex-col max-w-[85%] rounded-lg p-2.5 text-xs overflow-hidden break-words ${
         isAssistant
-          ? "bg-[#2a1515]/50 border border-[#3d1f1f] text-foreground/80 self-start"
+          ? "bg-muted border border-border text-foreground self-start"
           : "bg-primary text-primary-foreground self-end"
       }`}
     >
@@ -108,7 +108,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
         {isAssistant ? "AI Tutor" : "Me"}
       </span>
       {isAssistant ? (
-        <div className="prose prose-invert prose-xs max-w-none text-xs leading-normal overflow-hidden break-words [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0.5 [&_code]:bg-[#3d1f1f] [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-[10px] [&_pre]:bg-[#2a1515] [&_pre]:p-2 [&_pre]:rounded [&_pre]:text-[10px] [&_pre]:overflow-x-auto">
+        <div className="prose prose-sm max-w-none text-xs leading-normal overflow-hidden break-words [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0.5 [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-[10px] [&_pre]:bg-muted [&_pre]:p-2 [&_pre]:rounded [&_pre]:text-[10px] [&_pre]:overflow-x-auto">
           <ReactMarkdown>{message.content}</ReactMarkdown>
         </div>
       ) : (
@@ -137,7 +137,7 @@ function ChatInput({
 }) {
   if (isSubmitted) {
     return (
-      <div className="p-3 border-t border-[#3d1f1f] bg-[#2a1515]/60 shrink-0">
+      <div className="p-3 border-t border-border bg-muted/30 shrink-0">
         <p className="text-[10px] text-muted-foreground text-center italic py-2">Chat is disabled after submission.</p>
       </div>
     );
@@ -145,27 +145,27 @@ function ChatInput({
 
   if (heartsCount <= 0) {
     return (
-      <div className="p-3 border-t border-[#3d1f1f] bg-[#2a1515]/60 shrink-0">
+      <div className="p-3 border-t border-border bg-muted/30 shrink-0">
         <div className="text-center py-2 space-y-1.5">
           <p className="text-[10px] text-muted-foreground italic">0 Hearts left. Send disabled.</p>
-          {timeToRegen && <p className="text-[9px] font-bold text-rose-500">Next heart in: {timeToRegen}</p>}
+          {timeToRegen && <p className="text-[9px] font-bold text-destructive">Next heart in: {timeToRegen}</p>}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-3 border-t border-[#3d1f1f] bg-[#2a1515]/60 shrink-0">
+    <div className="p-3 border-t border-border bg-muted/30 shrink-0">
       <form onSubmit={onSendMessage} className="flex gap-1.5">
         <input
           placeholder="Ask a question..."
           value={chatInput}
           onChange={(e) => onChatInputChange(e.target.value)}
           disabled={isLoading}
-          className="flex-1 bg-[#1a0f0f] border border-[#3d1f1f] rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/50"
+          className="flex-1 bg-background border border-border rounded px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground/50"
         />
         <Button type="submit" size="sm" disabled={isLoading || !chatInput.trim()}
-          className="bg-primary hover:bg-primary/90 h-8 shrink-0 text-xs px-2.5">
+          className="bg-primary hover:bg-primary/90 text-primary-foreground h-8 shrink-0 text-xs px-2.5">
           Send
         </Button>
       </form>

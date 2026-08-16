@@ -23,7 +23,7 @@ export function WorkspaceHeader({
   isSubmitted,
 }: WorkspaceHeaderProps) {
   return (
-    <header className="flex h-14 items-center justify-between px-6 border-b border-[#3d1f1f] bg-[#2a1515] shrink-0">
+    <header className="flex h-14 items-center justify-between px-6 border-b border-border bg-card shrink-0">
       <div className="flex items-center gap-4 flex-wrap">
         <Link
           href="/dashboard/student"
@@ -33,11 +33,11 @@ export function WorkspaceHeader({
         </Link>
         <span className="text-muted-foreground/50">|</span>
         <h1 className="text-sm font-bold tracking-tight">{title}</h1>
-        <span className="bg-[#3d1f1f] text-[10px] px-2 py-0.5 rounded font-mono font-semibold">
+        <span className="bg-muted text-[10px] px-2 py-0.5 rounded font-mono font-semibold">
           {language}
         </span>
         {isSubmitted && (
-          <span className="rounded-full bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-400 uppercase tracking-wide">
+          <span className="rounded-full bg-green-100 border border-green-300 px-2.5 py-0.5 text-[10px] font-semibold text-green-700 uppercase tracking-wide">
             Submitted
           </span>
         )}

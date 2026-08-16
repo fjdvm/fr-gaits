@@ -13,20 +13,20 @@ interface WorkspaceInstructionsProps {
 }
 
 function getScoreColorClass(score: number) {
-  if (score >= 90) return "text-emerald-400 bg-emerald-950/30 border-emerald-800/50";
-  if (score >= 70) return "text-amber-400 bg-amber-950/30 border-amber-800/50";
-  return "text-rose-400 bg-rose-950/30 border-rose-800/50";
+  if (score >= 90) return "text-green-700 bg-green-50 border-green-200";
+  if (score >= 70) return "text-amber-700 bg-amber-50 border-amber-200";
+  return "text-red-700 bg-red-50 border-red-200";
 }
 
 export function WorkspaceInstructions({ title, instructorEmail, instructions, submission }: WorkspaceInstructionsProps) {
   return (
-    <div className="w-[33%] border-r border-[#3d1f1f] bg-[#2a1515]/30 p-5 overflow-y-auto space-y-5 flex flex-col justify-between shrink-0">
+    <div className="w-[33%] border-r border-border bg-card/50 p-5 overflow-y-auto space-y-5 flex flex-col justify-between shrink-0">
       <div className="space-y-5">
         <div className="space-y-1">
           <h2 className="text-xl font-bold leading-tight">{title}</h2>
           <p className="text-[10px] text-muted-foreground">Instructor: {instructorEmail}</p>
         </div>
-        <div className="border-t border-[#3d1f1f] pt-3 prose prose-invert max-w-none text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">
+        <div className="border-t border-border pt-3 prose max-w-none text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">
           {instructions}
         </div>
       </div>
