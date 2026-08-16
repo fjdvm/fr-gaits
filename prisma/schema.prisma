@@ -13,11 +13,36 @@ datasource db {
 }
 
 model User {
-  id             String   @id
-  email          String   @unique
-  role           String   // 'student', 'instructor', 'admin'
-  approvalStatus String   @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
-  createdAt      DateTime @default(now()) @map("created_at")
+  id             String       @id
+  email          String       @unique
+  role           String       // 'student', 'instructor', 'admin'
+  approvalStatus String       @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
+  createdAt      DateTime     @default(now()) @map("created_at")
+  classes        Class[]
+  enrollments    Enrollment[]
 
   @@map("users")
+}
+
+model Class {
+  id           String       @id @default(uuid())
+  name         String
+  instructorId String       @map("instructor_id")
+  joinCode     String       @unique @map("join_code")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  instructor   User         @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  enrollments  Enrollment[]
+
+  @@map("classes")
+}
+
+model Enrollment {
+  studentId  String   @map("student_id")
+  classId    String   @map("class_id")
+  enrolledAt DateTime @default(now()) @map("enrolled_at")
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class      Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, classId])
+  @@map("enrollments")
 }
