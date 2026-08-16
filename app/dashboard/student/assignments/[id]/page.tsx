@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { getOrRegenerateHearts } from "@/lib/hearts";
 import { WorkspaceView } from "@/components/features/assignments/workspace-view";
 
 interface PageProps {
@@ -56,31 +57,22 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
   });
 
   if (!enrollment) {
-    // Student is not enrolled in a class assigned this programming problem
     redirect("/dashboard/student");
   }
 
-  // Initialize hearts state (thus marking assignment status as "in progress")
-  let heartsState = await prisma.heartsState.findUnique({
+  // Fetch or regenerate hearts state (transitioning assignment status to "in progress")
+  const heartsState = await getOrRegenerateHearts(user.id, id);
+
+  // Fetch chat history
+  const chatMessages = await prisma.chatMessage.findMany({
     where: {
-      studentId_assignmentId: {
-        studentId: user.id,
-        assignmentId: id,
-      },
+      studentId: user.id,
+      assignmentId: id,
     },
+    orderBy: { createdAt: "asc" },
   });
 
-  if (!heartsState) {
-    heartsState = await prisma.heartsState.create({
-      data: {
-        studentId: user.id,
-        assignmentId: id,
-        currentCount: assignment.heartsCount,
-      },
-    });
-  }
-
-  // Format assignment data for client workspace
+  // Format data for client workspace
   const formattedAssignment = {
     id: assignment.id,
     title: assignment.title,
@@ -102,6 +94,13 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     id: tc.id,
     input: tc.input,
     expectedOutput: tc.expectedOutput,
+  }));
+
+  const formattedMessages = chatMessages.map((msg) => ({
+    id: msg.id,
+    role: msg.role as "user" | "assistant",
+    content: msg.content,
+    createdAt: msg.createdAt.toISOString(),
   }));
 
   // Fetch student's existing submission if it exists
@@ -130,6 +129,7 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
       initialHearts={formattedHearts}
       visibleTestCases={formattedTestCases}
       initialSubmission={formattedSubmission}
+      initialChatMessages={formattedMessages}
     />
   );
 }

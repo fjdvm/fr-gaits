@@ -13,16 +13,17 @@ datasource db {
 }
 
 model User {
-  id                 String       @id
-  email              String       @unique
-  role               String       // 'student', 'instructor', 'admin'
-  approvalStatus     String       @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
-  createdAt          DateTime     @default(now()) @map("created_at")
+  id                 String        @id
+  email              String        @unique
+  role               String        // 'student', 'instructor', 'admin'
+  approvalStatus     String        @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
+  createdAt          DateTime      @default(now()) @map("created_at")
   classes            Class[]
   enrollments        Enrollment[]
   createdAssignments Assignment[]
   heartsStates       HeartsState[]
   submissions        Submission[]
+  chatMessages       ChatMessage[]
 
   @@map("users")
 }
@@ -66,6 +67,7 @@ model Assignment {
   testCases          TestCase[]
   heartsStates       HeartsState[]
   submissions        Submission[]
+  chatMessages       ChatMessage[]
 
   @@map("assignments")
 }
@@ -118,4 +120,17 @@ model Submission {
 
   @@unique([studentId, assignmentId])
   @@map("submissions")
+}
+
+model ChatMessage {
+  id           String     @id @default(uuid())
+  studentId    String     @map("student_id")
+  assignmentId String     @map("assignment_id")
+  role         String     // 'user' | 'assistant'
+  content      String
+  createdAt    DateTime   @default(now()) @map("created_at")
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
 }
