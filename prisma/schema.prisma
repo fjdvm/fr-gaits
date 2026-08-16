@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
-  output   = "../lib/generated/prisma"
+  output = "../lib/generated/prisma"
 }
 
 datasource db {
@@ -13,172 +8,172 @@ datasource db {
 }
 
 model User {
-  id                 String        @id
-  email              String        @unique
-  role               String        // 'student', 'instructor', 'admin'
-  approvalStatus     String        @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
-  createdAt          DateTime      @default(now()) @map("created_at")
-  classes            Class[]
-  enrollments        Enrollment[]
+  id String @id
+  email String @unique
+  role String
+  approvalStatus String @default("approved") @map("approval_status")
+  createdAt DateTime @default(now()) @map("created_at")
+  classes Class[]
+  enrollments Enrollment[]
   createdAssignments Assignment[]
-  heartsStates       HeartsState[]
-  submissions        Submission[]
-  chatMessages       ChatMessage[]
-  xpEvents           XpEvent[]
-  userBadges         UserBadge[]
-  streak             Streak?
+  heartsStates HeartsState[]
+  submissions Submission[]
+  chatMessages ChatMessage[]
+  xpEvents XpEvent[]
+  userBadges UserBadge[]
+  streak Streak?
 
   @@map("users")
 }
 
 model Class {
-  id              String            @id @default(uuid())
-  name            String
-  instructorId    String            @map("instructor_id")
-  joinCode        String            @unique @map("join_code")
-  aiProvider      String?           @map("ai_provider") // 'groq', 'openai', 'anthropic', 'google'
-  aiApiKeyEnc     String?           @map("ai_api_key_enc") // encrypted API key
-  leaderboardSize Int               @default(10) @map("leaderboard_size")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  instructor      User              @relation(fields: [instructorId], references: [id], onDelete: Cascade)
-  enrollments     Enrollment[]
-  assignments     AssignmentClass[]
+  id String @id @default(uuid())
+  name String
+  instructorId String @map("instructor_id")
+  joinCode String @unique @map("join_code")
+  aiProvider String? @map("ai_provider")
+  aiApiKeyEnc String? @map("ai_api_key_enc")
+  leaderboardSize Int @default(10) @map("leaderboard_size")
+  createdAt DateTime @default(now()) @map("created_at")
+  instructor User @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  enrollments Enrollment[]
+  assignments AssignmentClass[]
 
   @@map("classes")
 }
 
 model Enrollment {
-  studentId  String   @map("student_id")
-  classId    String   @map("class_id")
+  studentId String @map("student_id")
+  classId String @map("class_id")
   enrolledAt DateTime @default(now()) @map("enrolled_at")
-  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  class      Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@id([studentId, classId])
   @@map("enrollments")
 }
 
 model Assignment {
-  id                 String            @id @default(uuid())
-  title              String
-  instructions       String
-  language           String            // 'Python', 'C', 'JavaScript', 'C#'
-  dueDate            DateTime          @map("due_date")
-  heartsCount        Int               @default(5) @map("hearts_count")
-  heartsRegenMinutes Int               @default(30) @map("hearts_regen_minutes")
-  createdBy          String            @map("created_by")
-  createdAt          DateTime          @default(now()) @map("created_at")
-  instructor         User              @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  classes            AssignmentClass[]
-  testCases          TestCase[]
-  heartsStates       HeartsState[]
-  submissions        Submission[]
-  chatMessages       ChatMessage[]
+  id String @id @default(uuid())
+  title String
+  instructions String
+  language String
+  dueDate DateTime @map("due_date")
+  heartsCount Int @default(5) @map("hearts_count")
+  heartsRegenMinutes Int @default(30) @map("hearts_regen_minutes")
+  createdBy String @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  instructor User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  classes AssignmentClass[]
+  testCases TestCase[]
+  heartsStates HeartsState[]
+  submissions Submission[]
+  chatMessages ChatMessage[]
 
   @@map("assignments")
 }
 
 model AssignmentClass {
-  assignmentId String     @map("assignment_id")
-  classId      String     @map("class_id")
-  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  class        Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
+  assignmentId String @map("assignment_id")
+  classId String @map("class_id")
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@id([assignmentId, classId])
   @@map("assignment_classes")
 }
 
 model TestCase {
-  id             String     @id @default(uuid())
-  assignmentId   String     @map("assignment_id")
-  input          String
-  expectedOutput String     @map("expected_output")
-  visible        Boolean
-  assignment     Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  id String @id @default(uuid())
+  assignmentId String @map("assignment_id")
+  input String
+  expectedOutput String @map("expected_output")
+  visible Boolean
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@map("test_cases")
 }
 
 model HeartsState {
-  studentId    String     @map("student_id")
-  assignmentId String     @map("assignment_id")
-  currentCount Int        @map("current_count")
-  lastRegenAt  DateTime   @default(now()) @map("last_regen_at")
-  totalSpent   Int        @default(0) @map("total_spent")
-  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId String @map("student_id")
+  assignmentId String @map("assignment_id")
+  currentCount Int @map("current_count")
+  lastRegenAt DateTime @default(now()) @map("last_regen_at")
+  totalSpent Int @default(0) @map("total_spent")
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@id([studentId, assignmentId])
   @@map("hearts_states")
 }
 
 model Submission {
-  id                String     @id @default(uuid())
-  studentId         String     @map("student_id")
-  assignmentId      String     @map("assignment_id")
-  code              String
-  score             Float
-  testResults       Json       @map("test_results")
-  behavioralSignals Json       @map("behavioral_signals")
-  submittedAt       DateTime   @default(now()) @map("submitted_at")
-  student           User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  assignment        Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  id String @id @default(uuid())
+  studentId String @map("student_id")
+  assignmentId String @map("assignment_id")
+  code String
+  score Float
+  testResults Json @map("test_results")
+  behavioralSignals Json @map("behavioral_signals")
+  submittedAt DateTime @default(now()) @map("submitted_at")
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, assignmentId])
   @@map("submissions")
 }
 
 model ChatMessage {
-  id           String     @id @default(uuid())
-  studentId    String     @map("student_id")
-  assignmentId String     @map("assignment_id")
-  role         String     // 'user' | 'assistant'
-  content      String
-  createdAt    DateTime   @default(now()) @map("created_at")
-  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  id String @id @default(uuid())
+  studentId String @map("student_id")
+  assignmentId String @map("assignment_id")
+  role String
+  content String
+  createdAt DateTime @default(now()) @map("created_at")
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@map("chat_messages")
 }
 
 model XpEvent {
-  id           String   @id @default(uuid())
-  studentId    String   @map("student_id")
-  eventType    String   @map("event_type") // 'pass_case', 'perfect_score', 'no_hints', 'fewer_hints', 'streak_maintained'
-  xpAmount     Int      @map("xp_amount")
-  assignmentId String?  @map("assignment_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  student      User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  id String @id @default(uuid())
+  studentId String @map("student_id")
+  eventType String @map("event_type")
+  xpAmount Int @map("xp_amount")
+  assignmentId String? @map("assignment_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@map("xp_events")
 }
 
 model Badge {
-  id          String      @id @default(uuid())
-  name        String      @unique
+  id String @id @default(uuid())
+  name String @unique
   description String
-  condition   String      // machine-readable condition key
-  userBadges  UserBadge[]
+  condition String
+  userBadges UserBadge[]
 
   @@map("badges")
 }
 
 model UserBadge {
-  userId   String   @map("user_id")
-  badgeId  String   @map("badge_id")
+  userId String @map("user_id")
+  badgeId String @map("badge_id")
   earnedAt DateTime @default(now()) @map("earned_at")
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
 
   @@id([userId, badgeId])
   @@map("user_badges")
 }
 
 model Streak {
-  studentId          String @map("student_id")
-  currentStreak      Int    @default(0) @map("current_streak")
-  lastSubmissionWeek Int    @default(0) @map("last_submission_week") // ISO week number * 100 + year for uniqueness
-  student            User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String @map("student_id")
+  currentStreak Int @default(0) @map("current_streak")
+  lastSubmissionWeek Int @default(0) @map("last_submission_week")
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@id([studentId])
   @@map("streaks")

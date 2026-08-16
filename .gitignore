@@ -49,3 +49,5 @@ next-env.d.ts
 .scratch/
 .windsurf/
 
+CLAUDE.md
+skills-lock.json
