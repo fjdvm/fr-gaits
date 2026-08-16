@@ -57,6 +57,74 @@ GAITS is a gamified web platform that integrates:
 - `/dashboard/instructor/submissions` — Grade overview and detailed submission view
 - `/dashboard/admin` — Instructor approvals and API key settings
 
+### Student Data Flow
+
+```mermaid
+flowchart TD
+    A[Student Login] --> B[Student Dashboard]
+    B --> C[Join Class via Code]
+    B --> D[View Assignments]
+    B --> E[View Leaderboard]
+    D --> F[Open Workspace]
+    F --> G[Write Code in Editor]
+    F --> H[Chat with AI Tutor]
+    H --> I{Hearts Available?}
+    I -->|Yes| J[Deduct Heart + Send Message]
+    J --> K[Receive Tiered Hint via Stream]
+    I -->|No| L[Wait for Regeneration]
+    G --> M[Run Code - Visible Tests]
+    M --> N[View Results in Console]
+    G --> O[Submit Code - All Tests]
+    O --> P[Calculate Score]
+    P --> Q[Award XP]
+    Q --> R[Check Badges]
+    R --> S[Update Streak]
+    S --> T[Update Leaderboard Position]
+```
+
+### Instructor Data Flow
+
+```mermaid
+flowchart TD
+    A[Instructor Login] --> B{Account Approved?}
+    B -->|No| C[Pending Approval Page]
+    B -->|Yes| D[Instructor Dashboard]
+    D --> E[Create Class]
+    E --> F[Generate Join Code]
+    D --> G[Create Assignment]
+    G --> H[Set Instructions + Language]
+    H --> I[Add Test Cases]
+    I --> J[Set Visible / Hidden]
+    G --> K[Configure Hearts + Regen Time]
+    D --> L[Configure AI Provider]
+    L --> M[Select Provider + Enter API Key]
+    M --> N[Encrypt + Store Key]
+    D --> O[View Submissions]
+    O --> P[View Assignment Scores Table]
+    P --> Q[View Individual Submission Detail]
+    Q --> R[See Code + Score + Behavioral Signals]
+```
+
+### Admin Data Flow
+
+```mermaid
+flowchart TD
+    A[Admin Login] --> B[Admin Dashboard]
+    B --> C[View Pending Instructors]
+    C --> D[Review Instructor Request]
+    D --> E{Approve?}
+    E -->|Yes| F[Set Status to Approved]
+    E -->|No| G[Reject Request]
+    B --> H[System Settings]
+    H --> I[Manage AI API Keys]
+    I --> J[Add/Update Groq Key]
+    I --> K[Add/Update Google Key]
+    J --> L[Encrypt with AES-256-GCM]
+    K --> L
+    L --> M[Store in SystemSetting Table]
+    M --> N[Available as Fallback for All Classes]
+```
+
 ---
 
 ## Architecture Design
@@ -106,7 +174,7 @@ graph TB
 ```mermaid
 erDiagram
     User ||--o{ Enrollment : enrolls
-    User ||--o{ Class : creates
+    User ||--o{ Classroom : creates
     User ||--o{ Submission : submits
     User ||--o{ ChatMessage : sends
     User ||--o{ HeartsState : has
@@ -114,8 +182,8 @@ erDiagram
     User ||--o{ UserBadge : achieves
     User ||--|| Streak : maintains
 
-    Class ||--o{ Enrollment : contains
-    Class ||--o{ AssignmentClass : links
+    Classroom ||--o{ Enrollment : contains
+    Classroom ||--o{ AssignmentClass : links
 
     Assignment ||--o{ AssignmentClass : links
     Assignment ||--o{ TestCase : has
@@ -133,7 +201,7 @@ erDiagram
         datetime createdAt
     }
 
-    Class {
+    Classroom {
         string id PK
         string name
         string instructorId FK
