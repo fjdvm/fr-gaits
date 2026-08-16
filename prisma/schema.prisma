@@ -13,25 +13,27 @@ datasource db {
 }
 
 model User {
-  id             String       @id
-  email          String       @unique
-  role           String       // 'student', 'instructor', 'admin'
-  approvalStatus String       @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
-  createdAt      DateTime     @default(now()) @map("created_at")
-  classes        Class[]
-  enrollments    Enrollment[]
+  id                 String       @id
+  email              String       @unique
+  role               String       // 'student', 'instructor', 'admin'
+  approvalStatus     String       @default("approved") @map("approval_status") // 'pending', 'approved', 'rejected'
+  createdAt          DateTime     @default(now()) @map("created_at")
+  classes            Class[]
+  enrollments        Enrollment[]
+  createdAssignments Assignment[]
 
   @@map("users")
 }
 
 model Class {
-  id           String       @id @default(uuid())
+  id           String            @id @default(uuid())
   name         String
-  instructorId String       @map("instructor_id")
-  joinCode     String       @unique @map("join_code")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  instructor   User         @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  instructorId String            @map("instructor_id")
+  joinCode     String            @unique @map("join_code")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  instructor   User              @relation(fields: [instructorId], references: [id], onDelete: Cascade)
   enrollments  Enrollment[]
+  assignments  AssignmentClass[]
 
   @@map("classes")
 }
@@ -45,4 +47,42 @@ model Enrollment {
 
   @@id([studentId, classId])
   @@map("enrollments")
+}
+
+model Assignment {
+  id                 String            @id @default(uuid())
+  title              String
+  instructions       String
+  language           String            // 'Python', 'C', 'JavaScript', 'C#'
+  dueDate            DateTime          @map("due_date")
+  heartsCount        Int               @default(5) @map("hearts_count")
+  heartsRegenMinutes Int               @default(30) @map("hearts_regen_minutes")
+  createdBy          String            @map("created_by")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  instructor         User              @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  classes            AssignmentClass[]
+  testCases          TestCase[]
+
+  @@map("assignments")
+}
+
+model AssignmentClass {
+  assignmentId String     @map("assignment_id")
+  classId      String     @map("class_id")
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  class        Class      @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@id([assignmentId, classId])
+  @@map("assignment_classes")
+}
+
+model TestCase {
+  id             String     @id @default(uuid())
+  assignmentId   String     @map("assignment_id")
+  input          String
+  expectedOutput String     @map("expected_output")
+  visible        Boolean
+  assignment     Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@map("test_cases")
 }

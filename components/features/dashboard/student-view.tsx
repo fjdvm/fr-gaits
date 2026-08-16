@@ -9,12 +9,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+interface AssignmentInfo {
+  id: string;
+  title: string;
+  language: string;
+  dueDate: string;
+  status: string;
+}
+
 interface EnrolledClass {
   id: string;
   name: string;
   joinCode: string;
   instructorEmail: string;
   enrolledAt: string;
+  assignments: AssignmentInfo[];
 }
 
 interface StudentViewProps {
@@ -58,7 +67,6 @@ export function StudentView({ initialClasses }: StudentViewProps) {
         toast.success(`Successfully joined class: ${result.className}!`);
         setJoinCode("");
         router.refresh();
-        // Wait a small moment for server component data refresh
         setTimeout(() => {
           window.location.reload();
         }, 800);
@@ -151,19 +159,51 @@ export function StudentView({ initialClasses }: StudentViewProps) {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {classes.map((cls) => (
-                <Card key={cls.id} className="shadow-sm hover:shadow-md transition-shadow border border-zinc-200 dark:border-zinc-800">
-                  <CardHeader>
+                <Card key={cls.id} className="shadow-sm hover:shadow-md transition-all flex flex-col border border-zinc-200 dark:border-zinc-800">
+                  <CardHeader className="pb-3">
                     <CardTitle className="text-lg font-bold">{cls.name}</CardTitle>
                     <CardDescription>Instructor: {cls.instructorEmail}</CardDescription>
                   </CardHeader>
-                  <CardContent className="text-xs text-zinc-500 dark:text-zinc-400">
-                    <div className="flex justify-between items-center">
-                      <span>Joined: {new Date(cls.enrolledAt).toLocaleDateString()}</span>
-                      <span className="font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-[10px]">
-                        {cls.joinCode}
-                      </span>
+                  <CardContent className="flex-1 space-y-4">
+                    <div>
+                      <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
+                        Assignments ({cls.assignments.length})
+                      </h4>
+                      {cls.assignments.length === 0 ? (
+                        <p className="text-xs text-zinc-500 italic">No assignments posted yet.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {cls.assignments.map((asm) => (
+                            <div
+                              key={asm.id}
+                              className="flex items-center justify-between p-2 rounded-lg border border-zinc-100 bg-zinc-50/50 dark:border-zinc-850 dark:bg-zinc-900/30 text-xs"
+                            >
+                              <div className="space-y-0.5 min-w-0 pr-2">
+                                <p className="font-semibold text-zinc-900 dark:text-zinc-50 truncate">
+                                  {asm.title}
+                                </p>
+                                <p className="text-[10px] text-zinc-500">
+                                  Due: {new Date(asm.dueDate).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <span className="bg-zinc-100 dark:bg-zinc-800 text-[9px] px-1.5 py-0.5 rounded font-mono">
+                                  {asm.language}
+                                </span>
+                                <span className="bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase">
+                                  {asm.status}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </CardContent>
+                  <div className="p-4 border-t border-zinc-100 dark:border-zinc-850 text-[10px] text-zinc-400 font-mono flex justify-between items-center">
+                    <span>Enrolled: {new Date(cls.enrolledAt).toLocaleDateString()}</span>
+                    <span>Code: {cls.joinCode}</span>
+                  </div>
                 </Card>
               ))}
             </div>

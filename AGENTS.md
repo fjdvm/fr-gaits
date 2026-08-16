@@ -14,6 +14,8 @@ export default function Home() {
 - do not commit .env files except for .env.example
 - use already the existing templates in shadcn ui for sidebar and header.
 - git commit and push after every change and task
+- make github bot as contributor and reviewer
+- check also the acceptance criteria for the task and for each issue
 
 # Components
 ## Header

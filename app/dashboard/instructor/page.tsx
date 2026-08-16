@@ -13,7 +13,7 @@ export default async function InstructorDashboardPage() {
     redirect("/login");
   }
 
-  // Fetch classes created by this instructor along with enrollment counts
+  // 1. Fetch classes created by this instructor along with enrollment counts
   const instructorClasses = await prisma.class.findMany({
     where: { instructorId: user.id },
     include: {
@@ -32,5 +32,43 @@ export default async function InstructorDashboardPage() {
     createdAt: cls.createdAt.toISOString(),
   }));
 
-  return <InstructorView initialClasses={formattedClasses} />;
+  // 2. Fetch assignments created by this instructor
+  const instructorAssignments = await prisma.assignment.findMany({
+    where: { createdBy: user.id },
+    include: {
+      classes: {
+        include: {
+          class: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      _count: {
+        select: {
+          testCases: true,
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const formattedAssignments = instructorAssignments.map((asm) => ({
+    id: asm.id,
+    title: asm.title,
+    language: asm.language,
+    dueDate: asm.dueDate.toISOString(),
+    heartsCount: asm.heartsCount,
+    heartsRegenMinutes: asm.heartsRegenMinutes,
+    classNames: asm.classes.map((c) => c.class.name),
+    testCaseCount: asm._count.testCases,
+  }));
+
+  return (
+    <InstructorView
+      initialClasses={formattedClasses}
+      initialAssignments={formattedAssignments}
+    />
+  );
 }

@@ -13,7 +13,7 @@ export default async function StudentDashboardPage() {
     redirect("/login");
   }
 
-  // Fetch student's enrolled classes
+  // Fetch student's enrolled classes and their assignments
   const enrollments = await prisma.enrollment.findMany({
     where: { studentId: user.id },
     include: {
@@ -22,6 +22,11 @@ export default async function StudentDashboardPage() {
           instructor: {
             select: {
               email: true,
+            },
+          },
+          assignments: {
+            include: {
+              assignment: true,
             },
           },
         },
@@ -36,6 +41,13 @@ export default async function StudentDashboardPage() {
     joinCode: e.class.joinCode,
     instructorEmail: e.class.instructor.email,
     enrolledAt: e.enrolledAt.toISOString(),
+    assignments: e.class.assignments.map((ac) => ({
+      id: ac.assignment.id,
+      title: ac.assignment.title,
+      language: ac.assignment.language,
+      dueDate: ac.assignment.dueDate.toISOString(),
+      status: "not started", // Default status, to be updated dynamically once submissions table is implemented
+    })),
   }));
 
   return <StudentView initialClasses={enrolledClasses} />;
