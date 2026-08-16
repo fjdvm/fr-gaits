@@ -40,6 +40,7 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
       const remainingMs = nextRegen - Date.now();
       if (remainingMs <= 0) {
         setHearts((prev) => ({ ...prev, currentCount: Math.min(assignment.heartsCount, prev.currentCount + 1), lastRegenAt: new Date().toISOString() }));
+        toast.success("💚 Heart regenerated!");
         router.refresh();
       } else {
         setTimeToRegen(`${Math.floor(remainingMs / 60000)}m ${Math.floor((remainingMs % 60000) / 1000)}s`);
