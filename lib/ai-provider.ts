@@ -31,7 +31,7 @@ function createModel(provider: Provider, apiKey: string, model?: string): Langua
   }
 }
 
-function getDefaultModel(): LanguageModel {
+async function getDefaultModel(): Promise<LanguageModel> {
   const groqKey = process.env.GROQ_API_KEY;
   if (groqKey) {
     return createModel("groq", groqKey);
@@ -40,7 +40,24 @@ function getDefaultModel(): LanguageModel {
   if (googleKey) {
     return createModel("google", googleKey);
   }
-  throw new Error("No default AI API key configured (set GROQ_API_KEY or GOOGLE_GENERATIVE_AI_API_KEY)");
+
+  const adminKeys = await prisma.systemSetting.findMany({
+    where: { key: { in: ["GROQ_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY"] } },
+  });
+
+  for (const setting of adminKeys) {
+    try {
+      const decryptedKey = decrypt(setting.value);
+      const provider = setting.key === "GROQ_API_KEY" ? "groq" : "google";
+      return createModel(provider, decryptedKey);
+    } catch {
+      continue;
+    }
+  }
+
+  throw new Error(
+    "No AI API key configured. Set env vars or configure keys in admin settings."
+  );
 }
 
 export async function getModelWithFallback(assignmentId: string): Promise<LanguageModel> {
@@ -78,6 +95,6 @@ export async function streamWithFallback(
     }
   }
 
-  const defaultModel = getDefaultModel();
+  const defaultModel = await getDefaultModel();
   return await streamFn(defaultModel);
 }

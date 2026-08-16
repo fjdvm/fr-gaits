@@ -62,16 +62,13 @@ export function LoginView() {
           <div className="flex justify-center">
             <Image
               src="/logo.png"
-              alt="GAITS Logo"
-              width={64}
-              height={64}
-              className="rounded-lg"
+              alt="Logo"
+              width={400}
+              height={400}
+              className="rounded-lg w-full h-auto max-w-[280px]"
             />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-primary font-[var(--font-heading)]">
-              GAITS
-            </h1>
             <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mt-1">
               Begin your quest
             </p>

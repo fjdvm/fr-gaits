@@ -13,7 +13,10 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
     }
 
-    const { assignmentId, message, currentCode, lastRunResults } = await req.json();
+    const body = await req.json();
+    const { assignmentId, currentCode, lastRunResults, messages } = body;
+    const lastUserMessage = messages?.filter((m: { role: string }) => m.role === "user").pop();
+    const message = lastUserMessage?.content ?? lastUserMessage?.parts?.find((p: any) => p.type === "text")?.text ?? body.message;
     if (!assignmentId || !message || message.trim() === "") {
       return new Response(JSON.stringify({ error: "Missing required parameters" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return result.toTextStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (err) {
     console.error("AI Tutor chat error:", err);
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : "Unknown error" }), { status: 500, headers: { "Content-Type": "application/json" } });

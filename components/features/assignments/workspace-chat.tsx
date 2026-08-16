@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 
@@ -20,7 +21,7 @@ interface WorkspaceChatProps {
   onSendMessage: (e: React.FormEvent) => void;
 }
 
-export function WorkspaceChat({
+export const WorkspaceChat = memo(function WorkspaceChat({
   messages,
   isLoading,
   isSubmitted,
@@ -30,6 +31,13 @@ export function WorkspaceChat({
   onChatInputChange,
   onSendMessage,
 }: WorkspaceChatProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="w-[25%] flex flex-col h-full bg-card shrink-0 min-w-0 overflow-hidden">
       <div className="flex h-11 items-center px-4 border-b border-border bg-muted/50 shrink-0">
@@ -41,7 +49,7 @@ export function WorkspaceChat({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 select-text" style={{ overflowAnchor: "none" }}>
+      <div ref={scrollRef} className="flex-1 overflow-y-auto pl-4 py-4 space-y-4 select-text">
         {messages.length === 0 ? (
           <ChatEmptyState />
         ) : (
@@ -55,6 +63,7 @@ export function WorkspaceChat({
             <span className="animate-pulse">Thinking...</span>
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
 
       <ChatInput
@@ -68,7 +77,7 @@ export function WorkspaceChat({
       />
     </div>
   );
-}
+});
 
 function ChatEmptyState() {
   return (
@@ -82,7 +91,7 @@ function ChatEmptyState() {
   );
 }
 
-function ChatBubble({ message }: { message: ChatMessage }) {
+const ChatBubble = memo(function ChatBubble({ message }: { message: ChatMessage }) {
   const isAssistant = message.role === "assistant";
 
   return (
@@ -105,7 +114,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
       )}
     </div>
   );
-}
+});
 
 function ChatInput({
   isSubmitted,

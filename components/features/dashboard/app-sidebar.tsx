@@ -41,7 +41,11 @@ const instructorMenuItems = [
   { title: "Dashboard", url: "/dashboard/instructor", icon: LayoutDashboard },
   { title: "Classes", url: "/dashboard/instructor", icon: Users },
   { title: "Assignments", url: "/dashboard/instructor", icon: BookOpen },
-  { title: "Submissions", url: "/dashboard/instructor/submissions", icon: GraduationCap },
+  {
+    title: "Submissions",
+    url: "/dashboard/instructor/submissions",
+    icon: GraduationCap,
+  },
 ];
 
 const adminMenuItems = [
@@ -61,7 +65,11 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
         : adminMenuItems;
 
   const roleLabel =
-    role === "student" ? "Student" : role === "instructor" ? "Instructor" : "Admin";
+    role === "student"
+      ? "Student"
+      : role === "instructor"
+        ? "Instructor"
+        : "Admin";
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -74,20 +82,14 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader className="border-b border-sidebar-border p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center gap-2">
           <Image
-            src="/logo.png"
-            alt="GAITS Logo"
-            width={36}
-            height={36}
-            className="rounded-md"
+            src="/logo-sidebar.png"
+            alt="Logo"
+            width={160}
+            height={160}
+            className="rounded-md w-full h-auto"
           />
-          <span className="text-lg font-bold tracking-tight font-[var(--font-heading)]">
-            GAITS
-          </span>
-          <span className="ml-auto rounded-full bg-sidebar-primary px-2 py-0.5 text-xs font-semibold text-sidebar-primary-foreground">
-            {roleLabel}
-          </span>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -109,7 +111,14 @@ export function AppSidebar({ role, userEmail }: AppSidebarProps) {
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border p-4">
         {userEmail && (
-          <p className="mb-2 truncate text-xs text-sidebar-foreground/70">{userEmail}</p>
+          <div className="mb-2">
+            <p className="truncate text-xs text-sidebar-foreground/70">
+              {userEmail}
+            </p>
+            <span className="mt-1 inline-block rounded-full bg-sidebar-primary px-2 py-0.5 text-xs font-semibold text-sidebar-primary-foreground">
+              {roleLabel}
+            </span>
+          </div>
         )}
         <SidebarMenu>
           <SidebarMenuItem>
