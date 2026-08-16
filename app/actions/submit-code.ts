@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { awardSubmissionXp } from "@/lib/gamification";
 
 interface BehavioralSignals {
   pasteCount: number;
@@ -163,6 +164,13 @@ export async function submitCode(
         behavioralSignals: behavioralSignals as any,
       },
     });
+
+    // Award XP based on submission performance
+    const heartsState = await prisma.heartsState.findUnique({
+      where: { studentId_assignmentId: { studentId: user.id, assignmentId } },
+    });
+    const totalHintsUsed = heartsState?.totalSpent || 0;
+    await awardSubmissionXp(user.id, assignmentId, scorePercentage, totalHintsUsed);
 
     return {
       success: true,
