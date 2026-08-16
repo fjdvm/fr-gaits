@@ -61,7 +61,6 @@ export async function createAssignment(params: CreateAssignmentParams) {
       throw new Error("Unauthorized: You must be logged in");
     }
 
-    // Check if user is approved instructor
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
     });
@@ -70,9 +69,7 @@ export async function createAssignment(params: CreateAssignmentParams) {
       throw new Error("Unauthorized: Only approved instructors can create assignments");
     }
 
-    // Run creation queries inside a database transaction
     const newAssignment = await prisma.$transaction(async (tx) => {
-      // 1. Create the assignment record
       const assignment = await tx.assignment.create({
         data: {
           title: title.trim(),
@@ -85,7 +82,6 @@ export async function createAssignment(params: CreateAssignmentParams) {
         },
       });
 
-      // 2. Link to selected classes
       await tx.assignmentClass.createMany({
         data: classIds.map((classId) => ({
           assignmentId: assignment.id,
@@ -93,7 +89,6 @@ export async function createAssignment(params: CreateAssignmentParams) {
         })),
       });
 
-      // 3. Create test cases
       await tx.testCase.createMany({
         data: testCases.map((tc) => ({
           assignmentId: assignment.id,

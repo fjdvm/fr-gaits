@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 
-// Rate limiting: max 5 runs per minute per student
 const RUN_LIMIT = 5;
 const LIMIT_WINDOW_MS = 60000;
 const runHistory = new Map<string, number[]>();
@@ -12,7 +11,6 @@ function checkRateLimit(userId: string): { allowed: boolean; remainingSecs?: num
   const now = Date.now();
   const history = runHistory.get(userId) || [];
   
-  // Filter runs within the last minute
   const recentRuns = history.filter((timestamp) => now - timestamp < LIMIT_WINDOW_MS);
   
   if (recentRuns.length >= RUN_LIMIT) {
@@ -29,7 +27,6 @@ function checkRateLimit(userId: string): { allowed: boolean; remainingSecs?: num
   return { allowed: true };
 }
 
-// Map assignment languages to Judge0 language IDs
 const LANGUAGE_MAP: Record<string, number> = {
   Python: 100,      // Python (3.12.5)
   C: 103,           // C (GCC 14.1.0)
@@ -55,7 +52,6 @@ export async function runCode(assignmentId: string, code: string) {
       throw new Error("Unauthorized: You must be logged in");
     }
 
-    // Rate limiting check
     const rateLimit = checkRateLimit(user.id);
     if (!rateLimit.allowed) {
       throw new Error(
@@ -63,7 +59,6 @@ export async function runCode(assignmentId: string, code: string) {
       );
     }
 
-    // Fetch assignment and its visible test cases
     const assignment = await prisma.assignment.findUnique({
       where: { id: assignmentId },
       include: {
@@ -82,12 +77,10 @@ export async function runCode(assignmentId: string, code: string) {
       throw new Error(`Unsupported programming language: ${assignment.language}`);
     }
 
-    // If there are no visible test cases, we just run the code once without stdin
     const testCasesToRun = assignment.testCases.length > 0 
       ? assignment.testCases 
       : [{ id: "default", input: "", expectedOutput: "", visible: true }];
 
-    // Run test cases in parallel using Judge0 API
     const runPromises = testCasesToRun.map(async (tc) => {
       try {
         const response = await fetch("https://ce.judge0.com/submissions?wait=true&base64_encoded=false", {
@@ -115,10 +108,8 @@ export async function runCode(assignmentId: string, code: string) {
         const compileOutput = result.compile_output || "";
         const status = result.status || { id: 13, description: "Internal Error" };
 
-        // Determine if it passed
         let passed = false;
         if (status.id === 3) {
-          // If execution succeeded (Accepted), check if output matches expected output
           const cleanActual = stdout.trim().replace(/\r\n/g, "\n");
           const cleanExpected = (tc.expectedOutput || "").trim().replace(/\r\n/g, "\n");
           passed = cleanActual === cleanExpected;

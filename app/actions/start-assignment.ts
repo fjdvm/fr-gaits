@@ -18,7 +18,6 @@ export async function startAssignment(assignmentId: string) {
       throw new Error("Unauthorized");
     }
 
-    // Check if hearts state already exists
     let heartsState = await prisma.heartsState.findUnique({
       where: {
         studentId_assignmentId: {
@@ -29,7 +28,6 @@ export async function startAssignment(assignmentId: string) {
     });
 
     if (!heartsState) {
-      // Fetch assignment to know default hearts count
       const assignment = await prisma.assignment.findUnique({
         where: { id: assignmentId },
       });
@@ -38,7 +36,6 @@ export async function startAssignment(assignmentId: string) {
         throw new Error("Assignment not found");
       }
 
-      // Initialize hearts state for this assignment
       heartsState = await prisma.heartsState.create({
         data: {
           studentId: user.id,

@@ -20,7 +20,6 @@ export async function joinClass(joinCode: string) {
       throw new Error("Unauthorized: You must be logged in");
     }
 
-    // Check if user is a student
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
     });
@@ -29,7 +28,6 @@ export async function joinClass(joinCode: string) {
       throw new Error("Unauthorized: Only students can join classes");
     }
 
-    // Find class by join code
     const targetClass = await prisma.class.findUnique({
       where: { joinCode: cleanCode },
     });
@@ -38,7 +36,6 @@ export async function joinClass(joinCode: string) {
       throw new Error("Invalid join code. Class not found.");
     }
 
-    // Check if already enrolled (duplicate enrollment prevention)
     const existingEnrollment = await prisma.enrollment.findUnique({
       where: {
         studentId_classId: {
@@ -52,7 +49,6 @@ export async function joinClass(joinCode: string) {
       throw new Error("You are already enrolled in this class");
     }
 
-    // Create enrollment
     await prisma.enrollment.create({
       data: {
         studentId: user.id,

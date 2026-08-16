@@ -47,24 +47,20 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
-  // User is authenticated
   const role = user.user_metadata?.role || "student";
   const approvalStatus = user.user_metadata?.approval_status || "approved";
 
-  // Redirect based on role and approval status
   if (role === "instructor" && approvalStatus === "pending") {
     if (url.pathname !== "/pending-approval") {
       url.pathname = "/pending-approval";
       return NextResponse.redirect(url);
     }
   } else {
-    // If not pending but on the pending-approval page
     if (url.pathname === "/pending-approval") {
       url.pathname = `/dashboard/${role}`;
       return NextResponse.redirect(url);
     }
 
-    // Gating dashboard directories
     if (url.pathname.startsWith("/dashboard/")) {
       const expectedPrefix = `/dashboard/${role}`;
       if (!url.pathname.startsWith(expectedPrefix)) {
@@ -74,7 +70,6 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // Redirect from login/signup/home to the appropriate dashboard
   if (isAuthRoute) {
     if (role === "instructor" && approvalStatus === "pending") {
       url.pathname = "/pending-approval";

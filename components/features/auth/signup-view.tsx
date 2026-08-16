@@ -48,7 +48,6 @@ export function SignupView() {
         toast.error(error.message);
       } else if (data?.user) {
         toast.success("Account created successfully!");
-        // Small delay for the trigger to execute
         setTimeout(() => {
           if (role === "instructor") {
             router.push("/pending-approval");

@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: "0 hearts remaining. Wait for regeneration." }), { status: 403, headers: { "Content-Type": "application/json" } });
     }
 
-    // Decrement hearts
     heartsState = await prisma.heartsState.update({
       where: { studentId_assignmentId: { studentId: user.id, assignmentId } },
       data: {
@@ -45,23 +44,19 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Save user message
     await prisma.chatMessage.create({
       data: { studentId: user.id, assignmentId, role: "user", content: message.trim() },
     });
 
-    // Load chat history
     const chatHistory = await prisma.chatMessage.findMany({
       where: { studentId: user.id, assignmentId },
       orderBy: { createdAt: "asc" },
     });
     const formattedHistory = chatHistory.map((msg) => ({ role: msg.role as "user" | "assistant", content: msg.content }));
 
-    // Build tiered system prompt
     const tier = Math.min(5, Math.max(1, heartsState.totalSpent));
     const systemPrompt = buildSystemPrompt(assignment, currentCode, lastRunResults, heartsState.totalSpent, tier);
 
-    // Get model with fallback (instructor key -> default)
     const model = await getModelWithFallback(assignmentId);
 
     const result = streamText({

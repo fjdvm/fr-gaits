@@ -12,7 +12,6 @@ interface BehavioralSignals {
   totalFocusTimeSecs: number;
 }
 
-// Map assignment languages to Judge0 language IDs
 const LANGUAGE_MAP: Record<string, number> = {
   Python: 100,      // Python (3.12.5)
   C: 103,           // C (GCC 14.1.0)
@@ -42,7 +41,6 @@ export async function submitCode(
       throw new Error("Unauthorized: You must be logged in");
     }
 
-    // Check if the student has already submitted this assignment
     const existingSubmission = await prisma.submission.findUnique({
       where: {
         studentId_assignmentId: {
@@ -56,7 +54,6 @@ export async function submitCode(
       throw new Error("Duplicate Submission: You have already submitted this assignment.");
     }
 
-    // Fetch the assignment details and ALL test cases (both visible and hidden)
     const assignment = await prisma.assignment.findUnique({
       where: { id: assignmentId },
       include: {
@@ -68,7 +65,6 @@ export async function submitCode(
       throw new Error("Assignment not found");
     }
 
-    // Check if current date is past the due date
     const now = new Date();
     if (now > new Date(assignment.dueDate)) {
       throw new Error("Late Submission: The submission deadline has passed. Submissions are no longer accepted.");
@@ -83,7 +79,6 @@ export async function submitCode(
       ? assignment.testCases 
       : [{ id: "default", input: "", expectedOutput: "", visible: true }];
 
-    // Run ALL test cases in parallel using Judge0 API
     const runPromises = testCasesToRun.map(async (tc) => {
       try {
         const response = await fetch("https://ce.judge0.com/submissions?wait=true&base64_encoded=false", {
@@ -111,7 +106,6 @@ export async function submitCode(
         const compileOutput = result.compile_output || "";
         const status = result.status || { id: 13, description: "Internal Error" };
 
-        // Determine if it passed
         let passed = false;
         if (status.id === 3) {
           const cleanActual = stdout.trim().replace(/\r\n/g, "\n");
@@ -147,13 +141,11 @@ export async function submitCode(
 
     const results = await Promise.all(runPromises);
 
-    // Compute the score: passed / total
     const passedCount = results.filter((r) => r.passed).length;
     const totalCount = results.length;
     const scoreFraction = totalCount > 0 ? passedCount / totalCount : 0.0;
     const scorePercentage = Math.round(scoreFraction * 100 * 100) / 100; // Store as 0-100 score value
 
-    // Save the submission record to the database
     const submission = await prisma.submission.create({
       data: {
         studentId: user.id,
@@ -165,7 +157,6 @@ export async function submitCode(
       },
     });
 
-    // Award XP based on submission performance
     const heartsState = await prisma.heartsState.findUnique({
       where: { studentId_assignmentId: { studentId: user.id, assignmentId } },
     });

@@ -22,7 +22,6 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     redirect("/login");
   }
 
-  // Fetch assignment along with instructor details
   const assignment = await prisma.assignment.findUnique({
     where: { id },
     include: {
@@ -41,7 +40,6 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     redirect("/dashboard/student");
   }
 
-  // Verify student is enrolled in at least one class that this assignment belongs to
   const assignmentClasses = await prisma.assignmentClass.findMany({
     where: { assignmentId: id },
     select: { classId: true },
@@ -60,10 +58,8 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     redirect("/dashboard/student");
   }
 
-  // Fetch or regenerate hearts state (transitioning assignment status to "in progress")
   const heartsState = await getOrRegenerateHearts(user.id, id);
 
-  // Fetch chat history
   const chatMessages = await prisma.chatMessage.findMany({
     where: {
       studentId: user.id,
@@ -72,7 +68,6 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     orderBy: { createdAt: "asc" },
   });
 
-  // Format data for client workspace
   const formattedAssignment = {
     id: assignment.id,
     title: assignment.title,
@@ -103,7 +98,6 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     createdAt: msg.createdAt.toISOString(),
   }));
 
-  // Fetch student's existing submission if it exists
   const submission = await prisma.submission.findUnique({
     where: {
       studentId_assignmentId: {

@@ -54,7 +54,6 @@ export async function getModelWithFallback(assignmentId: string): Promise<Langua
       const decryptedKey = decrypt(assignmentClass.class.aiApiKeyEnc);
       return createModel(assignmentClass.class.aiProvider as Provider, decryptedKey);
     } catch {
-      // Fallback to default on decryption error
     }
   }
 
@@ -70,18 +69,15 @@ export async function streamWithFallback(
     include: { class: { select: { aiProvider: true, aiApiKeyEnc: true } } },
   });
 
-  // Try instructor's key first
   if (assignmentClass?.class.aiProvider && assignmentClass.class.aiApiKeyEnc) {
     try {
       const decryptedKey = decrypt(assignmentClass.class.aiApiKeyEnc);
       const instructorModel = createModel(assignmentClass.class.aiProvider as Provider, decryptedKey);
       return await streamFn(instructorModel);
     } catch {
-      // Fall through to default
     }
   }
 
-  // Fallback to default provider
   const defaultModel = getDefaultModel();
   return await streamFn(defaultModel);
 }

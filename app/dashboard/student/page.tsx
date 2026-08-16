@@ -13,7 +13,6 @@ export default async function StudentDashboardPage() {
     redirect("/login");
   }
 
-  // Fetch student's enrolled classes and their assignments with student's interaction states
   const enrollments = await prisma.enrollment.findMany({
     where: { studentId: user.id },
     include: {

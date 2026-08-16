@@ -46,7 +46,6 @@ export async function awardSubmissionXp(studentId: string, assignmentId: string,
   if (totalHintsUsed === 0) events.push({ eventType: "no_hints", xpAmount: XP_VALUES.no_hints });
   else if (totalHintsUsed <= 2) events.push({ eventType: "fewer_hints", xpAmount: XP_VALUES.fewer_hints });
 
-  // Streak check
   const currentWeekYear = getISOWeekYear(new Date());
   let streak = await prisma.streak.findUnique({ where: { studentId } });
   if (!streak) {
@@ -55,25 +54,20 @@ export async function awardSubmissionXp(studentId: string, assignmentId: string,
   } else {
     const lastWeek = streak.lastSubmissionWeek;
     if (currentWeekYear === lastWeek) {
-      // Same week, streak already counted
     } else if (currentWeekYear - lastWeek === 1 || (currentWeekYear % 100 === 1 && lastWeek % 100 >= 52)) {
-      // Consecutive week
       await prisma.streak.update({ where: { studentId }, data: { currentStreak: streak.currentStreak + 1, lastSubmissionWeek: currentWeekYear } });
       events.push({ eventType: "streak_maintained", xpAmount: XP_VALUES.streak_maintained });
     } else {
-      // Streak broken - reset
       await prisma.streak.update({ where: { studentId }, data: { currentStreak: 1, lastSubmissionWeek: currentWeekYear } });
     }
   }
 
-  // Save XP events
   if (events.length > 0) {
     await prisma.xpEvent.createMany({
       data: events.map((e) => ({ studentId, assignmentId, eventType: e.eventType, xpAmount: e.xpAmount })),
     });
   }
 
-  // Check and award badges
   await checkAndAwardBadges(studentId);
 
   return events;

@@ -13,7 +13,6 @@ export default async function InstructorDashboardPage() {
     redirect("/login");
   }
 
-  // 1. Fetch classes created by this instructor along with enrollment counts
   const instructorClasses = await prisma.class.findMany({
     where: { instructorId: user.id },
     include: {
@@ -32,7 +31,6 @@ export default async function InstructorDashboardPage() {
     createdAt: cls.createdAt.toISOString(),
   }));
 
-  // 2. Fetch assignments created by this instructor
   const instructorAssignments = await prisma.assignment.findMany({
     where: { createdBy: user.id },
     include: {
