@@ -21,6 +21,8 @@ model User {
   classes            Class[]
   enrollments        Enrollment[]
   createdAssignments Assignment[]
+  heartsStates       HeartsState[]
+  submissions        Submission[]
 
   @@map("users")
 }
@@ -62,6 +64,8 @@ model Assignment {
   instructor         User              @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   classes            AssignmentClass[]
   testCases          TestCase[]
+  heartsStates       HeartsState[]
+  submissions        Submission[]
 
   @@map("assignments")
 }
@@ -85,4 +89,33 @@ model TestCase {
   assignment     Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@map("test_cases")
+}
+
+model HeartsState {
+  studentId    String     @map("student_id")
+  assignmentId String     @map("assignment_id")
+  currentCount Int        @map("current_count")
+  lastRegenAt  DateTime   @default(now()) @map("last_regen_at")
+  totalSpent   Int        @default(0) @map("total_spent")
+  student      User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, assignmentId])
+  @@map("hearts_states")
+}
+
+model Submission {
+  id                String     @id @default(uuid())
+  studentId         String     @map("student_id")
+  assignmentId      String     @map("assignment_id")
+  code              String
+  score             Float
+  testResults       Json       @map("test_results")
+  behavioralSignals Json       @map("behavioral_signals")
+  submittedAt       DateTime   @default(now()) @map("submitted_at")
+  student           User       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment        Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, assignmentId])
+  @@map("submissions")
 }

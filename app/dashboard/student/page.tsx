@@ -13,7 +13,7 @@ export default async function StudentDashboardPage() {
     redirect("/login");
   }
 
-  // Fetch student's enrolled classes and their assignments
+  // Fetch student's enrolled classes and their assignments with student's interaction states
   const enrollments = await prisma.enrollment.findMany({
     where: { studentId: user.id },
     include: {
@@ -26,7 +26,16 @@ export default async function StudentDashboardPage() {
           },
           assignments: {
             include: {
-              assignment: true,
+              assignment: {
+                include: {
+                  heartsStates: {
+                    where: { studentId: user.id },
+                  },
+                  submissions: {
+                    where: { studentId: user.id },
+                  },
+                },
+              },
             },
           },
         },
@@ -41,13 +50,25 @@ export default async function StudentDashboardPage() {
     joinCode: e.class.joinCode,
     instructorEmail: e.class.instructor.email,
     enrolledAt: e.enrolledAt.toISOString(),
-    assignments: e.class.assignments.map((ac) => ({
-      id: ac.assignment.id,
-      title: ac.assignment.title,
-      language: ac.assignment.language,
-      dueDate: ac.assignment.dueDate.toISOString(),
-      status: "not started", // Default status, to be updated dynamically once submissions table is implemented
-    })),
+    assignments: e.class.assignments.map((ac) => {
+      const hasSubmission = ac.assignment.submissions.length > 0;
+      const hasStarted = ac.assignment.heartsStates.length > 0;
+      
+      let status = "not started";
+      if (hasSubmission) {
+        status = "submitted";
+      } else if (hasStarted) {
+        status = "in progress";
+      }
+
+      return {
+        id: ac.assignment.id,
+        title: ac.assignment.title,
+        language: ac.assignment.language,
+        dueDate: ac.assignment.dueDate.toISOString(),
+        status,
+      };
+    }),
   }));
 
   return <StudentView initialClasses={enrolledClasses} />;

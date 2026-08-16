@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { joinClass } from "@/app/actions/join-class";
 import { toast } from "sonner";
@@ -174,27 +175,30 @@ export function StudentView({ initialClasses }: StudentViewProps) {
                       ) : (
                         <div className="space-y-2">
                           {cls.assignments.map((asm) => (
-                            <div
+                            <Link
+                              href={`/dashboard/student/assignments/${asm.id}`}
                               key={asm.id}
-                              className="flex items-center justify-between p-2 rounded-lg border border-zinc-100 bg-zinc-50/50 dark:border-zinc-850 dark:bg-zinc-900/30 text-xs"
+                              className="flex items-center justify-between p-2 rounded-lg border border-zinc-100 bg-zinc-50/50 hover:bg-zinc-100/50 dark:border-zinc-800 dark:bg-zinc-900/30 dark:hover:bg-zinc-900/50 transition-colors text-xs cursor-pointer block min-w-0"
                             >
-                              <div className="space-y-0.5 min-w-0 pr-2">
-                                <p className="font-semibold text-zinc-900 dark:text-zinc-50 truncate">
-                                  {asm.title}
-                                </p>
-                                <p className="text-[10px] text-zinc-500">
-                                  Due: {new Date(asm.dueDate).toLocaleDateString()}
-                                </p>
+                              <div className="flex items-center justify-between w-full">
+                                <div className="space-y-0.5 min-w-0 pr-2">
+                                  <p className="font-semibold text-zinc-900 dark:text-zinc-50 truncate">
+                                    {asm.title}
+                                  </p>
+                                  <p className="text-[10px] text-zinc-500">
+                                    Due: {new Date(asm.dueDate).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <span className="bg-zinc-100 dark:bg-zinc-800 text-[9px] px-1.5 py-0.5 rounded font-mono">
+                                    {asm.language}
+                                  </span>
+                                  <span className="bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase">
+                                    {asm.status}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1.5 shrink-0">
-                                <span className="bg-zinc-100 dark:bg-zinc-800 text-[9px] px-1.5 py-0.5 rounded font-mono">
-                                  {asm.language}
-                                </span>
-                                <span className="bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase">
-                                  {asm.status}
-                                </span>
-                              </div>
-                            </div>
+                            </Link>
                           ))}
                         </div>
                       )}
