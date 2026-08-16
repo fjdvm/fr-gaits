@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 
@@ -31,24 +30,6 @@ export function WorkspaceChat({
   onChatInputChange,
   onSendMessage,
 }: WorkspaceChatProps) {
-  const chatScrollRef = useRef<HTMLDivElement>(null);
-  const isNearBottomRef = useRef(true);
-
-  const handleScroll = () => {
-    if (!chatScrollRef.current) return;
-    const { scrollTop, scrollHeight, clientHeight } = chatScrollRef.current;
-    isNearBottomRef.current = scrollHeight - scrollTop - clientHeight < 80;
-  };
-
-  useEffect(() => {
-    if (!isNearBottomRef.current) return;
-    setTimeout(() => {
-      if (chatScrollRef.current) {
-        chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
-      }
-    }, 50);
-  }, [messages]);
-
   return (
     <div className="w-[25%] flex flex-col h-full bg-card shrink-0 min-w-0 overflow-hidden">
       <div className="flex h-11 items-center px-4 border-b border-border bg-muted/50 shrink-0">
@@ -60,7 +41,7 @@ export function WorkspaceChat({
         </div>
       </div>
 
-      <div ref={chatScrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-4 space-y-4 select-text">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 select-text">
         {messages.length === 0 ? (
           <ChatEmptyState />
         ) : (
