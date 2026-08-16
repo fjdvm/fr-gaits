@@ -24,19 +24,25 @@ model User {
   heartsStates       HeartsState[]
   submissions        Submission[]
   chatMessages       ChatMessage[]
+  xpEvents           XpEvent[]
+  userBadges         UserBadge[]
+  streak             Streak?
 
   @@map("users")
 }
 
 model Class {
-  id           String            @id @default(uuid())
-  name         String
-  instructorId String            @map("instructor_id")
-  joinCode     String            @unique @map("join_code")
-  createdAt    DateTime          @default(now()) @map("created_at")
-  instructor   User              @relation(fields: [instructorId], references: [id], onDelete: Cascade)
-  enrollments  Enrollment[]
-  assignments  AssignmentClass[]
+  id              String            @id @default(uuid())
+  name            String
+  instructorId    String            @map("instructor_id")
+  joinCode        String            @unique @map("join_code")
+  aiProvider      String?           @map("ai_provider") // 'groq', 'openai', 'anthropic', 'google'
+  aiApiKeyEnc     String?           @map("ai_api_key_enc") // encrypted API key
+  leaderboardSize Int               @default(10) @map("leaderboard_size")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  instructor      User              @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  enrollments     Enrollment[]
+  assignments     AssignmentClass[]
 
   @@map("classes")
 }
@@ -133,4 +139,47 @@ model ChatMessage {
   assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
 
   @@map("chat_messages")
+}
+
+model XpEvent {
+  id           String   @id @default(uuid())
+  studentId    String   @map("student_id")
+  eventType    String   @map("event_type") // 'pass_case', 'perfect_score', 'no_hints', 'fewer_hints', 'streak_maintained'
+  xpAmount     Int      @map("xp_amount")
+  assignmentId String?  @map("assignment_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  student      User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("xp_events")
+}
+
+model Badge {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String
+  condition   String      // machine-readable condition key
+  userBadges  UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  userId   String   @map("user_id")
+  badgeId  String   @map("badge_id")
+  earnedAt DateTime @default(now()) @map("earned_at")
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
+}
+
+model Streak {
+  studentId          String @map("student_id")
+  currentStreak      Int    @default(0) @map("current_streak")
+  lastSubmissionWeek Int    @default(0) @map("last_submission_week") // ISO week number * 100 + year for uniqueness
+  student            User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId])
+  @@map("streaks")
 }
