@@ -41,7 +41,7 @@ export function WorkspaceChat({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 select-text">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 select-text" style={{ overflowAnchor: "none" }}>
         {messages.length === 0 ? (
           <ChatEmptyState />
         ) : (
