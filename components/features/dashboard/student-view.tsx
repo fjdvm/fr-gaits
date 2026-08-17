@@ -142,7 +142,7 @@ export function StudentView({ initialClasses }: StudentViewProps) {
                   <div className="mt-4 space-y-2">
                     {cls.assignments.length === 0 ? (
                       <p className="text-xs text-secondary italic">No assignments posted yet.</p>
-                    ) : (
+                    ) :
                       cls.assignments.map((asm) => (
                         <Link
                           key={asm.id}
@@ -162,8 +162,8 @@ export function StudentView({ initialClasses }: StudentViewProps) {
                             </span>
                           </div>
                         </Link>
-                      ))}
-                    )}
+                      ))
+                    }
                   </div>
                 </div>
               </div>
