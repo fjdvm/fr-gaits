@@ -1,104 +1,237 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useState } from "react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
 import Editor from "@monaco-editor/react";
+import { CheckCircle2, XCircle, Brain, Clock, Sparkles, MessageSquare, AlertCircle } from "lucide-react";
+import { BehaviorTab } from "./components/behavior-tab";
 
-const MONACO_LANGUAGE_MAP: Record<string, string> = { Python: "python", C: "c", JavaScript: "javascript", "C#": "csharp" };
+const MONACO_LANGUAGE_MAP: Record<string, string> = {
+  Python: "python",
+  C: "c",
+  JavaScript: "javascript",
+  "C#": "csharp",
+};
 
-interface TestResult { testCaseId: string; input: string; expectedOutput: string; actualOutput: string; passed: boolean; visible?: boolean; }
-interface BehavioralSignals { pasteCount: number; pasteLength: number; keystrokeCount: number; wpm: number; totalFocusTimeSecs: number; }
-interface ChatMsg { role: string; content: string; createdAt: string; }
+interface TestResult {
+  testCaseId: string;
+  input: string;
+  expectedOutput: string;
+  actualOutput: string;
+  passed: boolean;
+  visible?: boolean;
+}
+
+interface BehavioralSignals {
+  pasteCount: number;
+  pasteLength: number;
+  keystrokeCount: number;
+  wpm: number;
+  totalFocusTimeSecs: number;
+}
+
+interface ChatMsg {
+  role: string;
+  content: string;
+  createdAt: string;
+}
 
 interface SubmissionDetailViewProps {
   assignmentTitle: string;
   assignmentLanguage: string;
   studentEmail: string;
-  submission: { code: string; score: number; testResults: TestResult[]; behavioralSignals: BehavioralSignals; submittedAt: string; } | null;
+  submission: {
+    code: string;
+    score: number;
+    testResults: TestResult[];
+    behavioralSignals: BehavioralSignals;
+    submittedAt: string;
+  } | null;
   chatMessages: ChatMsg[];
 }
 
-export function SubmissionDetailView({ assignmentTitle, assignmentLanguage, studentEmail, submission, chatMessages }: SubmissionDetailViewProps) {
+export function SubmissionDetailView({
+  assignmentTitle,
+  assignmentLanguage,
+  studentEmail,
+  submission,
+  chatMessages,
+}: SubmissionDetailViewProps) {
+  const [activeTab, setActiveTab] = useState<"tests" | "behavior" | "chat">("tests");
+
+  if (!submission) {
+    return (
+      <>
+        <DashboardHeader title={`${studentEmail} — ${assignmentTitle}`} description="Submission details" />
+        <main className="p-6 md:p-10 flex-grow">
+          <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center">
+            <AlertCircle className="h-12 w-12 text-secondary/30 mb-4" />
+            <h3 className="font-bold text-lg">No submission yet</h3>
+            <p className="text-xs text-secondary mt-1">This student has not submitted this assignment yet.</p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  // Calculate assertions count
+  const totalTests = submission.testResults.length;
+  const passedTests = submission.testResults.filter((tr) => tr.passed).length;
+  const passRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+
   return (
     <>
-      <DashboardHeader title={`${studentEmail} — ${assignmentTitle}`} description="Submission details, test results, chat history, and behavioral signals." />
-      <main className="p-6 space-y-6">
-        {!submission ? (
-          <Card><CardContent className="py-12 text-center"><p className="text-muted-foreground">This student has not submitted yet.</p></CardContent></Card>
-        ) : (
-          <>
-            <div className="grid gap-4 md:grid-cols-3">
-              <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Score</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">{submission.score}%</p></CardContent></Card>
-              <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Submitted</CardTitle></CardHeader><CardContent><p className="text-sm font-medium">{new Date(submission.submittedAt).toLocaleString()}</p></CardContent></Card>
-              <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Language</CardTitle></CardHeader><CardContent><p className="text-sm font-medium">{assignmentLanguage}</p></CardContent></Card>
+      <DashboardHeader
+        title={`${studentEmail} — ${assignmentTitle}`}
+        description={`Submitted at: ${new Date(submission.submittedAt).toLocaleString()}`}
+      />
+      <main className="flex-grow overflow-hidden p-6 md:p-10 flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
+        {/* Left Pane: Code Viewer */}
+        <section className="flex-grow lg:flex-[3] bg-white rounded-3xl border border-surface-container flex flex-col overflow-hidden shadow-sm">
+          <div className="px-6 py-4 bg-surface-container-low/50 border-b border-surface-container flex justify-between items-center shrink-0">
+            <div>
+              <h3 className="font-bold text-sm text-on-surface">Submitted Code</h3>
+              <p className="text-[10px] text-secondary font-semibold font-mono uppercase mt-0.5">{assignmentLanguage}</p>
             </div>
+            <span className="bg-primary-container text-on-primary-container text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+              {submission.score}% Score
+            </span>
+          </div>
+          <div className="flex-1 min-h-[300px]">
+            <Editor
+              height="100%"
+              language={MONACO_LANGUAGE_MAP[assignmentLanguage] || "plaintext"}
+              theme="vs-dark"
+              value={submission.code}
+              options={{
+                readOnly: true,
+                minimap: { enabled: false },
+                fontSize: 13,
+                fontFamily: "var(--font-mono)",
+                scrollBeyondLastLine: false,
+              }}
+            />
+          </div>
+        </section>
 
-            <Card>
-              <CardHeader><CardTitle>Submitted Code</CardTitle></CardHeader>
-              <CardContent>
-                <div className="h-72 border rounded-lg overflow-hidden">
-                  <Editor height="100%" language={MONACO_LANGUAGE_MAP[assignmentLanguage] || "plaintext"} theme="vs-dark" value={submission.code} options={{ readOnly: true, minimap: { enabled: false }, fontSize: 12, scrollBeyondLastLine: false }} />
-                </div>
-              </CardContent>
-            </Card>
+        {/* Right Pane: Analysis Tabs */}
+        <section className="flex-grow lg:flex-[2] bg-white rounded-3xl border border-surface-container flex flex-col overflow-hidden shadow-sm">
+          {/* Tab Switcher */}
+          <div className="flex bg-surface-container-low border-b border-surface-container shrink-0 p-1">
+            <button
+              onClick={() => setActiveTab("tests")}
+              className={`flex-1 py-3 text-xs font-bold rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeTab === "tests" ? "bg-white text-primary shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              <CheckCircle2 className="h-4 w-4" />
+              Test Results
+            </button>
+            <button
+              onClick={() => setActiveTab("behavior")}
+              className={`flex-1 py-3 text-xs font-bold rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeTab === "behavior" ? "bg-white text-primary shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              <Brain className="h-4 w-4" />
+              Behavior
+            </button>
+            <button
+              onClick={() => setActiveTab("chat")}
+              className={`flex-1 py-3 text-xs font-bold rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeTab === "chat" ? "bg-white text-primary shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              <MessageSquare className="h-4 w-4" />
+              Tutor Log
+            </button>
+          </div>
 
-            <Card>
-              <CardHeader><CardTitle>Test Results</CardTitle></CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader><TableRow><TableHead>#</TableHead><TableHead>Input</TableHead><TableHead>Expected</TableHead><TableHead>Actual</TableHead><TableHead>Result</TableHead></TableRow></TableHeader>
-                  <TableBody>
-                    {submission.testResults.map((tr, i) => (
-                      <TableRow key={i}>
-                        <TableCell>{i + 1}{tr.visible === false && " (Hidden)"}</TableCell>
-                        <TableCell className="font-mono text-xs">{tr.input || "—"}</TableCell>
-                        <TableCell className="font-mono text-xs">{tr.expectedOutput}</TableCell>
-                        <TableCell className="font-mono text-xs">{tr.actualOutput?.trim() || "—"}</TableCell>
-                        <TableCell>{tr.passed ? <span className="text-green-600 font-semibold">Pass</span> : <span className="text-red-600 font-semibold">Fail</span>}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader><CardTitle>Behavioral Signals</CardTitle></CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground mb-3">Raw data — no computed suspicion scores.</p>
-                <div className="grid gap-4 md:grid-cols-5">
-                  <div className="text-center"><p className="text-xs text-muted-foreground">Paste Events</p><p className="text-lg font-bold">{submission.behavioralSignals.pasteCount}</p></div>
-                  <div className="text-center"><p className="text-xs text-muted-foreground">Paste Chars</p><p className="text-lg font-bold">{submission.behavioralSignals.pasteLength}</p></div>
-                  <div className="text-center"><p className="text-xs text-muted-foreground">Keystrokes</p><p className="text-lg font-bold">{submission.behavioralSignals.keystrokeCount}</p></div>
-                  <div className="text-center"><p className="text-xs text-muted-foreground">Typing Speed</p><p className="text-lg font-bold">{submission.behavioralSignals.wpm} WPM</p></div>
-                  <div className="text-center"><p className="text-xs text-muted-foreground">Time Spent</p><p className="text-lg font-bold">{Math.round(submission.behavioralSignals.totalFocusTimeSecs / 60)}m</p></div>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        )}
-
-        <Card>
-          <CardHeader><CardTitle>AI Tutor Conversation ({chatMessages.length} messages)</CardTitle></CardHeader>
-          <CardContent>
-            {chatMessages.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No tutor conversations for this student.</p>
-            ) : (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {chatMessages.map((msg, i) => (
-                  <div key={i} className={`p-3 rounded-lg text-sm ${msg.role === "assistant" ? "bg-muted" : "bg-primary/5 border"}`}>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs font-bold uppercase text-muted-foreground">{msg.role === "assistant" ? "AI Tutor" : "Student"}</span>
-                      <span className="text-xs text-muted-foreground">{new Date(msg.createdAt).toLocaleTimeString()}</span>
-                    </div>
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
+          {/* Tab Content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            {activeTab === "tests" && (
+              <div className="space-y-6">
+                <div className="bg-surface-container-low rounded-2xl p-5 border border-surface-container flex items-center justify-between">
+                  <div>
+                    <h4 className="font-bold text-sm text-on-surface">Test Suite Pass Rate</h4>
+                    <p className="text-xs text-secondary mt-1">{passedTests} of {totalTests} assertions passed.</p>
                   </div>
-                ))}
+                  <div className="w-14 h-14 rounded-full border-4 border-primary/20 flex items-center justify-center bg-white">
+                    <span className="font-bold text-sm text-on-surface">{passRate}%</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-bold text-xs text-secondary uppercase tracking-wider mb-2 pl-1">Detailed Logs</h4>
+                  {submission.testResults.map((tr, index) => (
+                    <div
+                      key={tr.testCaseId || index}
+                      className={`flex gap-3 p-4 rounded-2xl border ${
+                        tr.passed
+                          ? "bg-white border-surface-container"
+                          : "bg-destructive/5 border-destructive/20"
+                      }`}
+                    >
+                      {tr.passed ? (
+                        <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className={`text-xs font-bold truncate ${tr.passed ? "text-on-surface" : "text-destructive"}`}>
+                            Case #{index + 1} {tr.visible === false && "(Hidden)"}
+                          </span>
+                          <span className="text-[10px] text-secondary font-mono">Assertion</span>
+                        </div>
+                        <p className="text-xs text-secondary font-mono bg-surface-container-low p-2 rounded-lg mt-1 whitespace-pre-wrap truncate">
+                          In: {tr.input || "—"}
+                        </p>
+                        <p className="text-xs text-secondary font-mono bg-surface-container-low p-2 rounded-lg mt-1 whitespace-pre-wrap truncate">
+                          Out: {tr.actualOutput?.trim() || "—"}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+
+            {activeTab === "behavior" && (
+              <BehaviorTab behavioralSignals={submission.behavioralSignals} />
+            )}
+
+            {activeTab === "chat" && (
+              <div className="space-y-4 flex flex-col h-full">
+                {chatMessages.length === 0 ? (
+                  <div className="text-center py-12">
+                    <MessageSquare className="h-10 w-10 text-secondary/30 mx-auto mb-2" />
+                    <p className="text-xs text-secondary font-semibold">No tutor conversations logged.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {chatMessages.map((msg, i) => (
+                      <div
+                        key={i}
+                        className={`p-4 rounded-2xl text-xs border ${
+                          msg.role === "assistant"
+                            ? "bg-surface-container-low border-surface-container text-on-surface"
+                            : "bg-primary-container/10 border-primary-container/20 text-on-surface"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center mb-2 font-bold text-[9px] uppercase tracking-wider text-secondary">
+                          <span>{msg.role === "assistant" ? "AI Tutor" : "Student"}</span>
+                          <span>{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                        </div>
+                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
       </main>
     </>
   );
