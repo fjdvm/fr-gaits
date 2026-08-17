@@ -150,33 +150,7 @@ export function LoginView() {
               </button>
             </form>
 
-            <div className="mt-8">
-              <div className="relative flex items-center py-4">
-                <div className="flex-grow border-t border-surface-container"></div>
-                <span className="flex-shrink-0 mx-4 text-xs text-secondary font-medium">Or access via</span>
-                <div className="flex-grow border-t border-surface-container"></div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <button
-                  type="button"
-                  className="flex items-center justify-center space-x-2 border border-outline-variant rounded-xl py-3 hover:bg-surface-container-low transition-colors cursor-pointer"
-                >
-                  <img
-                    className="w-5 h-5"
-                    alt="Google"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjIbwSfIW_POJ1CGFFlao1-xHZ2Ed60TLnRMgRTuuxDUOCAhs1YKwNb4IJzVytfOoFYumdSd6WD2hiT24Lo-ZCIqOQht7YT4xYec7rUjWNjF_odtqkELYMXESYgkNp7tCTp0zOff6kSSn-4rEpfUnC-fmThON8A9ffoUkoU6xzRBN3ZWsOJs--RTgOJvmuBQhBLiLnBG9ZbmHncHc8KSWF8bsC_l550XmhYuH0nIahptAl9O5TX4Xt"
-                  />
-                  <span className="text-xs font-semibold">Google</span>
-                </button>
-                <button
-                  type="button"
-                  className="flex items-center justify-center space-x-2 border border-outline-variant rounded-xl py-3 hover:bg-surface-container-low transition-colors cursor-pointer"
-                >
-                  <MessageSquare className="h-5 w-5 text-secondary" />
-                  <span className="text-xs font-semibold">Institution SSO</span>
-                </button>
-              </div>
-            </div>
+            {/* SSO buttons removed */}
           </div>
         </div>
       </main>
