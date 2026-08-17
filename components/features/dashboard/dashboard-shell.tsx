@@ -1,7 +1,5 @@
 "use client";
 
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppSidebar } from "./app-sidebar";
 
 interface DashboardShellProps {
@@ -12,11 +10,16 @@ interface DashboardShellProps {
 
 export function DashboardShell({ role, userEmail, children }: DashboardShellProps) {
   return (
-    <TooltipProvider>
-      <SidebarProvider>
+    <div className="flex min-h-screen w-full bg-surface text-on-surface">
+      {/* Sidebar */}
+      <div className="hidden md:block shrink-0">
         <AppSidebar role={role} userEmail={userEmail} />
-        <SidebarInset>{children}</SidebarInset>
-      </SidebarProvider>
-    </TooltipProvider>
+      </div>
+      
+      {/* Content wrapper */}
+      <div className="flex-1 flex flex-col min-w-0 bg-surface">
+        {children}
+      </div>
+    </div>
   );
 }
