@@ -37,13 +37,18 @@ export async function updateSession(request: NextRequest) {
 
   const url = request.nextUrl.clone();
   const isProtectedRoute = url.pathname.startsWith("/dashboard") || url.pathname === "/pending-approval";
-  const isAuthRoute = url.pathname === "/login" || url.pathname === "/signup" || url.pathname === "/";
+  const isAuthRoute = url.pathname === "/login" || url.pathname === "/signup" || url.pathname === "/forgot-password" || url.pathname === "/";
+  const isResetPasswordRoute = url.pathname === "/reset-password";
 
   if (!user) {
     if (isProtectedRoute) {
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
+    return response;
+  }
+
+  if (isResetPasswordRoute) {
     return response;
   }
 

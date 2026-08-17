@@ -60,6 +60,17 @@
   --color-on-secondary-container: var(--on-secondary-container);
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-tint: var(--surface-tint);
+  --color-surface-bright: var(--surface-bright);
+  --color-on-primary: var(--on-primary);
+  --color-on-background: var(--on-background);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -116,6 +127,17 @@
   --on-secondary-container: #636262;
   --outline: #847561;
   --outline-variant: #d6c4ac;
+  --secondary-fixed-dim: #c8c6c5;
+  --primary-fixed-dim: #ffba3f;
+  --primary-fixed: #ffdeae;
+  --surface-dim: #dad9df;
+  --surface-tint: #7f5600;
+  --surface-bright: #faf9fe;
+  --on-primary: #ffffff;
+  --on-background: #1a1b1f;
+  --on-surface-variant: #514533;
+  --inverse-surface: #2f3034;
+  --inverse-on-surface: #f1f0f5;
 }
 
 .dark {
@@ -164,6 +186,17 @@
   --on-secondary-container: #636262;
   --outline: #847561;
   --outline-variant: #d6c4ac;
+  --secondary-fixed-dim: #c8c6c5;
+  --primary-fixed-dim: #ffba3f;
+  --primary-fixed: #ffdeae;
+  --surface-dim: #dad9df;
+  --surface-tint: #7f5600;
+  --surface-bright: #faf9fe;
+  --on-primary: #ffffff;
+  --on-background: #1a1b1f;
+  --on-surface-variant: #514533;
+  --inverse-surface: #2f3034;
+  --inverse-on-surface: #f1f0f5;
 }
 
 @layer base {
@@ -176,4 +209,10 @@
   html {
     @apply font-sans;
   }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }

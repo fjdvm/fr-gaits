@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Submissions Overview - GAITS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#faf9fe",
+                        "on-secondary-container": "#636262",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "primary-fixed-dim": "#ffba3f",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#514533",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeedf3",
+                        "inverse-primary": "#ffba3f",
+                        "surface-bright": "#faf9fe",
+                        "outline-variant": "#d6c4ac",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "secondary": "#5f5e5e",
+                        "on-tertiary-container": "#4b4d4f",
+                        "primary-fixed": "#ffdeae",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f4f3f8",
+                        "background": "#faf9fe",
+                        "primary-container": "#fbb017",
+                        "tertiary-fixed-dim": "#c5c6c8",
+                        "surface-tint": "#7f5600",
+                        "tertiary-fixed": "#e1e2e4",
+                        "on-primary-fixed": "#281800",
+                        "surface-dim": "#dad9df",
+                        "on-primary-container": "#694600",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e9e7ed",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-background": "#1a1b1f",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "tertiary-container": "#bdbec0",
+                        "secondary-container": "#e2dfde",
+                        "outline": "#847561",
+                        "inverse-on-surface": "#f1f0f5",
+                        "inverse-surface": "#2f3034",
+                        "secondary-fixed": "#e5e2e1",
+                        "primary": "#7f5600",
+                        "on-error": "#ffffff",
+                        "tertiary": "#5c5f60",
+                        "surface-variant": "#e3e2e7",
+                        "on-primary-fixed-variant": "#604100",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-surface": "#1a1b1f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e2e7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "container-padding": "32px",
+                        "card-gap": "20px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-md-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "headline-md-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-md": ["15px", {"lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #faf9fe; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .soft-card { background: #ffffff; border-radius: 24px; box-shadow: 0 4px 24px rgba(95, 94, 94, 0.04); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-inverse-surface w-64 h-screen rounded-r-3xl shadow-sm flex-col py-8 space-y-2 flex-shrink-0 relative z-20">
+<div class="px-8 mb-8 flex items-center space-x-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined font-bold">school</span>
+</div>
+<div>
+<h1 class="font-display-lg text-display-lg font-bold text-primary dark:text-primary-fixed-dim leading-none">GAITS</h1>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto w-full">
+<ul class="space-y-1 w-full pl-0">
+<!-- Inactive Tab -->
+<li>
+<a class="flex items-center space-x-3 p-4 text-secondary dark:text-secondary-fixed-dim hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 ml-4 rounded-l-full" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-label-lg text-label-lg">Courses</span>
+</a>
+</li>
+<!-- Active Tab -->
+<li>
+<a class="flex items-center space-x-3 bg-on-background dark:bg-primary-container text-surface dark:text-on-primary-container rounded-r-full font-bold ml-0 mr-4 p-4 shadow-sm scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span class="font-label-lg text-label-lg">Homework</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-4 text-secondary dark:text-secondary-fixed-dim hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 ml-4 rounded-l-full" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble_outline">chat_bubble_outline</span>
+<span class="font-label-lg text-label-lg">Messages</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-4 text-secondary dark:text-secondary-fixed-dim hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 ml-4 rounded-l-full" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-label-lg text-label-lg">Schedule</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-4 text-secondary dark:text-secondary-fixed-dim hover:text-on-surface hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-200 ml-4 rounded-l-full" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="px-4 mt-auto">
+<div class="bg-surface-container rounded-2xl p-4 flex flex-col items-center text-center">
+<span class="font-label-sm text-label-sm text-secondary mb-2">Upgrade to Pro</span>
+<p class="text-xs text-secondary mb-4">Get unlimited access</p>
+<button class="bg-on-background text-surface rounded-full py-2 px-4 font-label-sm flex items-center space-x-1 hover:bg-primary-container hover:text-on-primary-container transition-colors">
+<span>Let's go PRO</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<ul class="mt-6 space-y-1">
+<li>
+<a class="flex items-center space-x-3 p-2 text-secondary hover:text-on-surface transition-colors ml-4" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-sm text-label-sm">Help</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 p-2 text-secondary hover:text-on-surface transition-colors ml-4" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-sm text-label-sm">Logout</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- TopNavBar (Mobile) / Header (Desktop) -->
+<header class="flex justify-between items-center w-full px-margin-desktop py-base bg-transparent md:h-24 flex-shrink-0 z-10">
+<div class="flex items-center space-x-4 md:hidden">
+<div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined font-bold text-sm">school</span>
+</div>
+<h1 class="font-headline-md-mobile text-headline-md-mobile font-bold text-on-surface">GAITS</h1>
+</div>
+<div class="hidden md:flex space-x-8">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Submissions Overview</h2>
+</div>
+<div class="flex items-center space-x-6">
+<div class="hidden md:flex items-center bg-surface-container rounded-full px-4 py-2">
+<span class="material-symbols-outlined text-secondary mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-48 text-on-surface placeholder-secondary" placeholder="Search assignments..." type="text"/>
+</div>
+<button class="text-secondary hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center space-x-3 cursor-pointer">
+<img class="w-10 h-10 rounded-full object-cover border border-surface-variant" data-alt="A professional studio portrait of a young woman with blonde hair, serving as an avatar. The lighting is soft and natural, contributing to a clean, bright, modern dashboard aesthetic. The background is isolated or very subtly blurred." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkmQpUyg1S6eoG0GuPIfbqiUyoS2ehkQsFl890DoVIY6o526l6thM5faOvz5nHhOxJ1EeQqHdzVBk7ZBsqxHi9T_LkhE7r2jFa5DONWxeM3HDkovNBkKRzOmVpf7b3Daw-DwwOB8gnvqS0k2yhLkG3FHzIIOAGFTcF1jMEt8OriyxAcfWD9dChST6kkzdLFmMwRw2ijW-iFuzLXMeYSW7tq_SiE7nSL8Iu9YPTPfXL3kBTR-BIkK7pVmSo7r7CScoI1A"/>
+<div class="hidden md:block">
+<p class="font-label-lg text-label-lg text-on-surface leading-tight">Instructor Jane</p>
+<p class="text-xs text-secondary">Pro Plan</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas Body -->
+<div class="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop pb-margin-desktop no-scrollbar">
+<!-- Controls Bar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 space-y-4 md:space-y-0">
+<div class="flex space-x-6 border-b border-surface-variant w-full md:w-auto">
+<button class="pb-2 font-label-lg text-label-lg text-primary border-b-2 border-primary">All Classes</button>
+<button class="pb-2 font-label-lg text-label-lg text-secondary hover:text-on-surface transition-colors">UX Design</button>
+<button class="pb-2 font-label-lg text-label-lg text-secondary hover:text-on-surface transition-colors">UI Patterns</button>
+<button class="pb-2 font-label-lg text-label-lg text-secondary hover:text-on-surface transition-colors">Frontend Dev</button>
+</div>
+<div class="flex space-x-3">
+<button class="bg-surface-container hover:bg-surface-variant text-on-surface rounded-lg px-4 py-2 font-label-sm flex items-center space-x-2 transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span>Filter</span>
+</button>
+<button class="bg-on-background text-surface rounded-lg px-4 py-2 font-label-sm hover:bg-primary-container hover:text-on-primary-container transition-colors flex items-center space-x-2">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Assignment</span>
+</button>
+</div>
+</div>
+<!-- Data Table Card -->
+<div class="soft-card overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary border-b border-surface-variant">
+<th class="py-4 px-6 font-label-sm text-label-sm font-semibold uppercase tracking-wider">Assignment Title</th>
+<th class="py-4 px-6 font-label-sm text-label-sm font-semibold uppercase tracking-wider">Class</th>
+<th class="py-4 px-6 font-label-sm text-label-sm font-semibold uppercase tracking-wider">Due Date</th>
+<th class="py-4 px-6 font-label-sm text-label-sm font-semibold uppercase tracking-wider">Submissions</th>
+<th class="py-4 px-6 font-label-sm text-label-sm font-semibold uppercase tracking-wider">Pending Review</th>
+<th class="py-4 px-6 font-label-sm text-label-sm font-semibold uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-variant bg-surface-container-lowest">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded bg-primary-container/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">design_services</span>
+</div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">User Research Persona</p>
+<p class="text-xs text-secondary">PDF/Figma Link</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">UX Design Fundamentals</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">Oct 24, 2023</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<div class="w-full bg-surface-variant rounded-full h-2 max-w-[100px]">
+<div class="bg-primary-container h-2 rounded-full" style="width: 85%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">42/50</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-error-container text-on-error-container">
+                                        12 Pending
+                                    </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-secondary hover:text-primary transition-colors p-2">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">web</span>
+</div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">React Component Library</p>
+<p class="text-xs text-secondary">Github Repo</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">Frontend Dev II</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">Oct 26, 2023</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<div class="w-full bg-surface-variant rounded-full h-2 max-w-[100px]">
+<div class="bg-primary-container h-2 rounded-full" style="width: 40%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">12/30</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-secondary">
+                                        0 Pending
+                                    </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-secondary hover:text-primary transition-colors p-2">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded bg-primary-container/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">palette</span>
+</div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Color Theory Application</p>
+<p class="text-xs text-secondary">Figma File</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">UI Patterns</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">Oct 22, 2023</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<div class="w-full bg-surface-variant rounded-full h-2 max-w-[100px]">
+<div class="bg-primary-container h-2 rounded-full" style="width: 100%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">45/45</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-container text-on-primary-container">
+                                        5 Pending
+                                    </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-secondary hover:text-primary transition-colors p-2">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 px-6">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">code</span>
+</div>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Basic HTML/CSS Layout</p>
+<p class="text-xs text-secondary">Zip File</p>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">Frontend Dev I</td>
+<td class="py-4 px-6 font-body-md text-body-md text-on-surface-variant">Oct 28, 2023</td>
+<td class="py-4 px-6">
+<div class="flex items-center space-x-2">
+<div class="w-full bg-surface-variant rounded-full h-2 max-w-[100px]">
+<div class="bg-primary-container h-2 rounded-full" style="width: 15%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">10/65</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-secondary">
+                                        0 Pending
+                                    </span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="text-secondary hover:text-primary transition-colors p-2">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 border-t border-surface-variant flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary">Showing 1 to 4 of 24 entries</span>
+<div class="flex space-x-2">
+<button class="w-8 h-8 rounded border border-surface-variant flex items-center justify-center text-secondary hover:bg-surface-container disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-on-background text-surface flex items-center justify-center font-label-sm">1</button>
+<button class="w-8 h-8 rounded border border-surface-variant flex items-center justify-center text-secondary hover:bg-surface-container font-label-sm">2</button>
+<button class="w-8 h-8 rounded border border-surface-variant flex items-center justify-center text-secondary hover:bg-surface-container font-label-sm">3</button>
+<button class="w-8 h-8 rounded border border-surface-variant flex items-center justify-center text-secondary hover:bg-surface-container">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden bg-surface-container-lowest w-full h-16 flex justify-around items-center border-t border-surface-variant flex-shrink-0 z-20">
+<a class="flex flex-col items-center text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</a>
+<a class="flex flex-col items-center text-primary dark:text-primary-fixed-dim p-2 relative" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open" style="font-variation-settings: 'FILL' 1;">folder_open</span>
+<span class="absolute bottom-1 w-1 h-1 bg-primary rounded-full"></span>
+</a>
+<a class="flex flex-col items-center text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble_outline">chat_bubble_outline</span>
+</a>
+<a class="flex flex-col items-center text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+</a>
+<a class="flex flex-col items-center text-secondary p-2" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</a>
+</nav>
+</body></html>

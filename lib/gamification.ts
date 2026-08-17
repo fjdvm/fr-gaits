@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { createNotification } from "./notifications";
 
 const XP_VALUES = {
   pass_case: 10,
@@ -99,6 +100,12 @@ async function checkAndAwardBadges(studentId: string) {
     if (earnedBadgeIds.includes(badge.id)) continue;
     if (conditions[badge.condition]) {
       await prisma.userBadge.create({ data: { userId: studentId, badgeId: badge.id } });
+      await createNotification({
+        userId: studentId,
+        type: "badge_earned",
+        title: `New badge: ${badge.name}`,
+        message: badge.description,
+      });
     }
   }
 }

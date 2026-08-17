@@ -16,7 +16,7 @@ interface WorkspaceInstructionsProps {
 
 export function WorkspaceInstructions({ title, instructorEmail, instructions, submission }: WorkspaceInstructionsProps) {
   return (
-    <div className="w-[33%] border-r border-surface-container bg-white p-6 overflow-y-auto space-y-6 flex flex-col justify-between shrink-0">
+    <div className="h-full w-full border-r border-surface-container bg-white p-6 overflow-y-auto space-y-6 flex flex-col justify-between">
       <div className="space-y-5">
         <div className="space-y-1">
           <h2 className="text-lg font-bold text-on-surface leading-tight">{title}</h2>

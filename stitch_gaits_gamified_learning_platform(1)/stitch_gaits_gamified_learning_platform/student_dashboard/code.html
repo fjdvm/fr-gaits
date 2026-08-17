@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GAITS - Student Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#faf9fe",
+                        "on-secondary-container": "#636262",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "primary-fixed-dim": "#ffba3f",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#514533",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeedf3",
+                        "inverse-primary": "#ffba3f",
+                        "surface-bright": "#faf9fe",
+                        "outline-variant": "#d6c4ac",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "secondary": "#5f5e5e",
+                        "on-tertiary-container": "#4b4d4f",
+                        "primary-fixed": "#ffdeae",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f4f3f8",
+                        "background": "#faf9fe",
+                        "primary-container": "#fbb017",
+                        "tertiary-fixed-dim": "#c5c6c8",
+                        "surface-tint": "#7f5600",
+                        "tertiary-fixed": "#e1e2e4",
+                        "on-primary-fixed": "#281800",
+                        "surface-dim": "#dad9df",
+                        "on-primary-container": "#694600",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e9e7ed",
+                        "on-tertiary-fixed": "#191c1e",
+                        "on-background": "#1a1b1f",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "tertiary-container": "#bdbec0",
+                        "secondary-container": "#e2dfde",
+                        "outline": "#847561",
+                        "inverse-on-surface": "#f1f0f5",
+                        "inverse-surface": "#2f3034",
+                        "secondary-fixed": "#e5e2e1",
+                        "primary": "#7f5600",
+                        "on-error": "#ffffff",
+                        "tertiary": "#5c5f60",
+                        "surface-variant": "#e3e2e7",
+                        "on-primary-fixed-variant": "#604100",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-surface": "#1a1b1f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e2e7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "container-padding": "32px",
+                        "card-gap": "20px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Plus Jakarta Sans"],
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-md-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-md": ["15px", { "lineHeight": "24px", "letterSpacing": "0.01em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom Scrollbar for sleekness */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2dfde;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bdbec0;
+        }
+    </style>
+</head>
+<body class="bg-surface-container text-on-surface font-body-md min-h-screen flex items-center justify-center p-4 md:p-8">
+<!-- Main App Container (Simulating the device frame) -->
+<div class="bg-surface-container-lowest w-full max-w-[1440px] h-[900px] rounded-[32px] shadow-xl overflow-hidden flex relative border-4 border-on-background">
+<!-- Left Sidebar -->
+<aside class="w-64 bg-surface-container-lowest h-full py-8 flex flex-col justify-between border-r border-surface-container-high hidden md:flex z-10 shrink-0">
+<div>
+<!-- Brand Logo -->
+<div class="px-8 mb-12 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container filled text-3xl">school</span>
+<span class="font-display-lg text-on-background">GAITS</span>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col space-y-2 pr-4">
+<!-- Active Tab -->
+<a class="bg-on-background text-surface rounded-r-full font-bold ml-0 mr-4 py-4 px-8 flex items-center gap-4 group transition-colors" href="#">
+<span class="material-symbols-outlined filled group-hover:scale-110 transition-transform">grid_view</span>
+<span class="font-label-lg">Courses</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="text-secondary hover:bg-surface-container-high hover:text-on-surface py-4 px-8 flex items-center gap-4 rounded-r-full mr-4 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">folder_open</span>
+<span class="font-label-lg">Homework</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-high hover:text-on-surface py-4 px-8 flex items-center gap-4 rounded-r-full mr-4 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">chat_bubble_outline</span>
+<span class="font-label-lg">Messages</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-high hover:text-on-surface py-4 px-8 flex items-center gap-4 rounded-r-full mr-4 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">assignment</span>
+<span class="font-label-lg">Schedule</span>
+</a>
+<a class="text-secondary hover:bg-surface-container-high hover:text-on-surface py-4 px-8 flex items-center gap-4 rounded-r-full mr-4 transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">settings</span>
+<span class="font-label-lg">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Upgrade CTA -->
+<div class="px-8 mt-auto">
+<div class="bg-surface-container-low rounded-2xl p-5 border border-surface-variant flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="font-title-sm text-on-surface relative z-10">Upgrade<br/>plan</div>
+<a class="text-secondary font-label-lg flex items-center gap-2 hover:text-on-surface transition-colors relative z-10" href="#">
+                        Let's go PRO
+                        <span class="material-symbols-outlined bg-on-background text-surface rounded-lg p-1 text-sm">chevron_right</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full bg-surface-container-lowest overflow-hidden">
+<!-- Top App Bar -->
+<header class="h-[100px] px-10 flex justify-between items-center bg-surface-container-lowest shrink-0">
+<div class="flex items-end gap-6">
+<h1 class="font-display-lg text-on-background m-0 leading-none">Courses</h1>
+<!-- Filter Tabs -->
+<div class="hidden lg:flex gap-6 pb-1">
+<button class="font-label-lg text-secondary hover:text-on-surface transition-colors">All</button>
+<button class="font-label-lg text-on-surface border-b-2 border-primary-container pb-1 relative">
+                            Active
+                            <span class="absolute -bottom-0.5 left-0 w-full h-0.5 bg-primary-container rounded-t-full"></span>
+</button>
+<button class="font-label-lg text-secondary hover:text-on-surface transition-colors">Completed</button>
+<button class="font-label-lg text-secondary hover:text-on-surface transition-colors">Upcoming</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<!-- Icon Actions -->
+<div class="flex gap-4">
+<button class="text-secondary hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-secondary hover:text-on-surface transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-primary-container rounded-full border-2 border-white"></span>
+</button>
+</div>
+<!-- User Profile -->
+<div class="flex items-center gap-3 pl-6 border-l border-surface-container-high">
+<img class="w-10 h-10 rounded-full object-cover border border-surface-variant shadow-sm" data-alt="A small circular profile picture of a young woman with blonde hair, wearing a casual light-colored top, set against a soft gray background. The lighting is bright and even, typical of a professional avatar portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGvVPilCsuQQqPSYQ6aJd3J66HUeG7lrf-8VFnhxF29EAJ3eCnZJfWB_unzn8l-iGVclKIqCrg4h5FjFLFpNDf1E97zdLI0FFdP_yWtB7zZaKRMvHOIWdMWVyA60etPuzSmFwFWMX3Av0M8bHZBJRynsBSz2TF5h5hQsnXWi-UGRAyzrBmVeSjtsRD0pNdRtH8N4pY9f4Ox2ck-JGb9XL3_6MSBBST18GMIt7PddVfj6XGdoLwUpCa"/>
+<div class="hidden sm:block">
+<div class="font-title-sm text-on-background leading-tight">Jane Doe</div>
+<div class="font-label-sm text-secondary">basic plan</div>
+</div>
+<button class="text-secondary hover:text-on-surface ml-2">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<div class="flex-1 overflow-y-auto px-10 pb-10 flex flex-col lg:flex-row gap-10">
+<!-- Left Column: Course Cards -->
+<div class="flex-1 flex flex-col gap-6">
+<!-- Course Card 1 -->
+<div class="bg-surface-container-lowest border border-surface-container-high rounded-3xl p-6 flex gap-6 hover:shadow-md transition-shadow group relative overflow-hidden">
+<!-- Abstract Background Decoration -->
+<div class="absolute -right-20 -top-20 w-40 h-40 bg-surface-container-high rounded-full opacity-20 blur-2xl group-hover:bg-primary-container group-hover:opacity-10 transition-all duration-500"></div>
+<!-- Thumbnail -->
+<div class="w-48 h-32 bg-surface-container-low rounded-2xl flex items-center justify-center shrink-0 overflow-hidden relative">
+<img class="w-full h-full object-contain p-2" data-alt="A stylized, flat-vector illustration depicting a person interacting with oversized UI elements like floating windows and geometric shapes. The color palette is modern, featuring a bright yellow character against a clean white and light gray background, conveying a sense of learning user experience design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHXZUHo2NgPY9l45w6vhjr0KVhqTRvaMeCkTLjekj9oraoywzsvG24FIaG6AINzrdirfixTXLJjNy-X69USd62ADJunmx4USb4Kwsl9dPNfrYLWdKMFo6fr-Yr-d4hkpsAgidpc7Oovi2oj61YWDClWk3zhCxc99DalkgFZ_9sTeOIgOAsCBIqGHfZHjw4a0VvimG6zTI4340RvC3XohR1ip0zx8L_JcT2zCUQhHy9AwLzpsLKaZb1"/>
+</div>
+<!-- Content -->
+<div class="flex-1 flex flex-col justify-between py-1 relative z-10">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-sm text-on-background text-xl">UX Design Fundamentals</h3>
+<span class="material-symbols-outlined text-secondary opacity-50">signal_cellular_alt</span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 pr-8">
+                                    This hands-on course examines how content is organized and structured to create an experience for a user, and what role the designer plays in creating and shaping user experience.
+                                </p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex gap-6 font-label-sm text-secondary">
+<span>Start: <span class="text-on-surface font-medium">Dec 14, 2020</span></span>
+<span>Duration: <span class="text-on-surface font-medium">6 weeks</span></span>
+</div>
+<button class="bg-on-background text-surface rounded-xl p-2 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="bg-surface-container-lowest border border-surface-container-high rounded-3xl p-6 flex gap-6 hover:shadow-md transition-shadow group relative overflow-hidden">
+<div class="absolute -right-20 -top-20 w-40 h-40 bg-surface-container-high rounded-full opacity-20 blur-2xl group-hover:bg-primary-container group-hover:opacity-10 transition-all duration-500"></div>
+<div class="w-48 h-32 bg-surface-container-low rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
+<img class="w-full h-full object-contain p-2" data-alt="A modern, abstract vector illustration of a person arranging colorful blocks and UI components. The character is wearing a blue top with a yellow accent, set against a clean white background. The style is playful and educational, representing UI design patterns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkwiHqR51e2LX7kw5Pfqb9OUcUcsBxY3SN0p3ahwxpVfKpURap7cg3tmtHNlCKuSO9xCgIXcurQ_QaacvVwNSdU_illatvv6zs1lERIrEOjeBAxSybj_VfqjI3QyD1P2ymF2cEP6hV--DWy1k8V2NxF-KSsCpvSOFR2NyRObDrGHt1AqqeFVyMSqTRWVd1Asue6d3b3UR1M_SqH-QIzjLGHmvm0o3GiBFdoNAm5FLEFM3GQ3rqTR47"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-1 relative z-10">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-sm text-on-background text-xl">UI Design Patterns for Successful Software</h3>
+<span class="material-symbols-outlined text-secondary opacity-50">signal_cellular_alt</span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 pr-8">
+                                    This design-centric course examines how to design and articulate meaning using color, type, and imagery is essential to making interfaces function clearly and seamlessly.
+                                </p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex gap-6 font-label-sm text-secondary">
+<span>Start: <span class="text-on-surface font-medium">Dec 16, 2020</span></span>
+<span>Duration: <span class="text-on-surface font-medium">7 weeks</span></span>
+</div>
+<button class="bg-on-background text-surface rounded-xl p-2 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Course Card 3 -->
+<div class="bg-surface-container-lowest border border-surface-container-high rounded-3xl p-6 flex gap-6 hover:shadow-md transition-shadow group relative overflow-hidden">
+<div class="absolute -right-20 -top-20 w-40 h-40 bg-surface-container-high rounded-full opacity-20 blur-2xl group-hover:bg-primary-container group-hover:opacity-10 transition-all duration-500"></div>
+<div class="w-48 h-32 bg-surface-container-low rounded-2xl flex items-center justify-center shrink-0 overflow-hidden">
+<img class="w-full h-full object-contain p-2" data-alt="A stylized vector graphic showing a person waving near a chat bubble and wireframe elements. The person wears a bright yellow shirt. The overall scene conveys communication and strategy in information architecture, rendered in a clean, modern aesthetic with soft gray and white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0i5pXARnHdO9KpUAquhF0CPsVXh3pdYX0QTljJbSZi9c_VJzYOare3YaccmbYW5iIxJpLyeoTkEsKPNhXFB3lRe81_8_qWPaM7qV7hcJ3vG_yN0s1IfXyxPDGdNwW3rVi6NDTJnQvRxSVshhfx4HyCzKumOII9bm-Napau14C8H1Xb3CKkJKDVdx1shfLAMQ0Q60LXRp16FvV5dQCKmJh8ogb5yLG_lNo5c0aHGxsN0OAD7S1ZYDE"/>
+</div>
+<div class="flex-1 flex flex-col justify-between py-1 relative z-10">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-sm text-on-background text-xl">Strategy and Information Architecture</h3>
+<span class="material-symbols-outlined text-secondary opacity-50">signal_cellular_alt</span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 pr-8">
+                                    This course is focused on the early user experience challenges of research, planning, setting goals, understanding the user, structuring content, and developing interactive sequences.
+                                </p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<div class="flex gap-6 font-label-sm text-secondary">
+<span>Start: <span class="text-on-surface font-medium">Dec 18, 2020</span></span>
+<span>Duration: <span class="text-on-surface font-medium">7 weeks</span></span>
+</div>
+<button class="bg-on-background text-surface rounded-xl p-2 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Calendar & Schedule -->
+<div class="w-full lg:w-80 shrink-0 flex flex-col gap-10 border-l border-surface-container-high pl-10">
+<!-- Calendar Widget -->
+<div>
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-on-background text-[22px]">Dec 2020</h2>
+<div class="flex gap-2 text-secondary">
+<button class="hover:text-on-surface transition-colors p-1"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="hover:text-on-surface transition-colors p-1"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-y-4 gap-x-2 text-center text-sm">
+<!-- Days Header -->
+<div class="text-secondary font-medium">Mon</div>
+<div class="text-secondary font-medium">Tue</div>
+<div class="text-secondary font-medium">Wed</div>
+<div class="text-secondary font-medium">Thu</div>
+<div class="text-secondary font-medium">Fri</div>
+<div class="text-secondary font-medium">Sat</div>
+<div class="text-secondary font-medium">Sun</div>
+<!-- Week 1 -->
+<div class="text-secondary/30">30</div>
+<div class="text-on-surface">1</div>
+<div class="text-on-surface">2</div>
+<div class="text-on-surface relative">
+                                3
+                                <span class="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-1 h-1 bg-primary-container rounded-full"></span>
+</div>
+<div class="text-on-surface">4</div>
+<div class="text-on-surface">5</div>
+<div class="text-on-surface">6</div>
+<!-- Week 2 -->
+<div class="text-on-surface">7</div>
+<div class="text-on-surface">8</div>
+<div class="text-on-surface">9</div>
+<div class="text-on-surface">10</div>
+<div class="text-on-surface">11</div>
+<div class="text-on-surface">12</div>
+<div class="text-on-surface">13</div>
+<!-- Week 3 (Active) -->
+<div class="bg-primary-container text-surface font-bold rounded-lg py-1 shadow-sm">14</div>
+<div class="text-on-surface">15</div>
+<div class="text-on-surface">16</div>
+<div class="text-on-surface">17</div>
+<div class="text-on-surface">18</div>
+<div class="text-on-surface">19</div>
+<div class="bg-primary-container text-surface font-bold rounded-lg py-1 shadow-sm">20</div>
+<!-- Week 4 -->
+<div class="text-on-surface">21</div>
+<div class="text-on-surface">22</div>
+<div class="text-on-surface">23</div>
+<div class="text-on-surface">24</div>
+<div class="text-on-surface">25</div>
+<div class="text-on-surface">26</div>
+<div class="text-on-surface">27</div>
+<!-- Week 5 -->
+<div class="text-on-surface">28</div>
+<div class="text-on-surface">29</div>
+<div class="text-on-surface">30</div>
+<div class="text-on-surface">31</div>
+<div class="text-secondary/30">1</div>
+<div class="text-secondary/30">2</div>
+<div class="text-secondary/30">3</div>
+</div>
+</div>
+<!-- Schedule List -->
+<div class="flex-1 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-on-background text-[22px]">Schedule</h2>
+<button class="text-secondary hover:text-on-surface transition-colors p-1">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex flex-col gap-5">
+<!-- Schedule Item 1 -->
+<div class="flex items-center gap-4 group cursor-pointer border-b border-surface-container-high pb-4 last:border-0">
+<div class="w-12 h-12 bg-primary-container text-surface rounded-xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">tablet_mac</span>
+</div>
+<div>
+<div class="font-title-sm text-on-background group-hover:text-primary-container transition-colors">Lesson 4</div>
+<div class="font-label-sm text-secondary">From Concept to Prototype</div>
+</div>
+</div>
+<!-- Schedule Item 2 -->
+<div class="flex items-center gap-4 group cursor-pointer border-b border-surface-container-high pb-4 last:border-0">
+<div class="w-12 h-12 bg-primary-container text-surface rounded-xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">folder_open</span>
+</div>
+<div>
+<div class="font-title-sm text-on-background group-hover:text-primary-container transition-colors">Homework Deadline</div>
+<div class="font-label-sm text-secondary">From Concept to Prototype</div>
+</div>
+</div>
+<!-- Schedule Item 3 -->
+<div class="flex items-center gap-4 group cursor-pointer border-b border-surface-container-high pb-4 last:border-0">
+<div class="w-12 h-12 bg-primary-container text-surface rounded-xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">chat_bubble_outline</span>
+</div>
+<div>
+<div class="font-title-sm text-on-background group-hover:text-primary-container transition-colors">Lesson 3</div>
+<div class="font-label-sm text-secondary">Conversational Interfaces</div>
+</div>
+</div>
+<!-- Schedule Item 4 -->
+<div class="flex items-center gap-4 group cursor-pointer border-b border-surface-container-high pb-4 last:border-0">
+<div class="w-12 h-12 bg-primary-container text-surface rounded-xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+</div>
+<div>
+<div class="font-title-sm text-on-background group-hover:text-primary-container transition-colors">Homework Deadline</div>
+<div class="font-label-sm text-secondary">Accessible Design</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

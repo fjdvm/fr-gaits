@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
 import Editor from "@monaco-editor/react";
-import { CheckCircle2, XCircle, Brain, Clock, Sparkles, MessageSquare, AlertCircle } from "lucide-react";
+import { CheckCircle2, Brain, MessageSquare, AlertCircle } from "lucide-react";
 import { BehaviorTab } from "./components/behavior-tab";
+import { TutorLogTab } from "./components/tutor-log-tab";
+import { TestResultsTab } from "./components/test-results-tab";
 
 const MONACO_LANGUAGE_MAP: Record<string, string> = {
   Python: "python",
@@ -73,11 +75,6 @@ export function SubmissionDetailView({
       </>
     );
   }
-
-  // Calculate assertions count
-  const totalTests = submission.testResults.length;
-  const passedTests = submission.testResults.filter((tr) => tr.passed).length;
-  const passRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
 
   return (
     <>
@@ -150,51 +147,7 @@ export function SubmissionDetailView({
           {/* Tab Content */}
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === "tests" && (
-              <div className="space-y-6">
-                <div className="bg-surface-container-low rounded-2xl p-5 border border-surface-container flex items-center justify-between">
-                  <div>
-                    <h4 className="font-bold text-sm text-on-surface">Test Suite Pass Rate</h4>
-                    <p className="text-xs text-secondary mt-1">{passedTests} of {totalTests} assertions passed.</p>
-                  </div>
-                  <div className="w-14 h-14 rounded-full border-4 border-primary/20 flex items-center justify-center bg-white">
-                    <span className="font-bold text-sm text-on-surface">{passRate}%</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <h4 className="font-bold text-xs text-secondary uppercase tracking-wider mb-2 pl-1">Detailed Logs</h4>
-                  {submission.testResults.map((tr, index) => (
-                    <div
-                      key={tr.testCaseId || index}
-                      className={`flex gap-3 p-4 rounded-2xl border ${
-                        tr.passed
-                          ? "bg-white border-surface-container"
-                          : "bg-destructive/5 border-destructive/20"
-                      }`}
-                    >
-                      {tr.passed ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className={`text-xs font-bold truncate ${tr.passed ? "text-on-surface" : "text-destructive"}`}>
-                            Case #{index + 1} {tr.visible === false && "(Hidden)"}
-                          </span>
-                          <span className="text-[10px] text-secondary font-mono">Assertion</span>
-                        </div>
-                        <p className="text-xs text-secondary font-mono bg-surface-container-low p-2 rounded-lg mt-1 whitespace-pre-wrap truncate">
-                          In: {tr.input || "—"}
-                        </p>
-                        <p className="text-xs text-secondary font-mono bg-surface-container-low p-2 rounded-lg mt-1 whitespace-pre-wrap truncate">
-                          Out: {tr.actualOutput?.trim() || "—"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <TestResultsTab testResults={submission.testResults} />
             )}
 
             {activeTab === "behavior" && (
@@ -202,33 +155,7 @@ export function SubmissionDetailView({
             )}
 
             {activeTab === "chat" && (
-              <div className="space-y-4 flex flex-col h-full">
-                {chatMessages.length === 0 ? (
-                  <div className="text-center py-12">
-                    <MessageSquare className="h-10 w-10 text-secondary/30 mx-auto mb-2" />
-                    <p className="text-xs text-secondary font-semibold">No tutor conversations logged.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {chatMessages.map((msg, i) => (
-                      <div
-                        key={i}
-                        className={`p-4 rounded-2xl text-xs border ${
-                          msg.role === "assistant"
-                            ? "bg-surface-container-low border-surface-container text-on-surface"
-                            : "bg-primary-container/10 border-primary-container/20 text-on-surface"
-                        }`}
-                      >
-                        <div className="flex justify-between items-center mb-2 font-bold text-[9px] uppercase tracking-wider text-secondary">
-                          <span>{msg.role === "assistant" ? "AI Tutor" : "Student"}</span>
-                          <span>{new Date(msg.createdAt).toLocaleTimeString()}</span>
-                        </div>
-                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <TutorLogTab chatMessages={chatMessages} />
             )}
           </div>
         </section>

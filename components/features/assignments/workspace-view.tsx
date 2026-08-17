@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
 import { toast } from "sonner";
@@ -11,12 +11,15 @@ import { WorkspaceInstructions } from "./workspace-instructions";
 import { WorkspaceEditor } from "./workspace-editor";
 import { WorkspaceChat } from "./workspace-chat";
 import { useHeartsTimer } from "./use-hearts-timer";
+import { useAutosave } from "./use-autosave";
+import { useBehavioralTracking } from "./tracking/use-behavioral-tracking";
 import { DEFAULT_CODE_TEMPLATES } from "./code-templates";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import type { WorkspaceViewProps, TestRunResult, SubmissionData } from "./types";
 
-export function WorkspaceView({ assignment, initialHearts, visibleTestCases, initialSubmission, initialChatMessages }: WorkspaceViewProps) {
+export function WorkspaceView({ assignment, initialHearts, visibleTestCases, initialSubmission, initialChatMessages, initialDraftCode }: WorkspaceViewProps) {
   const router = useRouter();
-  const [code, setCode] = useState(initialSubmission?.code || DEFAULT_CODE_TEMPLATES[assignment.language] || "");
+  const [code, setCode] = useState(initialSubmission?.code || initialDraftCode || DEFAULT_CODE_TEMPLATES[assignment.language] || "");
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submission, setSubmission] = useState<SubmissionData | null>(initialSubmission);
@@ -30,7 +33,14 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
     regenMinutes: assignment.heartsRegenMinutes,
   });
 
+  const { status: autosaveStatus } = useAutosave({
+    assignmentId: assignment.id,
+    code,
+    isSubmitted: !!submission,
+  });
+
   const { messages, sendMessage, status } = useChat({
+    throttle: 50,
     messages: initialChatMessages.map((msg) => ({
       id: msg.id,
       role: msg.role,
@@ -42,37 +52,15 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
     },
   });
   const isLoading = status === "submitted" || status === "streaming";
+  const isStreaming = status === "streaming";
 
-  const trackingRef = useRef({ pasteCount: 0, pasteLength: 0, keystrokeCount: 0, typingStartTime: 0, focusStartTime: Date.now(), totalFocusTimeSecs: 0 });
-
-  useEffect(() => {
-    if (submission) return;
-    const onFocus = () => { trackingRef.current.focusStartTime = Date.now(); };
-    const onBlur = () => {
-      if (trackingRef.current.focusStartTime > 0) {
-        trackingRef.current.totalFocusTimeSecs += (Date.now() - trackingRef.current.focusStartTime) / 1000;
-        trackingRef.current.focusStartTime = 0;
-      }
-    };
-    window.addEventListener("focus", onFocus);
-    window.addEventListener("blur", onBlur);
-    return () => { window.removeEventListener("focus", onFocus); window.removeEventListener("blur", onBlur); };
-  }, [submission]);
-
-  const handleEditorMount = useCallback((editor: any) => {
-    if (submission) return;
-    editor.onDidPaste((e: any) => {
-      trackingRef.current.pasteCount += 1;
-      trackingRef.current.pasteLength += (editor.getModel()?.getValueInRange(e.range) || "").length;
-    });
-  }, [submission]);
+  const { handleEditorMount, recordKeystroke, collectSignals } = useBehavioralTracking(!!submission);
 
   const handleCodeChange = useCallback((value: string | undefined) => {
     if (submission) return;
     setCode(value || "");
-    if (trackingRef.current.typingStartTime === 0) trackingRef.current.typingStartTime = Date.now();
-    trackingRef.current.keystrokeCount += 1;
-  }, [submission]);
+    recordKeystroke();
+  }, [submission, recordKeystroke]);
 
   const handleRunCode = async () => {
     if (submission) return;
@@ -111,20 +99,7 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
     if (submission) return;
     if (!window.confirm("Submit your code? You can only submit once.")) return;
     setIsSubmitting(true); setRunResults(null); setConsoleOutput("");
-    if (trackingRef.current.focusStartTime > 0) {
-      trackingRef.current.totalFocusTimeSecs += (Date.now() - trackingRef.current.focusStartTime) / 1000;
-      trackingRef.current.focusStartTime = 0;
-    }
-    const wpm = trackingRef.current.typingStartTime > 0
-      ? Math.round((trackingRef.current.keystrokeCount / 5) / ((Date.now() - trackingRef.current.typingStartTime) / 60000))
-      : 0;
-    const signals = {
-      pasteCount: trackingRef.current.pasteCount,
-      pasteLength: trackingRef.current.pasteLength,
-      keystrokeCount: trackingRef.current.keystrokeCount,
-      wpm,
-      totalFocusTimeSecs: Math.round(trackingRef.current.totalFocusTimeSecs),
-    };
+    const signals = collectSignals();
     try {
       const response = await submitCode(assignment.id, code, signals);
       if (response.success && response.submission) {
@@ -172,11 +147,21 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
 
   return (
     <div className="flex flex-col h-screen bg-surface-container-low text-on-surface overflow-hidden">
-      <WorkspaceHeader title={assignment.title} language={assignment.language} dueDate={assignment.dueDate} heartsCount={hearts.currentCount} maxHearts={assignment.heartsCount} timeToRegen={timeToRegen} isSubmitted={!!submission} />
-      <div className="flex flex-1 overflow-hidden p-6 gap-6">
-        <WorkspaceInstructions title={assignment.title} instructorEmail={assignment.instructorEmail} instructions={assignment.instructions} submission={submission} />
-        <WorkspaceEditor language={assignment.language} code={code} isSubmitted={!!submission} isRunning={isRunning} isSubmitting={isSubmitting} runResults={runResults} consoleOutput={consoleOutput} onCodeChange={handleCodeChange} onEditorMount={handleEditorMount} onRun={handleRunCode} onSubmit={handleSubmitCode} />
-        <WorkspaceChat messages={chatMsgs} isLoading={isLoading} isSubmitted={!!submission} heartsCount={hearts.currentCount} timeToRegen={timeToRegen} chatInput={chatInput} onChatInputChange={setChatInput} onSendMessage={onSendChatMessage} />
+      <WorkspaceHeader title={assignment.title} language={assignment.language} dueDate={assignment.dueDate} heartsCount={hearts.currentCount} maxHearts={assignment.heartsCount} timeToRegen={timeToRegen} isSubmitted={!!submission} autosaveStatus={autosaveStatus} />
+      <div className="flex flex-1 overflow-hidden p-6">
+        <ResizablePanelGroup orientation="horizontal">
+          <ResizablePanel defaultSize={33} minSize={20}>
+            <WorkspaceInstructions title={assignment.title} instructorEmail={assignment.instructorEmail} instructions={assignment.instructions} submission={submission} />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={42} minSize={30}>
+            <WorkspaceEditor language={assignment.language} code={code} isSubmitted={!!submission} isRunning={isRunning} isSubmitting={isSubmitting} runResults={runResults} consoleOutput={consoleOutput} onCodeChange={handleCodeChange} onEditorMount={handleEditorMount} onRun={handleRunCode} onSubmit={handleSubmitCode} />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={25} minSize={15}>
+            <WorkspaceChat messages={chatMsgs} isLoading={isLoading} isStreaming={isStreaming} isSubmitted={!!submission} heartsCount={hearts.currentCount} timeToRegen={timeToRegen} chatInput={chatInput} onChatInputChange={setChatInput} onSendMessage={onSendChatMessage} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Heart, Calendar } from "lucide-react";
+import { ArrowLeft, Heart, Calendar, Cloud, CloudUpload, CloudAlert } from "lucide-react";
+import type { AutosaveStatus } from "./use-autosave";
 
 interface WorkspaceHeaderProps {
   title: string;
@@ -11,6 +12,7 @@ interface WorkspaceHeaderProps {
   maxHearts: number;
   timeToRegen: string;
   isSubmitted: boolean;
+  autosaveStatus: AutosaveStatus;
 }
 
 export function WorkspaceHeader({
@@ -21,6 +23,7 @@ export function WorkspaceHeader({
   maxHearts,
   timeToRegen,
   isSubmitted,
+  autosaveStatus,
 }: WorkspaceHeaderProps) {
   return (
     <header className="flex h-[72px] items-center justify-between px-6 border-b border-surface-container bg-white shrink-0 shadow-sm">
@@ -41,6 +44,7 @@ export function WorkspaceHeader({
             Submitted
           </span>
         )}
+        {!isSubmitted && <AutosaveIndicator status={autosaveStatus} />}
       </div>
 
       <div className="flex items-center gap-6 text-xs font-bold text-secondary">
@@ -57,5 +61,31 @@ export function WorkspaceHeader({
         </div>
       </div>
     </header>
+  );
+}
+
+function AutosaveIndicator({ status }: { status: AutosaveStatus }) {
+  if (status === "idle") return null;
+
+  if (status === "saving") {
+    return (
+      <span className="text-[9px] text-secondary/70 font-bold flex items-center gap-1">
+        <CloudUpload className="h-3 w-3 animate-pulse" /> Saving...
+      </span>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <span className="text-[9px] text-rose-500 font-bold flex items-center gap-1">
+        <CloudAlert className="h-3 w-3" /> Save failed
+      </span>
+    );
+  }
+
+  return (
+    <span className="text-[9px] text-secondary/70 font-bold flex items-center gap-1">
+      <Cloud className="h-3 w-3" /> Saved
+    </span>
   );
 }

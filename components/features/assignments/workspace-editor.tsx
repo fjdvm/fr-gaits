@@ -1,7 +1,8 @@
 "use client";
 
-import Editor from "@monaco-editor/react";
+import Editor, { type OnMount } from "@monaco-editor/react";
 import { Play, CheckCircle2, XCircle, Terminal, FileCode, Send } from "lucide-react";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 
 interface TestRunResult {
   testCaseId: string;
@@ -31,7 +32,7 @@ interface WorkspaceEditorProps {
   runResults: TestRunResult[] | null;
   consoleOutput: string;
   onCodeChange: (value: string | undefined) => void;
-  onEditorMount: (editor: any) => void;
+  onEditorMount: OnMount;
   onRun: () => void;
   onSubmit: () => void;
 }
@@ -50,7 +51,7 @@ export function WorkspaceEditor({
   onSubmit,
 }: WorkspaceEditorProps) {
   return (
-    <div className="w-[42%] flex flex-col h-full overflow-hidden bg-white border-r border-surface-container shrink-0">
+    <div className="h-full w-full flex flex-col overflow-hidden bg-white border-r border-surface-container">
       {/* Editor Tab Bar */}
       <div className="bg-[#1e1e1e] px-4 py-2 flex items-center justify-between border-b border-white/10 shrink-0">
         <div className="flex items-center gap-2">
@@ -113,12 +114,17 @@ export function WorkspaceEditor({
             {isSubmitted ? "Test Results" : "Console & Test Cases"}
           </span>
         </div>
-        <div className="flex-1 flex overflow-hidden bg-white">
-          <TestResultsPanel results={runResults} isSubmitted={isSubmitted} />
-          <div className="w-[45%] overflow-y-auto p-4 bg-surface-container-low/30 font-mono text-[10px] text-secondary whitespace-pre-wrap select-text leading-relaxed">
-            {consoleOutput || "No logs available. Execute run to see compiler output."}
-          </div>
-        </div>
+        <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden bg-white">
+          <ResizablePanel defaultSize={55} minSize={25}>
+            <TestResultsPanel results={runResults} isSubmitted={isSubmitted} />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={45} minSize={20}>
+            <div className="h-full overflow-y-auto p-4 bg-surface-container-low/30 font-mono text-[10px] text-secondary whitespace-pre-wrap select-text leading-relaxed">
+              {consoleOutput || "No logs available. Execute run to see compiler output."}
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );
@@ -126,7 +132,7 @@ export function WorkspaceEditor({
 
 function TestResultsPanel({ results, isSubmitted }: { results: TestRunResult[] | null; isSubmitted: boolean }) {
   return (
-    <div className="w-[55%] border-r border-surface-container overflow-y-auto p-4 space-y-2 bg-white">
+    <div className="h-full border-r border-surface-container overflow-y-auto p-4 space-y-2 bg-white">
       {(!results || results.length === 0) ? (
         <p className="text-[10px] text-secondary italic">
           {isSubmitted ? "No test results recorded." : "No test runs executed yet."}

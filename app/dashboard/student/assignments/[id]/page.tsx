@@ -107,6 +107,17 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
     },
   });
 
+  const draft = submission
+    ? null
+    : await prisma.codeDraft.findUnique({
+        where: {
+          studentId_assignmentId: {
+            studentId: user.id,
+            assignmentId: id,
+          },
+        },
+      });
+
   const formattedSubmission = submission
     ? {
         id: submission.id,
@@ -124,6 +135,7 @@ export default async function AssignmentWorkspacePage({ params }: PageProps) {
       visibleTestCases={formattedTestCases}
       initialSubmission={formattedSubmission}
       initialChatMessages={formattedMessages}
+      initialDraftCode={draft?.code ?? null}
     />
   );
 }

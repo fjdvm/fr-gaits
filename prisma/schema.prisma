@@ -22,6 +22,8 @@ model User {
   xpEvents XpEvent[]
   userBadges UserBadge[]
   streak Streak?
+  codeDrafts CodeDraft[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -69,6 +71,7 @@ model Assignment {
   heartsStates HeartsState[]
   submissions Submission[]
   chatMessages ChatMessage[]
+  codeDrafts CodeDraft[]
 
   @@map("assignments")
 }
@@ -177,6 +180,33 @@ model Streak {
 
   @@id([studentId])
   @@map("streaks")
+}
+
+model CodeDraft {
+  studentId String @map("student_id")
+  assignmentId String @map("assignment_id")
+  code String
+  updatedAt DateTime @updatedAt @map("updated_at")
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, assignmentId])
+  @@map("code_drafts")
+}
+
+model Notification {
+  id String @id @default(uuid())
+  userId String @map("user_id")
+  type String
+  title String
+  message String
+  link String?
+  read Boolean @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
 }
 
 model SystemSetting {

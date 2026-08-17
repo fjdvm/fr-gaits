@@ -42,6 +42,7 @@ export interface WorkspaceViewProps {
   visibleTestCases: TestCaseData[];
   initialSubmission: SubmissionData | null;
   initialChatMessages: ChatMessageData[];
+  initialDraftCode: string | null;
 }
 
 export interface TestRunResult {

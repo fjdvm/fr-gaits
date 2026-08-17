@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { awardSubmissionXp } from "@/lib/gamification";
+import { createNotification } from "@/lib/notifications";
 
 interface BehavioralSignals {
   pasteCount: number;
@@ -162,6 +163,14 @@ export async function submitCode(
     });
     const totalHintsUsed = heartsState?.totalSpent || 0;
     await awardSubmissionXp(user.id, assignmentId, scorePercentage, totalHintsUsed);
+
+    await createNotification({
+      userId: user.id,
+      type: "submission_graded",
+      title: `${assignment.title} graded`,
+      message: `You scored ${scorePercentage}% (${passedCount}/${totalCount} tests passed).`,
+      link: `/dashboard/student/assignments/${assignmentId}`,
+    });
 
     return {
       success: true,

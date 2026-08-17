@@ -9,7 +9,7 @@ import { prisma } from "./prisma";
 type Provider = "groq" | "openai" | "anthropic" | "google";
 
 const DEFAULT_MODELS: Record<Provider, string> = {
-  groq: "llama-3.3-70b-versatile",
+  groq: "openai/gpt-oss-120b",
   openai: "gpt-4o-mini",
   anthropic: "claude-3-5-haiku-20241022",
   google: "gemini-1.5-flash",
