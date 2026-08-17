@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAssignment } from "@/app/actions/create-assignment";
 import { toast } from "sonner";
-import { Calendar, Heart, Shield, Plus, Trash2 } from "lucide-react";
+import { Calendar, Heart, Shield, Plus } from "lucide-react";
+import { TestCaseRow } from "./components/test-case-row";
+import { AssignmentFormFields } from "./components/assignment-form-fields";
 
 interface TestCaseForm {
   input: string;
@@ -91,83 +93,21 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
         <p className="text-xs text-secondary mt-1">Configure instructions, programming language, classes, and test cases.</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-on-surface pl-1">Title</label>
-            <input
-              placeholder="Assignment Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              disabled={isCreating}
-              className="w-full bg-surface-container-low rounded-xl px-4 py-2.5 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-on-surface pl-1">Instructions</label>
-            <textarea
-              placeholder="Describe the problem..."
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
-              required
-              disabled={isCreating}
-              className="w-full min-h-[120px] bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow resize-y"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-on-surface pl-1">Language</label>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                disabled={isCreating}
-                className="w-full bg-surface-container-low rounded-xl px-4 py-2.5 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container font-semibold transition-shadow"
-              >
-                <option value="Python">Python</option>
-                <option value="C">C</option>
-                <option value="JavaScript">JavaScript</option>
-                <option value="C#">C#</option>
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-on-surface pl-1">Due Date</label>
-              <input
-                type="datetime-local"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                required
-                disabled={isCreating}
-                className="w-full bg-surface-container-low rounded-xl px-4 py-2 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-on-surface pl-1">Hearts Limit</label>
-              <input
-                type="number"
-                min={1}
-                value={heartsCount}
-                onChange={(e) => setHeartsCount(parseInt(e.target.value) || 5)}
-                required
-                disabled={isCreating}
-                className="w-full bg-surface-container-low rounded-xl px-4 py-2 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-on-surface pl-1">Hearts Cooldown (min)</label>
-              <input
-                type="number"
-                min={1}
-                value={heartsRegen}
-                onChange={(e) => setHeartsRegen(parseInt(e.target.value) || 30)}
-                required
-                disabled={isCreating}
-                className="w-full bg-surface-container-low rounded-xl px-4 py-2 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
-              />
-            </div>
-          </div>
-        </div>
+        <AssignmentFormFields
+          title={title}
+          setTitle={setTitle}
+          instructions={instructions}
+          setInstructions={setInstructions}
+          language={language}
+          setLanguage={setLanguage}
+          dueDate={dueDate}
+          setDueDate={setDueDate}
+          heartsCount={heartsCount}
+          setHeartsCount={setHeartsCount}
+          heartsRegen={heartsRegen}
+          setHeartsRegen={setHeartsRegen}
+          isCreating={isCreating}
+        />
 
         <div className="space-y-2">
           <label className="text-xs font-bold text-on-surface pl-1 block">Assign to Classes</label>
@@ -205,49 +145,14 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
           </div>
           <div className="space-y-3">
             {testCases.map((tc, index) => (
-              <div key={index} className="grid grid-cols-12 gap-3 items-end bg-surface-container-low p-4 rounded-2xl border border-surface-container">
-                <div className="col-span-5 space-y-1">
-                  <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Input</label>
-                  <input
-                    placeholder="stdin (optional)"
-                    value={tc.input}
-                    onChange={(e) => updateTestCase(index, "input", e.target.value)}
-                    disabled={isCreating}
-                    className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
-                  />
-                </div>
-                <div className="col-span-5 space-y-1">
-                  <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Expected Output</label>
-                  <input
-                    placeholder="stdout"
-                    value={tc.expectedOutput}
-                    onChange={(e) => updateTestCase(index, "expectedOutput", e.target.value)}
-                    required
-                    disabled={isCreating}
-                    className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
-                  />
-                </div>
-                <div className="col-span-2 flex items-center justify-between h-8 mt-auto pl-2">
-                  <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer select-none text-on-surface">
-                    <input
-                      type="checkbox"
-                      checked={tc.visible}
-                      onChange={(e) => updateTestCase(index, "visible", e.target.checked)}
-                      disabled={isCreating}
-                      className="rounded border-surface-container text-primary focus:ring-primary-container"
-                    />
-                    Vis
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => removeTestCase(index)}
-                    disabled={isCreating}
-                    className="text-secondary hover:text-destructive p-1 rounded-md transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
+              <TestCaseRow
+                key={index}
+                index={index}
+                tc={tc}
+                isCreating={isCreating}
+                updateTestCase={updateTestCase}
+                removeTestCase={removeTestCase}
+              />
             ))}
           </div>
         </div>
