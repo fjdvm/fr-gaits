@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { DM_Sans, Fredoka, Space_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Fredoka, Space_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -28,7 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${fredoka.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${plusJakartaSans.variable} ${fredoka.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}
