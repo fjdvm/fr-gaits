@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClass } from "@/app/actions/create-class";
 import { toast } from "sonner";
 import { School, Copy, Users, Calendar, Plus } from "lucide-react";
@@ -89,8 +90,9 @@ export function ClassesList({ initialClasses }: ClassesListProps) {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {classes.map((cls) => (
-            <div
+            <Link
               key={cls.id}
+              href={`/dashboard/instructor/classes/${cls.id}`}
               className="bg-white rounded-2xl p-6 shadow-sm border border-surface-container flex flex-col relative overflow-hidden group hover:border-outline-variant transition-colors"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
@@ -115,14 +117,18 @@ export function ClassesList({ initialClasses }: ClassesListProps) {
                   <span>{cls.studentCount} students</span>
                 </div>
                 <button
-                  onClick={() => copyToClipboard(cls.joinCode)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    copyToClipboard(cls.joinCode);
+                  }}
                   className="bg-surface-container-low hover:bg-surface-container text-on-surface px-3 py-1.5 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-surface-container"
                 >
                   Code: {cls.joinCode}
                   <Copy className="h-3 w-3 text-secondary" />
                 </button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

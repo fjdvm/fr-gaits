@@ -98,6 +98,16 @@ export async function createAssignment(params: CreateAssignmentParams) {
         })),
       });
 
+      await tx.post.createMany({
+        data: classIds.map((classId) => ({
+          classId,
+          authorId: user.id,
+          type: "assignment_created",
+          body: `New assignment posted: ${assignment.title}`,
+          assignmentId: assignment.id,
+        })),
+      });
+
       return assignment;
     });
 

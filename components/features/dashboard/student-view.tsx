@@ -6,7 +6,8 @@ import Link from "next/link";
 import { joinClass } from "@/app/actions/join-class";
 import { toast } from "sonner";
 import { DashboardHeader } from "./dashboard-header";
-import { Calendar, ChevronRight, School, BookOpen, Clock, CalendarDays } from "lucide-react";
+import { StudentScheduleSidebar } from "./student-schedule-sidebar";
+import { School, BookOpen, ChevronRight } from "lucide-react";
 
 interface AssignmentInfo {
   id: string;
@@ -116,8 +117,9 @@ export function StudentView({ initialClasses }: StudentViewProps) {
             </div>
           ) : (
             classes.map((cls) => (
-              <div
+              <Link
                 key={cls.id}
+                href={`/dashboard/student/classes/${cls.id}`}
                 className="bg-white border border-surface-container rounded-3xl p-6 flex flex-col sm:flex-row gap-6 hover:shadow-md transition-shadow group relative overflow-hidden"
               >
                 {/* Visual Thumbnail */}
@@ -138,103 +140,18 @@ export function StudentView({ initialClasses }: StudentViewProps) {
                       Instructor: <span className="font-semibold">{cls.instructorEmail}</span>
                     </p>
                   </div>
-                  {/* Assignments sub-list */}
-                  <div className="mt-4 space-y-2">
-                    {cls.assignments.length === 0 ? (
-                      <p className="text-xs text-secondary italic">No assignments posted yet.</p>
-                    ) :
-                      cls.assignments.map((asm) => (
-                        <Link
-                          key={asm.id}
-                          href={`/dashboard/student/assignments/${asm.id}`}
-                          className="flex items-center justify-between p-2.5 rounded-xl border border-surface-container hover:bg-surface-container-low transition-colors text-xs"
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <BookOpen className="h-4 w-4 text-primary shrink-0" />
-                            <span className="font-semibold text-on-surface truncate">{asm.title}</span>
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="bg-surface-container text-[10px] px-2 py-0.5 rounded font-mono text-secondary">
-                              {asm.language}
-                            </span>
-                            <span className="bg-primary-container text-[10px] px-2 py-0.5 rounded font-bold text-on-primary-container uppercase">
-                              {asm.status}
-                            </span>
-                          </div>
-                        </Link>
-                      ))
-                    }
+                  <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-primary">
+                    <BookOpen className="h-4 w-4" />
+                    {cls.assignments.length === 0 ? "No assignments yet" : `${cls.assignments.length} assignment${cls.assignments.length === 1 ? "" : "s"}`}
+                    <ChevronRight className="h-3.5 w-3.5" />
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>
 
-        {/* Right Sidebar: Calendar & Schedule */}
-        <div className="w-full lg:w-80 shrink-0 flex flex-col gap-10 border-t lg:border-t-0 lg:border-l border-surface-container pt-10 lg:pt-0 lg:pl-10">
-          {/* Calendar Widget */}
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="font-bold text-lg text-on-surface">Academy Calendar</h2>
-              <Calendar className="h-5 w-5 text-secondary" />
-            </div>
-            <div className="bg-surface-container-low rounded-3xl p-5 border border-surface-container">
-              <div className="grid grid-cols-7 gap-y-3 gap-x-1 text-center text-xs">
-                {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
-                  <div key={day} className="text-secondary font-semibold">{day}</div>
-                ))}
-                {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => {
-                  const isCurrent = day === new Date().getDate();
-                  return (
-                    <div
-                      key={day}
-                      className={`py-1.5 rounded-lg text-xs font-semibold ${
-                        isCurrent
-                          ? "bg-primary-container text-on-primary-container font-bold shadow-sm"
-                          : "text-on-surface hover:bg-surface-container"
-                      }`}
-                    >
-                      {day}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Schedule List */}
-          <div className="flex flex-col">
-            <h2 className="font-bold text-lg text-on-surface mb-6">Upcoming Deadlines</h2>
-            <div className="flex flex-col gap-4">
-              {allAssignments.length === 0 ? (
-                <p className="text-xs text-secondary italic">No upcoming deadlines.</p>
-              ) : (
-                allAssignments.map((asm) => (
-                  <Link
-                    key={asm.id}
-                    href={`/dashboard/student/assignments/${asm.id}`}
-                    className="flex items-center gap-4 group cursor-pointer border-b border-surface-container pb-4 last:border-0"
-                  >
-                    <div className="w-12 h-12 bg-primary-container text-on-primary-container rounded-xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-                      <Clock className="h-5 w-5 text-on-primary-container" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors truncate">
-                        {asm.title}
-                      </div>
-                      <div className="text-xs text-secondary flex items-center gap-1.5 mt-0.5">
-                        <CalendarDays className="h-3 w-3 shrink-0" />
-                        <span>Due: {new Date(asm.dueDate).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-secondary ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
+        <StudentScheduleSidebar upcomingAssignments={allAssignments} />
       </main>
     </>
   );

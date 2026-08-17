@@ -1,6 +1,6 @@
 import { prisma } from "./prisma";
 
-export type NotificationType = "badge_earned" | "submission_graded" | "hearts_regenerated";
+export type NotificationType = "badge_earned" | "submission_graded" | "hearts_regenerated" | "private_comment";
 
 interface CreateNotificationInput {
   userId: string;
