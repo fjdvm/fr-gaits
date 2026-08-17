@@ -4,9 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAssignment } from "@/app/actions/create-assignment";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, Heart, Shield, Plus, Trash2 } from "lucide-react";
 
 interface TestCaseForm {
   input: string;
@@ -87,104 +85,191 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
   };
 
   return (
-    <Card className="max-w-3xl mx-auto">
-      <CardHeader>
-        <CardTitle>Create Assignment</CardTitle>
-        <CardDescription>Configure instructions, programming language, classes, and test cases.</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">Title</label>
-              <Input placeholder="Assignment Title" value={title} onChange={(e) => setTitle(e.target.value)} required disabled={isCreating} />
+    <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-surface-container p-6 shadow-sm flex flex-col">
+      <div className="mb-6">
+        <h3 className="font-bold text-lg text-on-surface">Create Assignment</h3>
+        <p className="text-xs text-secondary mt-1">Configure instructions, programming language, classes, and test cases.</p>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-on-surface pl-1">Title</label>
+            <input
+              placeholder="Assignment Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              disabled={isCreating}
+              className="w-full bg-surface-container-low rounded-xl px-4 py-2.5 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-on-surface pl-1">Instructions</label>
+            <textarea
+              placeholder="Describe the problem..."
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              required
+              disabled={isCreating}
+              className="w-full min-h-[120px] bg-surface-container-low rounded-xl px-4 py-3 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow resize-y"
+            />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-on-surface pl-1">Language</label>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                disabled={isCreating}
+                className="w-full bg-surface-container-low rounded-xl px-4 py-2.5 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container font-semibold transition-shadow"
+              >
+                <option value="Python">Python</option>
+                <option value="C">C</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="C#">C#</option>
+              </select>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">Instructions</label>
-              <textarea placeholder="Describe the problem..." value={instructions} onChange={(e) => setInstructions(e.target.value)} required disabled={isCreating}
-                className="flex min-h-[120px] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Language</label>
-                <select value={language} onChange={(e) => setLanguage(e.target.value)} disabled={isCreating}
-                  className="flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring">
-                  <option value="Python">Python</option>
-                  <option value="C">C</option>
-                  <option value="JavaScript">JavaScript</option>
-                  <option value="C#">C#</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Due Date</label>
-                <Input type="datetime-local" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required disabled={isCreating} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Hearts Limit</label>
-                <Input type="number" min={1} value={heartsCount} onChange={(e) => setHeartsCount(parseInt(e.target.value) || 5)} required disabled={isCreating} />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">Hearts Cooldown (min)</label>
-                <Input type="number" min={1} value={heartsRegen} onChange={(e) => setHeartsRegen(parseInt(e.target.value) || 30)} required disabled={isCreating} />
-              </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-on-surface pl-1">Due Date</label>
+              <input
+                type="datetime-local"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                required
+                disabled={isCreating}
+                className="w-full bg-surface-container-low rounded-xl px-4 py-2 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
+              />
             </div>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold block">Assign to Classes</label>
-            {classes.length === 0 ? (
-              <p className="text-xs text-destructive">You must create a class first!</p>
-            ) : (
-              <div className="flex flex-wrap gap-4 pt-1">
-                {classes.map((cls) => (
-                  <label key={cls.id} className="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                    <input type="checkbox" checked={selectedClasses.includes(cls.id)} onChange={() => handleClassToggle(cls.id)} disabled={isCreating}
-                      className="rounded border-border text-primary focus:ring-primary" />
-                    {cls.name}
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <label className="text-sm font-semibold">Test Cases</label>
-              <Button type="button" variant="outline" size="sm" onClick={addTestCase} disabled={isCreating}>Add Test Case</Button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-on-surface pl-1">Hearts Limit</label>
+              <input
+                type="number"
+                min={1}
+                value={heartsCount}
+                onChange={(e) => setHeartsCount(parseInt(e.target.value) || 5)}
+                required
+                disabled={isCreating}
+                className="w-full bg-surface-container-low rounded-xl px-4 py-2 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
+              />
             </div>
-            <div className="space-y-3">
-              {testCases.map((tc, index) => (
-                <div key={index} className="grid grid-cols-12 gap-3 items-end bg-muted/50 p-3 rounded-lg border">
-                  <div className="col-span-4 space-y-1">
-                    <label className="text-[10px] text-muted-foreground font-semibold block">Input</label>
-                    <Input placeholder="stdin (optional)" value={tc.input} onChange={(e) => updateTestCase(index, "input", e.target.value)} disabled={isCreating} />
-                  </div>
-                  <div className="col-span-5 space-y-1">
-                    <label className="text-[10px] text-muted-foreground font-semibold block">Expected Output</label>
-                    <Input placeholder="stdout" value={tc.expectedOutput} onChange={(e) => updateTestCase(index, "expectedOutput", e.target.value)} required disabled={isCreating} />
-                  </div>
-                  <div className="col-span-2 flex items-center justify-center h-9">
-                    <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none">
-                      <input type="checkbox" checked={tc.visible} onChange={(e) => updateTestCase(index, "visible", e.target.checked)} disabled={isCreating}
-                        className="rounded border-border text-primary focus:ring-primary" />
-                      Visible
-                    </label>
-                  </div>
-                  <div className="col-span-1 text-right">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => removeTestCase(index)} disabled={isCreating} className="text-destructive hover:text-destructive">&times;</Button>
-                  </div>
-                </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-on-surface pl-1">Hearts Cooldown (min)</label>
+              <input
+                type="number"
+                min={1}
+                value={heartsRegen}
+                onChange={(e) => setHeartsRegen(parseInt(e.target.value) || 30)}
+                required
+                disabled={isCreating}
+                className="w-full bg-surface-container-low rounded-xl px-4 py-2 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-on-surface pl-1 block">Assign to Classes</label>
+          {classes.length === 0 ? (
+            <p className="text-xs text-destructive pl-1">You must create a class first!</p>
+          ) : (
+            <div className="flex flex-wrap gap-4 pt-1 pl-1">
+              {classes.map((cls) => (
+                <label key={cls.id} className="flex items-center gap-2 text-sm font-semibold cursor-pointer text-on-surface">
+                  <input
+                    type="checkbox"
+                    checked={selectedClasses.includes(cls.id)}
+                    onChange={() => handleClassToggle(cls.id)}
+                    disabled={isCreating}
+                    className="rounded border-surface-container text-primary focus:ring-primary-container"
+                  />
+                  {cls.name}
+                </label>
               ))}
             </div>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex justify-between items-center pl-1">
+            <label className="text-xs font-bold text-on-surface">Test Cases</label>
+            <button
+              type="button"
+              onClick={addTestCase}
+              disabled={isCreating}
+              className="px-3.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1"
+            >
+              <Plus className="h-3.5 w-3.5" /> Add Case
+            </button>
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-end gap-2 border-t pt-4">
-          <Button type="button" variant="ghost" onClick={onCancel} disabled={isCreating}>Cancel</Button>
-          <Button type="submit" disabled={isCreating}>{isCreating ? "Creating..." : "Save Assignment"}</Button>
-        </CardFooter>
+          <div className="space-y-3">
+            {testCases.map((tc, index) => (
+              <div key={index} className="grid grid-cols-12 gap-3 items-end bg-surface-container-low p-4 rounded-2xl border border-surface-container">
+                <div className="col-span-5 space-y-1">
+                  <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Input</label>
+                  <input
+                    placeholder="stdin (optional)"
+                    value={tc.input}
+                    onChange={(e) => updateTestCase(index, "input", e.target.value)}
+                    disabled={isCreating}
+                    className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
+                  />
+                </div>
+                <div className="col-span-5 space-y-1">
+                  <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Expected Output</label>
+                  <input
+                    placeholder="stdout"
+                    value={tc.expectedOutput}
+                    onChange={(e) => updateTestCase(index, "expectedOutput", e.target.value)}
+                    required
+                    disabled={isCreating}
+                    className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
+                  />
+                </div>
+                <div className="col-span-2 flex items-center justify-between h-8 mt-auto pl-2">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer select-none text-on-surface">
+                    <input
+                      type="checkbox"
+                      checked={tc.visible}
+                      onChange={(e) => updateTestCase(index, "visible", e.target.checked)}
+                      disabled={isCreating}
+                      className="rounded border-surface-container text-primary focus:ring-primary-container"
+                    />
+                    Vis
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => removeTestCase(index)}
+                    disabled={isCreating}
+                    className="text-secondary hover:text-destructive p-1 rounded-md transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-6 border-t border-surface-container">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isCreating}
+            className="px-6 py-2.5 bg-surface-container hover:bg-surface-container-high text-secondary hover:text-on-surface rounded-xl font-semibold text-xs transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isCreating}
+            className="px-6 py-2.5 bg-primary-container hover:bg-surface-tint text-on-primary-container hover:text-white rounded-xl font-semibold text-xs transition-colors cursor-pointer"
+          >
+            {isCreating ? "Creating..." : "Save Assignment"}
+          </button>
+        </div>
       </form>
-    </Card>
+    </div>
   );
 }
