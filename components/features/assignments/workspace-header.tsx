@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Heart, Calendar } from "lucide-react";
 
 interface WorkspaceHeaderProps {
   title: string;
@@ -23,38 +23,37 @@ export function WorkspaceHeader({
   isSubmitted,
 }: WorkspaceHeaderProps) {
   return (
-    <header className="flex h-14 items-center justify-between px-6 border-b border-border bg-card shrink-0">
+    <header className="flex h-[72px] items-center justify-between px-6 border-b border-surface-container bg-white shrink-0 shadow-sm">
       <div className="flex items-center gap-4 flex-wrap">
         <Link
           href="/dashboard/student"
-          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+          className="text-xs text-secondary hover:text-primary transition-colors flex items-center gap-1.5 font-bold"
         >
-          &larr; Back to Dashboard
+          <ArrowLeft className="h-4 w-4" /> Dashboard
         </Link>
-        <span className="text-muted-foreground/50">|</span>
-        <h1 className="text-sm font-bold tracking-tight">{title}</h1>
-        <span className="bg-muted text-[10px] px-2 py-0.5 rounded font-mono font-semibold">
+        <span className="text-surface-container-high font-normal">|</span>
+        <h1 className="text-sm font-bold text-on-surface tracking-tight">{title}</h1>
+        <span className="bg-primary-container text-on-primary-container text-[10px] px-2.5 py-0.5 rounded-md font-bold uppercase tracking-wider font-mono">
           {language}
         </span>
         {isSubmitted && (
-          <span className="rounded-full bg-green-100 border border-green-300 px-2.5 py-0.5 text-[10px] font-semibold text-green-700 uppercase tracking-wide">
+          <span className="bg-[#e6f4ea] text-[#137333] text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
             Submitted
           </span>
         )}
       </div>
 
-      <div className="flex items-center gap-4 text-xs font-semibold">
-        <div className="flex items-center gap-1.5 text-rose-500">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-            <path d="m11.645 20.91l-.007-.003c-.022-.012-.045-.025-.069-.04a22.066 22.066 0 0 1-2.036-1.423c-.76-.613-1.6-1.39-2.384-2.28C5.972 15.93 5 14.477 5 12.674c0-2.623 2.122-4.674 4.707-4.674c1.19 0 2.247.455 3.043 1.2c.796-.745 1.85-1.2 3.043-1.2c2.585 0 4.707 2.122 4.707 4.674c0 1.803-.972 3.256-2.148 4.293a22.063 22.063 0 0 1-2.453 1.86a4.268 4.268 0 0 1-.07.042l-.008.003l-.002.001c-.13.067-.32.067-.45 0z" />
-          </svg>
-          <span>{heartsCount} Hearts</span>
+      <div className="flex items-center gap-6 text-xs font-bold text-secondary">
+        <div className="flex items-center gap-1.5 text-rose-500 bg-rose-50 px-3.5 py-1.5 rounded-xl border border-rose-100">
+          <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+          <span>{heartsCount} / {maxHearts} Hearts</span>
           {timeToRegen && (
-            <span className="text-[10px] text-muted-foreground font-normal">(Regen: {timeToRegen})</span>
+            <span className="text-[10px] text-rose-400 font-normal">({timeToRegen})</span>
           )}
         </div>
-        <div className="text-muted-foreground">
-          Due: {new Date(dueDate).toLocaleDateString()}
+        <div className="flex items-center gap-1.5 bg-surface-container-low px-3.5 py-1.5 rounded-xl border border-surface-container">
+          <Calendar className="h-4 w-4 text-secondary/70" />
+          <span>Due: {new Date(dueDate).toLocaleDateString(undefined, { dateStyle: "medium" })}</span>
         </div>
       </div>
     </header>

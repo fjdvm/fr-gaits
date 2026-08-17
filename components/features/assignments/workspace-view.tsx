@@ -171,9 +171,9 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
   );
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex flex-col h-screen bg-surface-container-low text-on-surface overflow-hidden">
       <WorkspaceHeader title={assignment.title} language={assignment.language} dueDate={assignment.dueDate} heartsCount={hearts.currentCount} maxHearts={assignment.heartsCount} timeToRegen={timeToRegen} isSubmitted={!!submission} />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden p-6 gap-6">
         <WorkspaceInstructions title={assignment.title} instructorEmail={assignment.instructorEmail} instructions={assignment.instructions} submission={submission} />
         <WorkspaceEditor language={assignment.language} code={code} isSubmitted={!!submission} isRunning={isRunning} isSubmitting={isSubmitting} runResults={runResults} consoleOutput={consoleOutput} onCodeChange={handleCodeChange} onEditorMount={handleEditorMount} onRun={handleRunCode} onSubmit={handleSubmitCode} />
         <WorkspaceChat messages={chatMsgs} isLoading={isLoading} isSubmitted={!!submission} heartsCount={hearts.currentCount} timeToRegen={timeToRegen} chatInput={chatInput} onChatInputChange={setChatInput} onSendMessage={onSendChatMessage} />
