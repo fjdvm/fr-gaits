@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { saveAdminApiKey, removeAdminApiKey } from "@/app/actions/admin-api-keys";
+import { Eye, EyeOff, KeyRound, Trash2 } from "lucide-react";
 
 interface ApiKeyEntry {
   key: string;
@@ -24,6 +21,7 @@ export function ApiKeyFormRow({ entry, onUpdate }: ApiKeyFormRowProps) {
   const [value, setValue] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSave() {
     if (!value.trim()) {
@@ -58,60 +56,76 @@ export function ApiKeyFormRow({ entry, onUpdate }: ApiKeyFormRowProps) {
   }
 
   return (
-    <div className="flex flex-col gap-2 border-b pb-4 last:border-b-0 last:pb-0">
+    <div className="flex flex-col gap-3 border-b border-surface-container pb-5 last:border-b-0 last:pb-0">
       <div className="flex items-center justify-between">
         <div>
-          <Label className="font-medium">{entry.label}</Label>
-          <p className="text-xs text-muted-foreground font-mono">{entry.key}</p>
+          <label className="text-sm font-bold text-on-surface block pl-1">{entry.label}</label>
+          <span className="text-[10px] text-secondary font-mono block pl-1 mt-0.5">{entry.key}</span>
         </div>
-        <Badge variant={entry.hasValue ? "default" : "secondary"}>
+        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${entry.hasValue ? "bg-primary-container text-on-primary-container" : "bg-surface-container text-secondary"}`}>
           {entry.hasValue ? "Configured ✓" : "Not Set"}
-        </Badge>
+        </span>
       </div>
 
       {isEditing ? (
-        <div className="flex gap-2 items-end">
-          <Input
-            type="password"
-            placeholder="Enter API key..."
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            className="flex-1 font-mono text-sm"
-          />
-          <Button size="sm" onClick={handleSave} disabled={isSaving}>
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter API key..."
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              className="w-full bg-surface-container-low rounded-xl px-4 py-2.5 text-sm text-on-surface border border-transparent focus:outline-none focus:ring-2 focus:ring-primary-container font-mono transition-shadow pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-on-surface cursor-pointer"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-4 py-2.5 bg-primary-container hover:bg-surface-tint text-on-primary-container hover:text-white rounded-xl font-semibold text-xs transition-colors cursor-pointer"
+          >
             {isSaving ? "Saving..." : "Save"}
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
+          </button>
+          <button
             onClick={() => {
               setIsEditing(false);
               setValue("");
             }}
+            className="px-4 py-2.5 bg-surface-container hover:bg-surface-container-high text-secondary rounded-xl font-semibold text-xs transition-colors cursor-pointer"
           >
             Cancel
-          </Button>
+          </button>
         </div>
       ) : (
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+          >
+            <KeyRound className="h-3.5 w-3.5" />
             {entry.hasValue ? "Update" : "Set Key"}
-          </Button>
+          </button>
           {entry.hasValue && (
-            <Button
-              size="sm"
-              variant="destructive"
+            <button
               onClick={handleRemove}
               disabled={isSaving}
+              className="px-4 py-2 bg-transparent hover:bg-destructive/10 text-destructive rounded-xl font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
             >
+              <Trash2 className="h-3.5 w-3.5" />
               Remove
-            </Button>
+            </button>
           )}
         </div>
       )}
 
       {entry.updatedAt && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[10px] text-secondary pl-1">
           Last updated: {new Date(entry.updatedAt).toLocaleString()}
         </p>
       )}

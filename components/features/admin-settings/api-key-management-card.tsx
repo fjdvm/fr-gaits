@@ -1,15 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { getAdminApiKeyStatus } from "@/app/actions/admin-api-keys";
 import { ApiKeyFormRow } from "./api-key-form-row";
+import { Key } from "lucide-react";
 
 interface ApiKeyEntry {
   key: string;
@@ -38,19 +32,21 @@ export function ApiKeyManagementCard({ initialKeys }: ApiKeyManagementCardProps)
   }, [initialKeys]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>AI Provider API Keys</CardTitle>
-        <CardDescription>
-          Set platform-wide API keys for AI providers. These are used when no
-          instructor-level key is configured for a class.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="bg-white p-6 rounded-[24px] border border-surface-container shadow-sm flex flex-col">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface">
+          <Key className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-bold text-base text-on-surface">AI Provider API Keys</h3>
+          <p className="text-xs text-secondary">Configure platform-wide provider keys.</p>
+        </div>
+      </div>
+      <div className="space-y-5 flex-1">
         {keys.map((entry) => (
           <ApiKeyFormRow key={entry.key} entry={entry} onUpdate={refresh} />
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
