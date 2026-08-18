@@ -15,8 +15,8 @@ export function DashboardHeader({ title, description }: DashboardHeaderProps) {
   const { collapsed, toggleCollapsed, toggleMobileOpen } = useSidebarCollapse();
 
   return (
-    <header className="h-auto min-h-[100px] px-4 md:px-10 py-4 md:py-0 flex flex-wrap gap-y-2 justify-between items-center bg-white border-b border-surface-container shrink-0">
-      <div className="flex items-end gap-3 md:gap-6 min-w-0">
+    <header className="h-auto min-h-[100px] px-4 md:px-10 py-4 md:py-0 flex flex-col sm:flex-row gap-3 sm:gap-0 sm:justify-between sm:items-center bg-white border-b border-surface-container shrink-0">
+      <div className="flex items-center sm:items-end gap-3 md:gap-6 min-w-0">
         <Button
           variant="ghost"
           size="icon-sm"
@@ -53,12 +53,12 @@ export function DashboardHeader({ title, description }: DashboardHeaderProps) {
         <div className="flex flex-col min-w-0">
           <h1 className="text-xl md:text-2xl font-bold tracking-tight text-on-surface font-sans truncate">{title}</h1>
           {description && (
-            <p className="text-xs text-secondary mt-0.5 truncate">{description}</p>
+            <p className="hidden sm:block text-xs text-secondary mt-0.5 truncate">{description}</p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-3 md:gap-6 shrink-0">
+      <div className="flex items-center gap-3 md:gap-6 shrink-0 self-end sm:self-auto">
         <NotificationBell />
       </div>
     </header>
