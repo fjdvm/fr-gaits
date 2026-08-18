@@ -18,7 +18,7 @@ export function StudentClassworkTab({ assignments }: StudentClassworkTabProps) {
   }
 
   return (
-    <div className="max-w-3xl space-y-3">
+    <div className="max-w-3xl w-full space-y-3">
       {assignments.map((asm) => (
         <Link
           key={asm.id}

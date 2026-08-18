@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
 import { createPost, deletePost } from "@/app/actions/posts";
 import { PostCard } from "./post-card";
-import type { RosterStudent, StreamPostData } from "./types";
+import { useClassStreamRealtime } from "./use-class-stream-realtime";
+import type { RosterStudent, RosterInstructor, StreamPostData } from "./types";
 
 interface StreamTabProps {
   classId: string;
@@ -14,14 +14,24 @@ interface StreamTabProps {
   isInstructor: boolean;
   currentUserId?: string;
   roster?: RosterStudent[];
+  instructor?: RosterInstructor;
 }
 
-export function StreamTab({ classId, initialPosts, isInstructor, currentUserId, roster }: StreamTabProps) {
-  const router = useRouter();
+export function StreamTab({ classId, initialPosts, isInstructor, currentUserId, roster, instructor }: StreamTabProps) {
   const [posts, setPosts] = useState(initialPosts);
   const [body, setBody] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [isPosting, setIsPosting] = useState(false);
+
+  const handlePostInserted = useCallback((post: StreamPostData) => {
+    setPosts((prev) => (prev.some((p) => p.id === post.id) ? prev : [post, ...prev]));
+  }, []);
+
+  const handlePostDeleted = useCallback((postId: string) => {
+    setPosts((prev) => prev.filter((p) => p.id !== postId));
+  }, []);
+
+  useClassStreamRealtime(classId, handlePostInserted, handlePostDeleted);
 
   const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +42,6 @@ export function StreamTab({ classId, initialPosts, isInstructor, currentUserId, 
       if (result.success) {
         setBody("");
         setLinkUrl("");
-        router.refresh();
         toast.success("Announcement posted");
       } else {
         toast.error(result.error || "Failed to post announcement");
@@ -53,7 +62,7 @@ export function StreamTab({ classId, initialPosts, isInstructor, currentUserId, 
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl w-full">
       {isInstructor && (
         <form onSubmit={handlePost} className="bg-white border border-surface-container rounded-2xl p-5 space-y-3 shadow-sm">
           <textarea
@@ -95,6 +104,7 @@ export function StreamTab({ classId, initialPosts, isInstructor, currentUserId, 
               isInstructor={isInstructor}
               currentUserId={currentUserId}
               roster={roster}
+              instructor={instructor}
               onDeletePost={handleDeletePost}
             />
           ))}

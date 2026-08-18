@@ -21,4 +21,11 @@ export interface StreamPostData {
 export interface RosterStudent {
   id: string;
   email: string;
+  name: string | null;
+}
+
+export interface RosterInstructor {
+  id: string;
+  email: string;
+  name: string | null;
 }

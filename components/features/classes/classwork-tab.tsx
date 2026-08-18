@@ -33,7 +33,7 @@ export function ClassworkTab({ classId, className, assignments }: ClassworkTabPr
   }
 
   return (
-    <div className="space-y-4 max-w-3xl">
+    <div className="space-y-4 max-w-3xl w-full">
       <div className="flex justify-end">
         <button
           onClick={() => setShowCreateForm(true)}

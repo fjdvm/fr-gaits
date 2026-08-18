@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { createComment, deleteComment } from "@/app/actions/comments";
-import type { CommentData, RosterStudent, StreamPostData } from "./types";
+import { CommentFeed } from "./comment-feed";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { CommentData, RosterStudent, RosterInstructor, StreamPostData } from "./types";
 
 function toCommentData(comment: { id: string; authorId: string; body: string; createdAt: Date }): CommentData {
   return { id: comment.id, authorId: comment.authorId, body: comment.body, createdAt: comment.createdAt.toISOString() };
+}
+
+interface Thread {
+  key: string;
+  label: string;
+  visibility: "class" | "private";
+  targetStudentId?: string;
 }
 
 interface CommentThreadProps {
@@ -14,12 +29,40 @@ interface CommentThreadProps {
   isInstructor: boolean;
   currentUserId?: string;
   roster?: RosterStudent[];
+  instructor?: RosterInstructor;
 }
 
-export function CommentThread({ post, isInstructor, currentUserId, roster }: CommentThreadProps) {
+export function CommentThread({ post, isInstructor, currentUserId, roster, instructor }: CommentThreadProps) {
   const [classComments, setClassComments] = useState(post.classComments);
   const [privateThread, setPrivateThread] = useState(post.privateThread ?? []);
   const [privateThreadsByStudent, setPrivateThreadsByStudent] = useState(post.privateThreadsByStudent ?? {});
+
+  const threads: Thread[] = useMemo(() => {
+    if (!isInstructor) {
+      return [
+        { key: "class", label: "Class comment", visibility: "class" },
+        { key: "private", label: "Private to instructor", visibility: "private" },
+      ];
+    }
+    const studentThreads = (roster ?? []).map((s) => ({
+      key: `private:${s.id}`,
+      label: `Private · ${s.email}`,
+      visibility: "private" as const,
+      targetStudentId: s.id,
+    }));
+    return [{ key: "class", label: "Class comment", visibility: "class" as const }, ...studentThreads];
+  }, [isInstructor, roster]);
+
+  const [selectedKey, setSelectedKey] = useState(threads[0]?.key ?? "class");
+  const selected = threads.find((t) => t.key === selectedKey) ?? threads[0];
+
+  const activeComments = !selected
+    ? []
+    : selected.visibility === "class"
+      ? classComments
+      : isInstructor
+        ? privateThreadsByStudent[selected.targetStudentId!] ?? []
+        : privateThread;
 
   const handleDelete = async (commentId: string, remove: () => void) => {
     const result = await deleteComment(commentId);
@@ -30,134 +73,65 @@ export function CommentThread({ post, isInstructor, currentUserId, roster }: Com
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <CommentSection
-        title="Class comments"
-        comments={classComments}
-        currentUserId={currentUserId}
-        isInstructor={isInstructor}
-        onDelete={(id) => handleDelete(id, () => setClassComments((prev) => prev.filter((c) => c.id !== id)))}
-        onSubmit={async (body) => {
-          const result = await createComment(post.id, body, "class");
-          if (result.success && result.comment) {
-            setClassComments((prev) => [...prev, toCommentData(result.comment!)]);
-          } else {
-            toast.error(result.error || "Failed to post comment");
-          }
-        }}
-      />
+  const handleDeleteActive = (commentId: string) => {
+    if (!selected) return;
+    if (selected.visibility === "class") {
+      handleDelete(commentId, () => setClassComments((prev) => prev.filter((c) => c.id !== commentId)));
+    } else if (isInstructor) {
+      const studentId = selected.targetStudentId!;
+      handleDelete(commentId, () =>
+        setPrivateThreadsByStudent((prev) => ({
+          ...prev,
+          [studentId]: (prev[studentId] ?? []).filter((c) => c.id !== commentId),
+        }))
+      );
+    } else {
+      handleDelete(commentId, () => setPrivateThread((prev) => prev.filter((c) => c.id !== commentId)));
+    }
+  };
 
-      {isInstructor ? (
-        Object.entries(privateThreadsByStudent).map(([studentId, comments]) => {
-          const studentEmail = roster?.find((s) => s.id === studentId)?.email;
-          return (
-            <CommentSection
-              key={studentId}
-              title={studentEmail ? `Private thread with ${studentEmail}` : "Private thread"}
-              comments={comments}
-              currentUserId={currentUserId}
-              isInstructor={isInstructor}
-              onDelete={(id) =>
-                handleDelete(id, () =>
-                  setPrivateThreadsByStudent((prev) => ({
-                    ...prev,
-                    [studentId]: prev[studentId].filter((c) => c.id !== id),
-                  }))
-                )
-              }
-              onSubmit={async (body) => {
-                const result = await createComment(post.id, body, "private", studentId);
-                if (result.success && result.comment) {
-                  const mapped = toCommentData(result.comment);
-                  setPrivateThreadsByStudent((prev) => ({
-                    ...prev,
-                    [studentId]: [...(prev[studentId] || []), mapped],
-                  }));
-                } else {
-                  toast.error(result.error || "Failed to post reply");
-                }
-              }}
-            />
-          );
-        })
-      ) : (
-        <CommentSection
-          title="Private comment to instructor"
-          comments={privateThread}
-          currentUserId={currentUserId}
-          isInstructor={isInstructor}
-          onDelete={(id) => handleDelete(id, () => setPrivateThread((prev) => prev.filter((c) => c.id !== id)))}
-          onSubmit={async (body) => {
-            const result = await createComment(post.id, body, "private");
-            if (result.success && result.comment) {
-              setPrivateThread((prev) => [...prev, toCommentData(result.comment!)]);
-            } else {
-              toast.error(result.error || "Failed to post comment");
-            }
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-function CommentSection({
-  title,
-  comments,
-  currentUserId,
-  isInstructor,
-  onDelete,
-  onSubmit,
-}: {
-  title: string;
-  comments: CommentData[];
-  currentUserId?: string;
-  isInstructor: boolean;
-  onDelete: (commentId: string) => void;
-  onSubmit: (body: string) => Promise<void>;
-}) {
-  const [input, setInput] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    setIsSubmitting(true);
-    await onSubmit(input.trim());
-    setInput("");
-    setIsSubmitting(false);
+  const handleSubmit = async (body: string) => {
+    if (!selected) return;
+    const result = await createComment(post.id, body, selected.visibility, selected.targetStudentId);
+    if (!result.success || !result.comment) {
+      toast.error(result.error || "Failed to post comment");
+      return;
+    }
+    const mapped = toCommentData(result.comment);
+    if (selected.visibility === "class") {
+      setClassComments((prev) => [...prev, mapped]);
+    } else if (isInstructor) {
+      const studentId = selected.targetStudentId!;
+      setPrivateThreadsByStudent((prev) => ({ ...prev, [studentId]: [...(prev[studentId] ?? []), mapped] }));
+    } else {
+      setPrivateThread((prev) => [...prev, mapped]);
+    }
   };
 
   return (
-    <div className="bg-surface-container-low rounded-xl p-3 space-y-2">
-      <p className="text-[9px] font-bold uppercase tracking-wider text-secondary">{title}</p>
-      {comments.map((c) => (
-        <div key={c.id} className="flex items-start justify-between gap-2 text-xs bg-white rounded-lg p-2 border border-surface-container">
-          <p className="text-on-surface">{c.body}</p>
-          {(c.authorId === currentUserId || isInstructor) && (
-            <button onClick={() => onDelete(c.id)} className="text-secondary hover:text-destructive transition-colors text-[10px] shrink-0 cursor-pointer">
-              delete
-            </button>
-          )}
-        </div>
-      ))}
-      <form onSubmit={handleSubmit} className="flex gap-2">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={isSubmitting}
-          placeholder="Write a comment..."
-          className="flex-1 bg-white border border-surface-container rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary-container"
-        />
-        <button
-          type="submit"
-          disabled={isSubmitting || !input.trim()}
-          className="px-3 py-1.5 bg-primary-container text-on-primary-container rounded-lg text-[10px] font-bold cursor-pointer disabled:opacity-50"
-        >
-          Send
-        </button>
-      </form>
+    <div>
+      <Select value={selectedKey} onValueChange={(value) => value && setSelectedKey(value)}>
+        <SelectTrigger className="w-full mb-3">
+          <SelectValue placeholder="Choose audience" />
+        </SelectTrigger>
+        <SelectContent>
+          {threads.map((t) => (
+            <SelectItem key={t.key} value={t.key}>
+              {t.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <CommentFeed
+        comments={activeComments}
+        currentUserId={currentUserId}
+        isInstructor={isInstructor}
+        roster={roster}
+        instructor={instructor}
+        onDelete={handleDeleteActive}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
