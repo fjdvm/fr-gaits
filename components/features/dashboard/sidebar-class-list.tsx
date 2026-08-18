@@ -17,9 +17,10 @@ interface SidebarClassListProps {
   role: "student" | "instructor" | "admin";
   classes: SidebarClass[];
   collapsed: boolean;
+  onNavigate?: () => void;
 }
 
-export function SidebarClassList({ role, classes, collapsed }: SidebarClassListProps) {
+export function SidebarClassList({ role, classes, collapsed, onNavigate }: SidebarClassListProps) {
   const pathname = usePathname();
   const [sectionOpen, setSectionOpen] = useState(true);
   const { handleArchiveToggle, handleLeave, handleDelete } = useClassMembershipActions();
@@ -55,6 +56,7 @@ export function SidebarClassList({ role, classes, collapsed }: SidebarClassListP
                 onArchiveToggle={handleArchiveToggle}
                 onLeave={handleLeave}
                 onDelete={handleDelete}
+                onNavigate={onNavigate}
               />
             ))
           )}
@@ -72,6 +74,7 @@ export function ClassLink({
   onArchiveToggle,
   onLeave,
   onDelete,
+  onNavigate,
   muted,
 }: {
   cls: SidebarClass;
@@ -81,6 +84,7 @@ export function ClassLink({
   onArchiveToggle?: (cls: SidebarClass) => void;
   onLeave?: (cls: SidebarClass) => void;
   onDelete?: (cls: SidebarClass) => void;
+  onNavigate?: () => void;
   muted?: boolean;
 }) {
   const isStudent = role !== "instructor";
@@ -90,6 +94,7 @@ export function ClassLink({
     <div className="flex items-center gap-1">
       <Link
         href={href}
+        onClick={onNavigate}
         className={`flex items-center gap-2 py-2 text-sm truncate transition-colors flex-1 min-w-0 ${
           isActive ? "font-bold text-on-surface" : muted ? "text-secondary/70 hover:text-on-surface" : "text-secondary hover:text-on-surface"
         }`}

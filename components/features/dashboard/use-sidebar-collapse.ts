@@ -12,12 +12,16 @@ function readStoredState(): boolean {
 interface SidebarCollapseContextValue {
   collapsed: boolean;
   toggleCollapsed: () => void;
+  mobileOpen: boolean;
+  setMobileOpen: (open: boolean) => void;
+  toggleMobileOpen: () => void;
 }
 
 export const SidebarCollapseContext = createContext<SidebarCollapseContextValue | null>(null);
 
 export function useSidebarCollapseState(): SidebarCollapseContextValue {
   const [collapsed, setCollapsed] = useState(readStoredState);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const toggleCollapsed = useCallback(() => {
     setCollapsed((prev) => {
@@ -27,7 +31,11 @@ export function useSidebarCollapseState(): SidebarCollapseContextValue {
     });
   }, []);
 
-  return { collapsed, toggleCollapsed };
+  const toggleMobileOpen = useCallback(() => {
+    setMobileOpen((prev) => !prev);
+  }, []);
+
+  return { collapsed, toggleCollapsed, mobileOpen, setMobileOpen, toggleMobileOpen };
 }
 
 export function useSidebarCollapse(): SidebarCollapseContextValue {

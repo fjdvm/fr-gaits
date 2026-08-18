@@ -31,6 +31,8 @@ interface AppSidebarProps {
   userEmail?: string;
   userName?: string | null;
   classes?: SidebarClass[];
+  forceExpanded?: boolean;
+  onNavigate?: () => void;
 }
 
 const studentMenuItems = [
@@ -50,10 +52,11 @@ const adminMenuItems = [
   { title: "Settings", url: "/dashboard/admin/settings", icon: Settings },
 ];
 
-export function AppSidebar({ role, userEmail, userName, classes = [] }: AppSidebarProps) {
+export function AppSidebar({ role, userEmail, userName, classes = [], forceExpanded, onNavigate }: AppSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { collapsed } = useSidebarCollapse();
+  const { collapsed: collapsedFromContext } = useSidebarCollapse();
+  const collapsed = forceExpanded ? false : collapsedFromContext;
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -89,8 +92,8 @@ export function AppSidebar({ role, userEmail, userName, classes = [] }: AppSideb
   return (
     <TooltipProvider>
       <aside
-        className={`bg-white h-full py-8 flex flex-col justify-between border-r border-surface-container shrink-0 transition-[width] duration-200 ease-linear ${
-          collapsed ? "w-20" : "w-64"
+        className={`bg-white h-full py-8 flex flex-col justify-between shrink-0 transition-[width] duration-200 ease-linear ${
+          forceExpanded ? "w-full" : `border-r border-surface-container ${collapsed ? "w-20" : "w-64"}`
         }`}
       >
         <div className="overflow-y-auto min-h-0 flex-1">
@@ -123,6 +126,7 @@ export function AppSidebar({ role, userEmail, userName, classes = [] }: AppSideb
                 <Link
                   key={item.title}
                   href={item.url}
+                  onClick={onNavigate}
                   className={`py-4 flex items-center gap-4 rounded-r-full mr-4 transition-colors group ${
                     collapsed ? "justify-center px-0 ml-4" : "px-8"
                   } ${
@@ -147,7 +151,7 @@ export function AppSidebar({ role, userEmail, userName, classes = [] }: AppSideb
             })}
           </nav>
 
-          <SidebarClassList role={role} classes={classes} collapsed={collapsed} />
+          <SidebarClassList role={role} classes={classes} collapsed={collapsed} onNavigate={onNavigate} />
         </div>
 
         <div className={`mt-auto flex flex-col gap-4 ${collapsed ? "px-3" : "px-6"}`}>

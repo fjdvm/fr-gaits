@@ -1,6 +1,6 @@
 "use client";
 
-import { User, PanelLeftIcon } from "lucide-react";
+import { User, PanelLeftIcon, MenuIcon } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -13,11 +13,22 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ title, description, children }: DashboardHeaderProps) {
-  const { collapsed, toggleCollapsed } = useSidebarCollapse();
+  const { collapsed, toggleCollapsed, toggleMobileOpen } = useSidebarCollapse();
 
   return (
-    <header className="h-[100px] px-6 md:px-10 flex justify-between items-center bg-white border-b border-surface-container shrink-0">
-      <div className="flex items-end gap-6">
+    <header className="h-auto min-h-[100px] px-4 md:px-10 py-4 md:py-0 flex flex-wrap gap-y-2 justify-between items-center bg-white border-b border-surface-container shrink-0">
+      <div className="flex items-end gap-3 md:gap-6 min-w-0">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={toggleMobileOpen}
+          aria-label="Open menu"
+          className="text-secondary hover:text-on-surface shrink-0 inline-flex md:hidden"
+        >
+          <MenuIcon />
+          <span className="sr-only">Open menu</span>
+        </Button>
+
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger
@@ -40,21 +51,21 @@ export function DashboardHeader({ title, description, children }: DashboardHeade
           </Tooltip>
         </TooltipProvider>
 
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-bold tracking-tight text-on-surface font-sans">{title}</h1>
+        <div className="flex flex-col min-w-0">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-on-surface font-sans truncate">{title}</h1>
           {description && (
-            <p className="text-xs text-secondary mt-0.5">{description}</p>
+            <p className="text-xs text-secondary mt-0.5 truncate">{description}</p>
           )}
         </div>
         {children}
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 md:gap-6 shrink-0">
         <NotificationBell />
 
         {/* User avatar placeholder */}
-        <div className="flex items-center gap-3 pl-6 border-l border-surface-container">
-          <div className="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center border border-surface-container">
+        <div className="flex items-center gap-3 pl-3 md:pl-6 border-l border-surface-container">
+          <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-surface-container-low flex items-center justify-center border border-surface-container">
             <User className="h-5 w-5 text-secondary" />
           </div>
         </div>

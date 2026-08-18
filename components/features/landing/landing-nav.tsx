@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { LandingMobileNav } from "./landing-mobile-nav";
 
 export function LandingNav() {
   return (
@@ -25,6 +26,8 @@ export function LandingNav() {
               Join now
             </Link>
           </div>
+
+          <LandingMobileNav />
         </div>
       </div>
     </header>
