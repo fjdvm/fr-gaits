@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+stitch_gaits_gamified_learning_platform(1)/
 
 # debug
 npm-debug.log*

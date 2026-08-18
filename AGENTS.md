@@ -16,7 +16,7 @@ export default function Home() {
 - git commit and push after every change and task
 - make github bot as contributor and reviewer
 - check also the acceptance criteria for the task and for each issue
-- Each file should have maximum of 200 lines of codes only, if it passes 200 lines of codes, it should then be broken down into smaller files. Separate the files in another directory from the main files that calls it.
+- Each file should have maximum of ~200 lines of codes only, if it passes 200 lines of codes, it should then be broken down into smaller files. Separate the files in another directory from the main files that calls it.
 - no unnecessary comments
 
 # Components
