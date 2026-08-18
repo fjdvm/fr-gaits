@@ -46,13 +46,21 @@ describe("submitFeedback", () => {
     expect(payload.labels).toContain("user-feedback");
   });
 
-  it("rejects an unauthenticated caller", async () => {
+  it("allows an unauthenticated caller to file an issue anonymously", async () => {
     mockUnauthenticated();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ html_url: "https://github.com/fjdvm/fr-gaits/issues/2", number: 2 }),
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
     const { submitFeedback } = await import("@/app/actions/feedback");
+    const result = await submitFeedback("Bug", "Description", "/");
 
-    const result = await submitFeedback("Bug", "Description", "/dashboard/student");
-
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    const [, options] = fetchMock.mock.calls[0];
+    const payload = JSON.parse(options.body);
+    expect(payload.body).toContain("anonymous");
   });
 
   it("rejects when title is missing", async () => {

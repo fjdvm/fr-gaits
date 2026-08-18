@@ -16,15 +16,20 @@ export async function submitFeedback(title: string, description: string, pageUrl
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Unauthorized: You must be logged in");
 
-    const dbUser = await prisma.user.findUnique({ where: { id: user.id }, select: { email: true, role: true } });
+    const dbUser = user
+      ? await prisma.user.findUnique({ where: { id: user.id }, select: { email: true, role: true } })
+      : null;
+
+    const reporterLine = dbUser
+      ? `Reported by: ${dbUser.email} (${dbUser.role})`
+      : "Reported by: anonymous (not logged in)";
 
     const body = [
       description.trim(),
       "",
       "---",
-      `Reported by: ${dbUser?.email ?? "unknown"} (${dbUser?.role ?? "unknown"})`,
+      reporterLine,
       `Page: ${pageUrl}`,
     ].join("\n");
 
