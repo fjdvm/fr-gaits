@@ -4,20 +4,23 @@ import { useState } from "react";
 import { Megaphone, BookOpen, Trash2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 import { CommentThread } from "./comment-thread";
-import type { RosterStudent, StreamPostData } from "./types";
+import { resolveAuthorDisplay } from "./comment-utils";
+import type { RosterStudent, RosterInstructor, StreamPostData } from "./types";
 
 interface PostCardProps {
   post: StreamPostData;
   isInstructor: boolean;
   currentUserId?: string;
   roster?: RosterStudent[];
+  instructor?: RosterInstructor;
   onDeletePost: (postId: string) => void;
 }
 
-export function PostCard({ post, isInstructor, currentUserId, roster, onDeletePost }: PostCardProps) {
+export function PostCard({ post, isInstructor, currentUserId, roster, instructor, onDeletePost }: PostCardProps) {
   const [showThreads, setShowThreads] = useState(false);
   const isAssignmentPost = post.type === "assignment_created";
   const canDelete = isInstructor && post.authorId === currentUserId;
+  const authorDisplay = resolveAuthorDisplay(post.authorId, currentUserId, instructor, roster);
 
   const handleDelete = () => {
     if (!window.confirm("Delete this post?")) return;
@@ -34,7 +37,13 @@ export function PostCard({ post, isInstructor, currentUserId, roster, onDeletePo
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm text-on-surface font-semibold whitespace-pre-wrap">{post.body}</p>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-on-surface">{authorDisplay.name}</p>
+              {authorDisplay.email && (
+                <p className="text-[10px] text-secondary -mt-0.5">{authorDisplay.email}</p>
+              )}
+              <p className="text-sm text-on-surface font-semibold whitespace-pre-wrap mt-1.5">{post.body}</p>
+            </div>
             {canDelete && (
               <button onClick={handleDelete} className="text-secondary hover:text-destructive transition-colors cursor-pointer shrink-0">
                 <Trash2 className="h-3.5 w-3.5" />
@@ -68,7 +77,7 @@ export function PostCard({ post, isInstructor, currentUserId, roster, onDeletePo
 
           {showThreads && (
             <div className="mt-3 pt-3 border-t border-surface-container">
-              <CommentThread post={post} isInstructor={isInstructor} currentUserId={currentUserId} roster={roster} />
+              <CommentThread post={post} isInstructor={isInstructor} currentUserId={currentUserId} roster={roster} instructor={instructor} />
             </div>
           )}
         </div>
