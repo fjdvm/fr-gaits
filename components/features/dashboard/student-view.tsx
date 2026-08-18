@@ -2,29 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { joinClass } from "@/app/actions/join-class";
 import { toast } from "sonner";
 import { DashboardHeader } from "./dashboard-header";
 import { StudentScheduleSidebar } from "./student-schedule-sidebar";
-import { School, BookOpen, ChevronRight } from "lucide-react";
-
-interface AssignmentInfo {
-  id: string;
-  title: string;
-  language: string;
-  dueDate: string;
-  status: string;
-}
-
-interface EnrolledClass {
-  id: string;
-  name: string;
-  joinCode: string;
-  instructorEmail: string;
-  enrolledAt: string;
-  assignments: AssignmentInfo[];
-}
+import { StudentClassCard, type EnrolledClass } from "./student-class-card";
+import { School } from "lucide-react";
 
 interface StudentViewProps {
   initialClasses: EnrolledClass[];
@@ -35,15 +18,14 @@ export function StudentView({ initialClasses }: StudentViewProps) {
   const [classes] = useState<EnrolledClass[]>(initialClasses);
   const [joinCode, setJoinCode] = useState("");
   const [isJoining, setIsJoining] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
-  // Extract all assignments for the schedule sidebar
-  const allAssignments = classes
-    .flatMap((c) =>
-      c.assignments.map((a) => ({
-        ...a,
-        className: c.name,
-      }))
-    )
+  const activeClasses = classes.filter((c) => !c.archived);
+  const archivedClasses = classes.filter((c) => c.archived);
+  const visibleClasses = showArchived ? archivedClasses : activeClasses;
+
+  const allAssignments = activeClasses
+    .flatMap((c) => c.assignments.map((a) => ({ ...a, className: c.name })))
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
     .slice(0, 4);
 
@@ -79,10 +61,9 @@ export function StudentView({ initialClasses }: StudentViewProps) {
         title="Student Courses"
         description="Solve assignments, earn experience points, and level up."
       />
-      <main className="flex-grow overflow-y-auto px-6 md:px-10 pb-10 pt-6 flex flex-col lg:flex-row gap-10">
-        {/* Left Column: Course Cards */}
+      <main className="flex-grow overflow-y-auto px-6 md:px-10 pb-10 pt-6 flex flex-col items-center">
+        <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-10">
         <div className="flex-grow flex flex-col gap-6 max-w-4xl">
-          {/* Join Class Banner/Card */}
           <div className="bg-surface-container-low border border-surface-container rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <h3 className="font-bold text-lg text-on-surface">Enroll in a Class</h3>
@@ -107,51 +88,44 @@ export function StudentView({ initialClasses }: StudentViewProps) {
             </form>
           </div>
 
-          {classes.length === 0 ? (
+          <div className="flex bg-surface-container-low p-1 rounded-xl border border-surface-container w-max">
+            <button
+              onClick={() => setShowArchived(false)}
+              className={`px-4 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                !showArchived ? "bg-white text-on-surface shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              Active ({activeClasses.length})
+            </button>
+            <button
+              onClick={() => setShowArchived(true)}
+              className={`px-4 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                showArchived ? "bg-white text-on-surface shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              Archived ({archivedClasses.length})
+            </button>
+          </div>
+
+          {visibleClasses.length === 0 ? (
             <div className="bg-white border border-surface-container rounded-3xl p-12 text-center flex flex-col items-center">
               <School className="h-12 w-12 text-secondary/30 mb-4" />
-              <h3 className="font-bold text-lg">Not enrolled in any classes</h3>
+              <h3 className="font-bold text-lg">{showArchived ? "No archived classes" : "Not enrolled in any classes"}</h3>
               <p className="text-xs text-secondary mt-1 max-w-sm">
-                Join a class using the code above to start solving assignments.
+                {showArchived
+                  ? "Classes you archive will show up here."
+                  : "Join a class using the code above to start solving assignments."}
               </p>
             </div>
           ) : (
-            classes.map((cls) => (
-              <Link
-                key={cls.id}
-                href={`/dashboard/student/classes/${cls.id}`}
-                className="bg-white border border-surface-container rounded-3xl p-6 flex flex-col sm:flex-row gap-6 hover:shadow-md transition-shadow group relative overflow-hidden"
-              >
-                {/* Visual Thumbnail */}
-                <div className="w-full sm:w-48 h-32 bg-surface-container-low rounded-2xl flex items-center justify-center shrink-0 overflow-hidden relative">
-                  <div className="absolute inset-0 bg-primary-container/5" />
-                  <School className="h-12 w-12 text-primary" />
-                </div>
-                {/* Content */}
-                <div className="flex-1 flex flex-col justify-between py-1 relative z-10">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold text-lg text-on-surface group-hover:text-primary transition-colors">{cls.name}</h3>
-                      <span className="text-xs font-mono font-bold px-2 py-0.5 bg-surface-container rounded text-secondary">
-                        Code: {cls.joinCode}
-                      </span>
-                    </div>
-                    <p className="text-xs text-secondary">
-                      Instructor: <span className="font-semibold">{cls.instructorEmail}</span>
-                    </p>
-                  </div>
-                  <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-primary">
-                    <BookOpen className="h-4 w-4" />
-                    {cls.assignments.length === 0 ? "No assignments yet" : `${cls.assignments.length} assignment${cls.assignments.length === 1 ? "" : "s"}`}
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </div>
-                </div>
-              </Link>
+            visibleClasses.map((cls) => (
+              <StudentClassCard key={cls.id} cls={cls} />
             ))
           )}
         </div>
 
         <StudentScheduleSidebar upcomingAssignments={allAssignments} />
+        </div>
       </main>
     </>
   );

@@ -13,17 +13,20 @@ interface InstructorClass {
   joinCode: string;
   studentCount: number;
   createdAt: string;
+  archived: boolean;
 }
 
 interface ClassesListProps {
   initialClasses: InstructorClass[];
+  archivedClasses: InstructorClass[];
 }
 
-export function ClassesList({ initialClasses }: ClassesListProps) {
+export function ClassesList({ initialClasses, archivedClasses }: ClassesListProps) {
   const router = useRouter();
   const [classes] = useState<InstructorClass[]>(initialClasses);
   const [className, setClassName] = useState("");
   const [isCreatingClass, setIsCreatingClass] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
   const handleCreateClass = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +59,8 @@ export function ClassesList({ initialClasses }: ClassesListProps) {
     toast.success("Join code copied to clipboard!");
   };
 
+  const visibleClasses = showArchived ? archivedClasses : classes;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -79,17 +84,38 @@ export function ClassesList({ initialClasses }: ClassesListProps) {
         </form>
       </div>
 
-      {classes.length === 0 ? (
+      <div className="flex bg-surface-container-low p-1 rounded-xl border border-surface-container w-max">
+        <button
+          onClick={() => setShowArchived(false)}
+          className={`px-4 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+            !showArchived ? "bg-white text-on-surface shadow-sm" : "text-secondary hover:text-on-surface"
+          }`}
+        >
+          Active ({classes.length})
+        </button>
+        <button
+          onClick={() => setShowArchived(true)}
+          className={`px-4 py-1.5 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+            showArchived ? "bg-white text-on-surface shadow-sm" : "text-secondary hover:text-on-surface"
+          }`}
+        >
+          Archived ({archivedClasses.length})
+        </button>
+      </div>
+
+      {visibleClasses.length === 0 ? (
         <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center">
           <School className="h-12 w-12 text-secondary/30 mb-4" />
-          <h3 className="font-bold text-lg">No classes created</h3>
+          <h3 className="font-bold text-lg">{showArchived ? "No archived classes" : "No classes created"}</h3>
           <p className="text-xs text-secondary mt-1 max-w-sm">
-            Use the form to create your first class and get a join code for students.
+            {showArchived
+              ? "Classes you archive will show up here."
+              : "Use the form to create your first class and get a join code for students."}
           </p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {classes.map((cls) => (
+          {visibleClasses.map((cls) => (
             <Link
               key={cls.id}
               href={`/dashboard/instructor/classes/${cls.id}`}
@@ -100,9 +126,11 @@ export function ClassesList({ initialClasses }: ClassesListProps) {
                 <div className="bg-primary-container/10 p-3 rounded-xl">
                   <School className="h-6 w-6 text-primary" />
                 </div>
-                <span className="bg-surface-container-low text-secondary px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-surface-container">
-                  Active
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="bg-surface-container-low text-secondary px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-surface-container">
+                    {cls.archived ? "Archived" : "Active"}
+                  </span>
+                </div>
               </div>
               <div className="mb-4 relative z-10">
                 <h4 className="font-bold text-base text-on-surface mb-1 group-hover:text-primary transition-colors">{cls.name}</h4>
