@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { validatePasswordStrength } from "@/lib/password-policy";
 import { toast } from "sonner";
 import { AuthBrandingPane, AuthMobileLogo } from "./auth-branding-pane";
 import { PasswordInput } from "./password-input";
@@ -31,8 +32,9 @@ export function ResetPasswordView() {
       toast.error("Please fill in all fields");
       return;
     }
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    const passwordCheck = validatePasswordStrength(password);
+    if (!passwordCheck.valid) {
+      toast.error(passwordCheck.error);
       return;
     }
     if (password !== confirmPassword) {
@@ -90,6 +92,9 @@ export function ResetPasswordView() {
                       required
                       placeholder="••••••••"
                     />
+                    <p className="text-[11px] text-secondary">
+                      At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
