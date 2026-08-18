@@ -18,8 +18,8 @@ describe("getClassRoster", () => {
 
     await prisma.user.createMany({
       data: [
-        { id: instructorId, email: `instructor-${instructorId}@test.com`, role: "instructor" },
-        { id: studentId, email: `student-${studentId}@test.com`, role: "student" },
+        { id: instructorId, email: `instructor-${instructorId}@test.com`, name: "Ivy Instructor", role: "instructor" },
+        { id: studentId, email: `student-${studentId}@test.com`, name: "Sam Student", role: "student" },
         { id: outsiderInstructorId, email: `outsider-instr-${outsiderInstructorId}@test.com`, role: "instructor" },
         { id: outsiderStudentId, email: `outsider-student-${outsiderStudentId}@test.com`, role: "student" },
       ],
@@ -50,6 +50,9 @@ describe("getClassRoster", () => {
     expect(result.success).toBe(true);
     expect(result.students).toHaveLength(1);
     expect(result.students![0].id).toBe(studentId);
+    expect(result.students![0].name).toBe("Sam Student");
+    expect(result.instructor?.id).toBe(instructorId);
+    expect(result.instructor?.name).toBe("Ivy Instructor");
   });
 
   it("lets an enrolled student fetch the roster", async () => {

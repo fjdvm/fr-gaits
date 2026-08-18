@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { getClassStream } from "@/app/actions/class-stream";
 import { getClassRoster } from "@/app/actions/class-roster";
+import { getClassLeaderboardTabData } from "@/app/actions/class-leaderboard";
 import { InstructorClassView } from "@/components/features/classes/instructor-class-view";
 
 interface PageProps {
@@ -21,7 +22,7 @@ export default async function InstructorClassDetailPage({ params }: PageProps) {
     redirect("/dashboard/instructor");
   }
 
-  const [streamResult, rosterResult, assignmentLinks] = await Promise.all([
+  const [streamResult, rosterResult, assignmentLinks, leaderboardResult] = await Promise.all([
     getClassStream(id),
     getClassRoster(id),
     prisma.assignmentClass.findMany({
@@ -33,6 +34,7 @@ export default async function InstructorClassDetailPage({ params }: PageProps) {
       },
       orderBy: { assignment: { createdAt: "desc" } },
     }),
+    getClassLeaderboardTabData(id),
   ]);
 
   const assignments = assignmentLinks.map((link) => ({
@@ -53,6 +55,9 @@ export default async function InstructorClassDetailPage({ params }: PageProps) {
       currentUserId={user.id}
       assignments={assignments}
       roster={rosterResult.success ? rosterResult.students! : []}
+      instructor={rosterResult.success ? rosterResult.instructor! : { id: cls.instructorId, email: "", name: null }}
+      leaderboard={leaderboardResult.success ? leaderboardResult.leaderboard! : []}
+      myRank={leaderboardResult.success ? leaderboardResult.myRank : 0}
     />
   );
 }

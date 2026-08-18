@@ -19,7 +19,7 @@ export default async function DashboardLayout({
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { role: true, email: true },
+    select: { role: true, email: true, name: true },
   });
 
   if (!dbUser) {
@@ -28,8 +28,25 @@ export default async function DashboardLayout({
 
   const role = dbUser.role as "student" | "instructor" | "admin";
 
+  let sidebarClasses: { id: string; name: string; archived: boolean }[] = [];
+  if (role === "instructor") {
+    const classes = await prisma.class.findMany({
+      where: { instructorId: user.id },
+      select: { id: true, name: true, archived: true },
+      orderBy: { createdAt: "desc" },
+    });
+    sidebarClasses = classes;
+  } else if (role === "student") {
+    const enrollments = await prisma.enrollment.findMany({
+      where: { studentId: user.id },
+      select: { archived: true, class: { select: { id: true, name: true } } },
+      orderBy: { enrolledAt: "desc" },
+    });
+    sidebarClasses = enrollments.map((e) => ({ id: e.class.id, name: e.class.name, archived: e.archived }));
+  }
+
   return (
-    <DashboardShell role={role} userEmail={dbUser.email}>
+    <DashboardShell role={role} userEmail={dbUser.email} userName={dbUser.name} classes={sidebarClasses}>
       {children}
     </DashboardShell>
   );

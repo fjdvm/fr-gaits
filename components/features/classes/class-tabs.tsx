@@ -1,6 +1,6 @@
-import { MessageSquare, BookOpen, Users } from "lucide-react";
+import { MessageSquare, BookOpen, Users, Trophy } from "lucide-react";
 
-export type ClassTab = "stream" | "classwork" | "people";
+export type ClassTab = "stream" | "classwork" | "people" | "leaderboard";
 
 interface ClassTabsProps {
   activeTab: ClassTab;
@@ -13,6 +13,7 @@ export function ClassTabs({ activeTab, onChange }: ClassTabsProps) {
       <TabButton active={activeTab === "stream"} onClick={() => onChange("stream")} icon={MessageSquare} label="Stream" />
       <TabButton active={activeTab === "classwork"} onClick={() => onChange("classwork")} icon={BookOpen} label="Classwork" />
       <TabButton active={activeTab === "people"} onClick={() => onChange("people")} icon={Users} label="People" />
+      <TabButton active={activeTab === "leaderboard"} onClick={() => onChange("leaderboard")} icon={Trophy} label="Leaderboard" />
     </div>
   );
 }
