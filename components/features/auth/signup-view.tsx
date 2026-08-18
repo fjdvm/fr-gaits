@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { AuthBrandingPane, AuthMobileLogo } from "./auth-branding-pane";
 import { RoleSelector } from "./role-selector";
-import { PasswordInput } from "./password-input";
+import { SignupFormFields, SignupLegalNotice } from "./signup-form-fields";
 import { SignupConfirmationSent } from "./signup-confirmation-sent";
 
 export function SignupView() {
@@ -117,64 +117,17 @@ export function SignupView() {
             <form onSubmit={handleSignup} className="space-y-6 flex-grow flex flex-col">
               <RoleSelector role={role} isLoading={isLoading} onRoleChange={setRole} />
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  disabled={isLoading}
-                  required
-                  className="w-full bg-surface-container-low rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container text-sm text-on-surface placeholder:text-outline-variant transition-shadow border border-transparent"
-                  placeholder="Ada Lovelace"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  required
-                  className="w-full bg-surface-container-low rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container text-sm text-on-surface placeholder:text-outline-variant transition-shadow border border-transparent"
-                  placeholder="ada@academy.edu"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
-                  Password
-                </label>
-                <PasswordInput
-                  value={password}
-                  onChange={setPassword}
-                  disabled={isLoading}
-                  required
-                  placeholder="••••••••"
-                />
-                <p className="text-[11px] text-secondary">
-                  At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
-                  Confirm Password
-                </label>
-                <PasswordInput
-                  value={confirmPassword}
-                  onChange={setConfirmPassword}
-                  disabled={isLoading}
-                  required
-                  placeholder="••••••••"
-                />
-              </div>
+              <SignupFormFields
+                name={name}
+                onNameChange={setName}
+                email={email}
+                onEmailChange={setEmail}
+                password={password}
+                onPasswordChange={setPassword}
+                confirmPassword={confirmPassword}
+                onConfirmPasswordChange={setConfirmPassword}
+                isLoading={isLoading}
+              />
 
               <div className="mt-auto pt-6">
                 <button
@@ -184,17 +137,7 @@ export function SignupView() {
                 >
                   {isLoading ? "Creating account..." : "Create Account"}
                 </button>
-                <p className="text-center mt-4 text-xs text-secondary">
-                  By joining, you agree to our{" "}
-                  <Link className="text-primary hover:underline" href="/terms">
-                    Terms of Service
-                  </Link>
-                  {" "}and{" "}
-                  <Link className="text-primary hover:underline" href="/privacy">
-                    Privacy Policy
-                  </Link>
-                  .
-                </p>
+                <SignupLegalNotice />
               </div>
             </form>
             </>

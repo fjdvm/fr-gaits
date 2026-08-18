@@ -1,14 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { ArchiveX } from "lucide-react";
-import { archiveClass, unarchiveClass } from "@/app/actions/archive-class";
-import { archiveEnrollment, unarchiveEnrollment } from "@/app/actions/archive-enrollment";
-import { leaveClass } from "@/app/actions/leave-class";
-import { deleteClass } from "@/app/actions/delete-class";
 import { DashboardHeader } from "./dashboard-header";
 import { ClassLink } from "./sidebar-class-list";
+import { useClassMembershipActions } from "./use-class-membership-actions";
 
 interface ArchivedClass {
   id: string;
@@ -23,62 +18,27 @@ interface ArchiveViewProps {
 }
 
 export function ArchiveView({ role, classes }: ArchiveViewProps) {
-  const router = useRouter();
   const basePath = role === "instructor" ? "/dashboard/instructor/classes" : "/dashboard/student/classes";
-
-  const handleRestore = async (cls: ArchivedClass) => {
-    const result = role === "instructor" ? await unarchiveClass(cls.id) : await unarchiveEnrollment(cls.id);
-    if (result.success) {
-      toast.success("Class restored");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to restore class");
-    }
-  };
-
-  const handleArchiveToggle = async (cls: ArchivedClass) => {
-    if (cls.archived) {
-      await handleRestore(cls);
-      return;
-    }
-    const result = role === "instructor" ? await archiveClass(cls.id) : await archiveEnrollment(cls.id);
-    if (result.success) {
-      toast.success("Class archived");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to archive class");
-    }
-  };
-
-  const handleLeave = async (cls: ArchivedClass) => {
-    const result = await leaveClass(cls.id);
-    if (result.success) {
-      toast.success("You left the class");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to leave class");
-    }
-  };
-
-  const handleDelete = async (cls: ArchivedClass) => {
-    const result = await deleteClass(cls.id);
-    if (result.success) {
-      toast.success("Class deleted");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to delete class");
-    }
-  };
+  const { handleArchiveToggle, handleLeave, handleDelete } = useClassMembershipActions();
 
   return (
     <>
-      <DashboardHeader title="Archive" description="Classes you've archived. Restore one to bring it back to your active list." />
+      <DashboardHeader
+        title="Archive"
+        description={
+          role === "instructor"
+            ? "Classes you've archived. Restore one to bring it back to your active list."
+            : "Classes your instructor has archived. Leave one if you no longer need it."
+        }
+      />
       <main className="flex-grow overflow-y-auto p-6 md:p-10 flex flex-col items-center">
         {classes.length === 0 ? (
           <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center max-w-3xl w-full">
             <ArchiveX className="h-12 w-12 text-secondary/30 mb-4" />
             <h3 className="font-bold text-lg">No archived classes</h3>
-            <p className="text-xs text-secondary mt-1">Classes you archive will show up here.</p>
+            <p className="text-xs text-secondary mt-1">
+              {role === "instructor" ? "Classes you archive will show up here." : "Classes your instructor archives will show up here."}
+            </p>
           </div>
         ) : (
           <div className="max-w-3xl w-full bg-white border border-surface-container rounded-[24px] p-4">
@@ -89,9 +49,9 @@ export function ArchiveView({ role, classes }: ArchiveViewProps) {
                 role={role}
                 href={`${basePath}/${cls.id}`}
                 isActive={false}
-                onArchiveToggle={handleArchiveToggle}
-                onLeave={handleLeave}
-                onDelete={handleDelete}
+                onArchiveToggle={role === "instructor" ? handleArchiveToggle : undefined}
+                onLeave={role === "student" ? handleLeave : undefined}
+                onDelete={role === "instructor" ? handleDelete : undefined}
                 muted
               />
             ))}

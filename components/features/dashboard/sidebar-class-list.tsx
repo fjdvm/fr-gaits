@@ -1,15 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { toast } from "sonner";
 import { ChevronDown, GraduationCap, Archive, ArchiveRestore, LogOut, Trash2 } from "lucide-react";
-import { archiveClass, unarchiveClass } from "@/app/actions/archive-class";
-import { archiveEnrollment, unarchiveEnrollment } from "@/app/actions/archive-enrollment";
-import { leaveClass } from "@/app/actions/leave-class";
-import { deleteClass } from "@/app/actions/delete-class";
+import { useClassMembershipActions } from "./use-class-membership-actions";
 
 interface SidebarClass {
   id: string;
@@ -25,53 +20,15 @@ interface SidebarClassListProps {
 }
 
 export function SidebarClassList({ role, classes, collapsed }: SidebarClassListProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const [sectionOpen, setSectionOpen] = useState(true);
+  const { handleArchiveToggle, handleLeave, handleDelete } = useClassMembershipActions();
 
   if (role === "admin" || collapsed) return null;
 
   const basePath = role === "instructor" ? "/dashboard/instructor/classes" : "/dashboard/student/classes";
   const sectionLabel = role === "instructor" ? "Teaching" : "Enrolled";
   const active = classes.filter((c) => !c.archived);
-
-  const handleArchiveToggle = async (cls: SidebarClass) => {
-    const result =
-      role === "instructor"
-        ? cls.archived
-          ? await unarchiveClass(cls.id)
-          : await archiveClass(cls.id)
-        : cls.archived
-          ? await unarchiveEnrollment(cls.id)
-          : await archiveEnrollment(cls.id);
-
-    if (result.success) {
-      toast.success(cls.archived ? "Class restored" : "Class archived");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to update class");
-    }
-  };
-
-  const handleLeave = async (cls: SidebarClass) => {
-    const result = await leaveClass(cls.id);
-    if (result.success) {
-      toast.success("You left the class");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to leave class");
-    }
-  };
-
-  const handleDelete = async (cls: SidebarClass) => {
-    const result = await deleteClass(cls.id);
-    if (result.success) {
-      toast.success("Class deleted");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to delete class");
-    }
-  };
 
   return (
     <div className="px-8 mt-8">
@@ -121,7 +78,7 @@ export function ClassLink({
   role?: "student" | "instructor" | "admin";
   href: string;
   isActive: boolean;
-  onArchiveToggle: (cls: SidebarClass) => void;
+  onArchiveToggle?: (cls: SidebarClass) => void;
   onLeave?: (cls: SidebarClass) => void;
   onDelete?: (cls: SidebarClass) => void;
   muted?: boolean;
@@ -146,7 +103,7 @@ export function ClassLink({
         )}
       </Link>
 
-      {!instructorArchived && (
+      {!isStudent && onArchiveToggle && (
         <button
           onClick={(e) => {
             e.preventDefault();

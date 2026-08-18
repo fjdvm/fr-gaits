@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { School, BookOpen, ChevronRight, LogOut } from "lucide-react";
-import { leaveClass } from "@/app/actions/leave-class";
+import { useClassMembershipActions } from "./use-class-membership-actions";
 
 export interface EnrolledClass {
   id: string;
@@ -22,19 +20,13 @@ interface StudentClassCardProps {
 }
 
 export function StudentClassCard({ cls }: StudentClassCardProps) {
-  const router = useRouter();
+  const { handleLeave } = useClassMembershipActions();
 
-  const handleLeave = async (e: React.MouseEvent) => {
+  const onLeave = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!window.confirm(`Leave "${cls.name}"? You'll need the join code to enroll again.`)) return;
-    const result = await leaveClass(cls.id);
-    if (result.success) {
-      toast.success("You left the class");
-      router.refresh();
-    } else {
-      toast.error(result.error || "Failed to leave class");
-    }
+    handleLeave(cls);
   };
 
   return (
@@ -72,7 +64,7 @@ export function StudentClassCard({ cls }: StudentClassCardProps) {
             <ChevronRight className="h-3.5 w-3.5" />
           </div>
           <button
-            onClick={handleLeave}
+            onClick={onLeave}
             className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-red-600 transition-colors cursor-pointer"
           >
             <LogOut className="h-3.5 w-3.5" />
