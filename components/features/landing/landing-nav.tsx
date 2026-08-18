@@ -9,7 +9,7 @@ export function LandingNav() {
           <Image src="/logo.png" alt="GAITS" width={2172} height={724} className="h-9 w-auto" priority />
 
           <nav className="hidden md:flex space-x-8">
-            <a className="text-sm font-medium text-on-surface hover:text-primary transition-colors" href="/">Home</a>
+            <Link className="text-sm font-medium text-on-surface hover:text-primary transition-colors" href="/">Home</Link>
             <a className="text-sm font-medium text-secondary hover:text-primary transition-colors" href="#problem">About</a>
             <a className="text-sm font-medium text-secondary hover:text-primary transition-colors" href="#features">Feature</a>
           </nav>
