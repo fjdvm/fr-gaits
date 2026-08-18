@@ -12,6 +12,7 @@ interface InstructorClass {
   joinCode: string;
   studentCount: number;
   createdAt: string;
+  archived: boolean;
 }
 
 interface InstructorAssignment {
@@ -40,39 +41,43 @@ export function InstructorView({ initialClasses, initialAssignments }: Instructo
         title="Instructor Panel"
         description="Create and manage classes, set coding assignments, and configure AI tutor parameters."
       />
-      <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-8">
-        <div className="flex bg-surface-container-low p-1.5 rounded-2xl border border-surface-container w-max">
-          <button
-            onClick={() => { setActiveTab("classes"); setShowCreateAssignment(false); }}
-            className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
-              activeTab === "classes" ? "bg-primary text-white shadow-sm" : "text-secondary hover:text-on-surface"
-            }`}
-          >
-            Classes ({initialClasses.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("assignments")}
-            className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
-              activeTab === "assignments" ? "bg-primary text-white shadow-sm" : "text-secondary hover:text-on-surface"
-            }`}
-          >
-            Assignments ({initialAssignments.length})
-          </button>
-        </div>
+      <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-8 flex flex-col items-center">
+        <div className="w-full max-w-5xl space-y-8">
+          <div className="flex bg-surface-container-low p-1.5 rounded-2xl border border-surface-container w-max">
+            <button
+              onClick={() => { setActiveTab("classes"); setShowCreateAssignment(false); }}
+              className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+                activeTab === "classes" ? "bg-primary text-white shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              Classes ({initialClasses.filter((c) => !c.archived).length})
+            </button>
+            <button
+              onClick={() => setActiveTab("assignments")}
+              className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+                activeTab === "assignments" ? "bg-primary text-white shadow-sm" : "text-secondary hover:text-on-surface"
+              }`}
+            >
+              Assignments ({initialAssignments.length})
+            </button>
+          </div>
 
-        <div className="pt-2">
-          {activeTab === "classes" && <ClassesList initialClasses={initialClasses} />}
+          <div className="pt-2">
+            {activeTab === "classes" && (
+              <ClassesList initialClasses={initialClasses.filter((c) => !c.archived)} archivedClasses={initialClasses.filter((c) => c.archived)} />
+            )}
 
-          {activeTab === "assignments" && !showCreateAssignment && (
-            <AssignmentsList assignments={initialAssignments} onCreateClick={() => setShowCreateAssignment(true)} />
-          )}
+            {activeTab === "assignments" && !showCreateAssignment && (
+              <AssignmentsList assignments={initialAssignments} onCreateClick={() => setShowCreateAssignment(true)} />
+            )}
 
-          {activeTab === "assignments" && showCreateAssignment && (
-            <CreateAssignmentForm
-              classes={initialClasses.map(c => ({ id: c.id, name: c.name }))}
-              onCancel={() => setShowCreateAssignment(false)}
-            />
-          )}
+            {activeTab === "assignments" && showCreateAssignment && (
+              <CreateAssignmentForm
+                classes={initialClasses.filter((c) => !c.archived).map(c => ({ id: c.id, name: c.name }))}
+                onCancel={() => setShowCreateAssignment(false)}
+              />
+            )}
+          </div>
         </div>
       </main>
     </>

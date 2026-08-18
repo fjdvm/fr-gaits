@@ -47,7 +47,8 @@ export function AdminView({ initialPendingInstructors }: AdminViewProps) {
         title="Admin Dashboard"
         description="Verify instructor registrations and manage platform settings."
       />
-      <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-8">
+      <main className="flex-grow overflow-y-auto p-6 md:p-10 flex flex-col items-center">
+        <div className="w-full max-w-6xl space-y-8">
         {/* Bento Grid Metrics */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-[24px] p-6 border border-surface-container shadow-sm flex flex-col relative overflow-hidden group">
@@ -166,6 +167,7 @@ export function AdminView({ initialPendingInstructors }: AdminViewProps) {
               </div>
             </div>
           </aside>
+        </div>
         </div>
       </main>
     </>

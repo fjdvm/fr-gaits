@@ -39,8 +39,8 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
   return (
     <>
       <DashboardHeader title={`Submissions: ${assignmentTitle}`} description="Review student submissions and performance metrics." />
-      <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-8">
-        
+      <main className="flex-grow overflow-y-auto p-6 md:p-10 flex flex-col items-center">
+        <div className="w-full max-w-6xl space-y-8">
         {/* Summary Bento Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-[24px] p-6 border border-surface-container shadow-sm flex flex-col justify-between group">
@@ -180,6 +180,7 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
               );
             })}
           </div>
+        </div>
         </div>
       </main>
     </>
