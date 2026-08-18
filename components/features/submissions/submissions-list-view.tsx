@@ -59,11 +59,12 @@ export function SubmissionsListView({ assignments, classes }: SubmissionsListVie
 
   return (
     <>
-      <DashboardHeader title="Student Submissions" description="View scores and submission details for your assignments.">
-        <ClassFilter classes={classes} selectedClassId={selectedClassId} onChange={setSelectedClassId} />
-      </DashboardHeader>
+      <DashboardHeader title="Student Submissions" description="View scores and submission details for your assignments." />
       <main className="flex-grow overflow-y-auto p-6 md:p-10 flex flex-col items-center">
         <div className="w-full max-w-5xl space-y-10">
+          <div className="flex justify-end">
+            <ClassFilter classes={classes} selectedClassId={selectedClassId} onChange={setSelectedClassId} />
+          </div>
           {groups.length === 0 ? (
             <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center">
               <FileCode className="h-12 w-12 text-secondary/30 mb-4" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, PanelLeftIcon, MenuIcon } from "lucide-react";
+import { PanelLeftIcon, MenuIcon } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -9,10 +9,9 @@ import { useSidebarCollapse } from "./use-sidebar-collapse";
 interface DashboardHeaderProps {
   title: string;
   description?: string;
-  children?: React.ReactNode;
 }
 
-export function DashboardHeader({ title, description, children }: DashboardHeaderProps) {
+export function DashboardHeader({ title, description }: DashboardHeaderProps) {
   const { collapsed, toggleCollapsed, toggleMobileOpen } = useSidebarCollapse();
 
   return (
@@ -57,18 +56,10 @@ export function DashboardHeader({ title, description, children }: DashboardHeade
             <p className="text-xs text-secondary mt-0.5 truncate">{description}</p>
           )}
         </div>
-        {children}
       </div>
 
       <div className="flex items-center gap-3 md:gap-6 shrink-0">
         <NotificationBell />
-
-        {/* User avatar placeholder */}
-        <div className="flex items-center gap-3 pl-3 md:pl-6 border-l border-surface-container">
-          <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-surface-container-low flex items-center justify-center border border-surface-container">
-            <User className="h-5 w-5 text-secondary" />
-          </div>
-        </div>
       </div>
     </header>
   );

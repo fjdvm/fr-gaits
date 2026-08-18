@@ -35,17 +35,18 @@ export function TodoView({ todos, classes }: TodoViewProps) {
 
   return (
     <>
-      <DashboardHeader title="To-do" description="Assignments you haven't submitted yet, across all your classes.">
-        {classes.length > 0 && (
-          <ClassFilter
-            classes={classes}
-            selectedClassId={selectedClassId}
-            onChange={setSelectedClassId}
-            label="Filter to-do by class"
-          />
-        )}
-      </DashboardHeader>
+      <DashboardHeader title="To-do" description="Assignments you haven't submitted yet, across all your classes." />
       <main className="flex-grow overflow-y-auto p-6 md:p-10 flex flex-col items-center">
+        {classes.length > 0 && (
+          <div className="max-w-3xl w-full flex justify-end mb-4">
+            <ClassFilter
+              classes={classes}
+              selectedClassId={selectedClassId}
+              onChange={setSelectedClassId}
+              label="Filter to-do by class"
+            />
+          </div>
+        )}
         {visibleTodos.length === 0 ? (
           <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center max-w-3xl w-full">
             <CheckCircle2 className="h-12 w-12 text-primary/40 mb-4" />
