@@ -29,6 +29,7 @@ export default async function InstructorDashboardPage() {
     joinCode: cls.joinCode,
     studentCount: cls._count.enrollments,
     createdAt: cls.createdAt.toISOString(),
+    archived: cls.archived,
   }));
 
   const instructorAssignments = await prisma.assignment.findMany({

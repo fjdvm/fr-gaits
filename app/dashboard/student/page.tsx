@@ -49,6 +49,7 @@ export default async function StudentDashboardPage() {
     joinCode: e.class.joinCode,
     instructorEmail: e.class.instructor.email,
     enrolledAt: e.enrolledAt.toISOString(),
+    archived: e.archived,
     assignments: e.class.assignments.map((ac) => {
       const hasSubmission = ac.assignment.submissions.length > 0;
       const hasStarted = ac.assignment.heartsStates.length > 0;
