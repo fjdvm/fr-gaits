@@ -10,8 +10,8 @@ export function NotificationBell() {
 
   return (
     <Popover>
-      <PopoverTrigger className="text-secondary hover:text-on-surface transition-colors relative cursor-pointer">
-        <Bell className="h-5 w-5" />
+      <PopoverTrigger className="text-secondary hover:text-on-surface transition-colors relative cursor-pointer inline-flex items-center justify-center">
+        <Bell className="size-5" />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-destructive rounded-full border border-white text-[9px] font-bold text-white flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
