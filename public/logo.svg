@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2172 724" fill="none">
+  <text x="470" y="560" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="480" letter-spacing="-10" fill="#1a1b1f">GA</text>
+  <rect x="1108" y="270" width="90" height="290" rx="20" fill="#1a1b1f"/>
+  <circle cx="1153" cy="215" r="55" fill="#fbb017"/>
+  <text x="1230" y="560" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="480" letter-spacing="-10" fill="#1a1b1f">TS</text>
+
+  <g>
+    <path d="M455 270 L695 195 L710 205 L710 220 L470 300 Z" fill="#fbb017"/>
+    <path d="M470 300 L470 220 L580 255 L580 335 Z" fill="#fbb017"/>
+    <rect x="463" y="300" width="16" height="70" rx="8" fill="#1a1b1f"/>
+    <circle cx="471" cy="378" r="16" fill="#fbb017"/>
+    <path d="M463 378 L479 378 L474 410 L468 410 Z" fill="#fbb017"/>
+  </g>
+</svg>
