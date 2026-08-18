@@ -2,13 +2,15 @@ import Link from "next/link";
 
 export function LandingHero() {
   return (
-    <section
-      className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center"
-      style={{
-        background:
-          "linear-gradient(160deg, var(--color-primary-fixed) 0%, var(--color-primary-container) 100%)",
-      }}
-    >
+    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center bg-surface">
+      <div
+        className="absolute inset-0 pointer-events-none opacity-60"
+        style={{
+          background:
+            "linear-gradient(160deg, var(--color-primary-fixed) 0%, var(--color-primary-container) 100%)",
+        }}
+      />
+
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
