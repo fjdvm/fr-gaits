@@ -18,6 +18,14 @@ export function LandingHero() {
         }}
       />
 
+      <div
+        className="absolute inset-x-0 bottom-0 h-40 lg:h-56 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent 0%, var(--color-surface) 100%)",
+        }}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold text-on-surface tracking-tight mb-6 max-w-4xl mx-auto leading-tight">
           Master your craft with <br className="hidden md:block" /> AI Tutor
