@@ -11,7 +11,7 @@ export default async function InstructorSubmissionsPage() {
   const assignments = await prisma.assignment.findMany({
     where: { createdBy: user.id },
     include: {
-      classes: { include: { class: { select: { name: true } } } },
+      classes: { include: { class: { select: { id: true, name: true } } } },
       _count: { select: { submissions: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -22,9 +22,15 @@ export default async function InstructorSubmissionsPage() {
     title: a.title,
     language: a.language,
     dueDate: a.dueDate.toISOString(),
-    classNames: a.classes.map((c) => c.class.name),
+    classes: a.classes.map((c) => ({ id: c.class.id, name: c.class.name })),
     submissionCount: a._count.submissions,
   }));
 
-  return <SubmissionsListView assignments={formattedAssignments} />;
+  const classes = await prisma.class.findMany({
+    where: { instructorId: user.id },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
+
+  return <SubmissionsListView assignments={formattedAssignments} classes={classes} />;
 }
