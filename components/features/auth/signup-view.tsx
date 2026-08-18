@@ -11,6 +11,7 @@ import { PasswordInput } from "./password-input";
 
 export function SignupView() {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +20,7 @@ export function SignupView() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -42,6 +43,7 @@ export function SignupView() {
         password,
         options: {
           data: {
+            name: name.trim(),
             role,
             approval_status: approvalStatus,
           },
@@ -98,6 +100,21 @@ export function SignupView() {
             </div>
             <form onSubmit={handleSignup} className="space-y-6 flex-grow flex flex-col">
               <RoleSelector role={role} isLoading={isLoading} onRoleChange={setRole} />
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isLoading}
+                  required
+                  className="w-full bg-surface-container-low rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-container text-sm text-on-surface placeholder:text-outline-variant transition-shadow border border-transparent"
+                  placeholder="Ada Lovelace"
+                />
+              </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-on-surface uppercase tracking-wider">
