@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Hourglass, Info, LogOut, RefreshCw } from "lucide-react";
+import Image from "next/image";
+import { LogoutConfirmDialog } from "@/components/features/dashboard/logout-confirm-dialog";
 
 export function PendingView() {
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -42,7 +45,7 @@ export function PendingView() {
           
           {/* Brand Logo */}
           <div className="mb-12 flex items-center justify-center">
-            <span className="font-sans text-2xl text-primary font-bold tracking-tight">GAITS</span>
+            <Image src="/logo.svg" alt="GAITS" width={2172} height={724} className="h-8 w-auto" priority />
             <span className="ml-2 text-xs font-semibold text-secondary bg-surface-container-high px-2 py-1 rounded-md">Instructor</span>
           </div>
 
@@ -75,11 +78,11 @@ export function PendingView() {
             <ul className="space-y-3 text-xs text-secondary leading-relaxed">
               <li className="flex items-start">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary-container mt-1.5 mr-3 shrink-0" />
-                We'll verify your credentials and provided information.
+                We&apos;ll verify your credentials and provided information.
               </li>
               <li className="flex items-start">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary-container mt-1.5 mr-3 shrink-0" />
-                You'll receive an email notification once approved.
+                You&apos;ll receive an email notification once approved.
               </li>
               <li className="flex items-start">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary-container mt-1.5 mr-3 shrink-0" />
@@ -99,7 +102,7 @@ export function PendingView() {
               Check Status
             </button>
             <button
-              onClick={handleLogout}
+              onClick={() => setShowLogoutConfirm(true)}
               disabled={isLoggingOut}
               className="w-full py-3 bg-transparent hover:bg-surface-container text-secondary hover:text-on-surface rounded-xl font-semibold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
             >
@@ -109,6 +112,13 @@ export function PendingView() {
           </div>
         </div>
       </main>
+
+      <LogoutConfirmDialog
+        open={showLogoutConfirm}
+        onOpenChange={setShowLogoutConfirm}
+        onConfirm={handleLogout}
+        isLoggingOut={isLoggingOut}
+      />
     </div>
   );
 }
