@@ -7,7 +7,7 @@ export function LandingHero() {
         className="absolute inset-0 -z-10"
         style={{
           background:
-            "linear-gradient(160deg, var(--color-surface) 0%, var(--color-primary-fixed) 55%, var(--color-primary-container) 100%)",
+            "linear-gradient(160deg, var(--color-primary-fixed) 0%, var(--color-primary-container) 100%)",
         }}
       />
       <div
