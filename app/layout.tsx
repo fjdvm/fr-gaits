@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Fredoka, Space_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { FeedbackButton } from "@/components/features/feedback/feedback-button";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         {children}
+        <FeedbackButton />
         <Toaster />
       </body>
     </html>
