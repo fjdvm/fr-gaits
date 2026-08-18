@@ -1,5 +1,10 @@
-import { User } from "lucide-react";
+"use client";
+
+import { User, PanelLeftIcon } from "lucide-react";
 import { NotificationBell } from "@/components/features/notifications/notification-bell";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { useSidebarCollapse } from "./use-sidebar-collapse";
 
 interface DashboardHeaderProps {
   title: string;
@@ -8,9 +13,33 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ title, description, children }: DashboardHeaderProps) {
+  const { collapsed, toggleCollapsed } = useSidebarCollapse();
+
   return (
     <header className="h-[100px] px-6 md:px-10 flex justify-between items-center bg-white border-b border-surface-container shrink-0">
       <div className="flex items-end gap-6">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={toggleCollapsed}
+                  aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  className="text-secondary hover:text-on-surface shrink-0 hidden md:inline-flex"
+                />
+              }
+            >
+              <PanelLeftIcon />
+              <span className="sr-only">Toggle Sidebar</span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold tracking-tight text-on-surface font-sans">{title}</h1>
           {description && (

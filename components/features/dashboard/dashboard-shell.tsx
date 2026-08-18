@@ -1,25 +1,36 @@
 "use client";
 
 import { AppSidebar } from "./app-sidebar";
+import { SidebarCollapseProvider } from "./sidebar-collapse-provider";
+
+interface SidebarClass {
+  id: string;
+  name: string;
+  archived: boolean;
+}
 
 interface DashboardShellProps {
   role: "student" | "instructor" | "admin";
   userEmail: string;
+  userName?: string | null;
+  classes?: SidebarClass[];
   children: React.ReactNode;
 }
 
-export function DashboardShell({ role, userEmail, children }: DashboardShellProps) {
+export function DashboardShell({ role, userEmail, userName, classes, children }: DashboardShellProps) {
   return (
-    <div className="flex min-h-screen w-full bg-surface text-on-surface">
-      {/* Sidebar */}
-      <div className="hidden md:block shrink-0">
-        <AppSidebar role={role} userEmail={userEmail} />
+    <SidebarCollapseProvider>
+      <div className="flex min-h-screen w-full bg-surface text-on-surface">
+        {/* Sidebar */}
+        <div className="hidden md:block shrink-0">
+          <AppSidebar role={role} userEmail={userEmail} userName={userName} classes={classes} />
+        </div>
+
+        {/* Content wrapper */}
+        <div className="flex-1 flex flex-col min-w-0 bg-surface">
+          {children}
+        </div>
       </div>
-      
-      {/* Content wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 bg-surface">
-        {children}
-      </div>
-    </div>
+    </SidebarCollapseProvider>
   );
 }
