@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function LandingFooter() {
   return (
@@ -57,7 +58,7 @@ export function LandingFooter() {
             </h4>
             <ul className="space-y-3 text-sm text-secondary-fixed-dim">
               <li>
-                <a className="hover:text-white transition-colors" href="#">
+                <a className="hover:text-white transition-colors" href="#features">
                   Courses
                 </a>
               </li>
@@ -78,19 +79,24 @@ export function LandingFooter() {
             </h4>
             <ul className="space-y-3 text-sm text-secondary-fixed-dim">
               <li>
-                <a className="hover:text-white transition-colors" href="#">
+                <a className="hover:text-white transition-colors" href="#problem">
                   About Us
                 </a>
               </li>
               <li>
-                <a className="hover:text-white transition-colors" href="#">
+                <a className="hover:text-white transition-colors" href="mailto:hello@gaits.app">
                   Contact
                 </a>
               </li>
               <li>
-                <a className="hover:text-white transition-colors" href="#">
+                <Link className="hover:text-white transition-colors" href="/privacy">
                   Privacy Policy
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link className="hover:text-white transition-colors" href="/terms">
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>

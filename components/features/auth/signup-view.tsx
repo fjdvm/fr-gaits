@@ -172,9 +172,13 @@ export function SignupView() {
                 </button>
                 <p className="text-center mt-4 text-xs text-secondary">
                   By joining, you agree to our{" "}
-                  <a className="text-primary hover:underline" href="#">
+                  <Link className="text-primary hover:underline" href="/terms">
                     Terms of Service
-                  </a>
+                  </Link>
+                  {" "}and{" "}
+                  <Link className="text-primary hover:underline" href="/privacy">
+                    Privacy Policy
+                  </Link>
                   .
                 </p>
               </div>
