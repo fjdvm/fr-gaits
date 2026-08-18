@@ -13,11 +13,33 @@ interface PendingInstructor {
   createdAt: Date | string;
 }
 
-interface AdminViewProps {
-  initialPendingInstructors: PendingInstructor[];
+interface AdminKpis {
+  totalUsers: number;
+  totalUsersChangePct: number;
+  activeClasses: number;
+  activeClassesChangePct: number;
+  totalSubmissions: number;
+  totalSubmissionsChangePct: number;
 }
 
-export function AdminView({ initialPendingInstructors }: AdminViewProps) {
+interface AdminViewProps {
+  initialPendingInstructors: PendingInstructor[];
+  kpis: AdminKpis;
+}
+
+function formatChangePct(pct: number): string {
+  const sign = pct > 0 ? "+" : "";
+  return `${sign}${pct}%`;
+}
+
+function formatCount(value: number): string {
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 1)}k`;
+  }
+  return value.toLocaleString();
+}
+
+export function AdminView({ initialPendingInstructors, kpis }: AdminViewProps) {
   const router = useRouter();
   const [instructors, setInstructors] = useState<PendingInstructor[]>(initialPendingInstructors);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -58,11 +80,11 @@ export function AdminView({ initialPendingInstructors }: AdminViewProps) {
                 <Users className="h-5 w-5 text-primary" />
               </div>
               <span className="bg-surface-container-high text-on-surface px-2.5 py-0.5 rounded-lg text-xs font-bold flex items-center">
-                +12%
+                {formatChangePct(kpis.totalUsersChangePct)}
               </span>
             </div>
             <h3 className="text-secondary text-xs font-bold mb-1 relative z-10 uppercase tracking-wider">Total Users</h3>
-            <p className="text-3xl font-extrabold text-on-surface relative z-10">14,205</p>
+            <p className="text-3xl font-extrabold text-on-surface relative z-10">{formatCount(kpis.totalUsers)}</p>
           </div>
 
           <div className="bg-white rounded-[24px] p-6 border border-surface-container shadow-sm flex flex-col relative overflow-hidden group">
@@ -72,11 +94,11 @@ export function AdminView({ initialPendingInstructors }: AdminViewProps) {
                 <BookOpen className="h-5 w-5 text-primary" />
               </div>
               <span className="bg-surface-container-high text-on-surface px-2.5 py-0.5 rounded-lg text-xs font-bold flex items-center">
-                +5%
+                {formatChangePct(kpis.activeClassesChangePct)}
               </span>
             </div>
             <h3 className="text-secondary text-xs font-bold mb-1 relative z-10 uppercase tracking-wider">Active Classes</h3>
-            <p className="text-3xl font-extrabold text-on-surface relative z-10">342</p>
+            <p className="text-3xl font-extrabold text-on-surface relative z-10">{formatCount(kpis.activeClasses)}</p>
           </div>
 
           <div className="bg-white rounded-[24px] p-6 border border-surface-container shadow-sm flex flex-col relative overflow-hidden group">
@@ -86,11 +108,11 @@ export function AdminView({ initialPendingInstructors }: AdminViewProps) {
                 <ClipboardCheck className="h-5 w-5 text-primary" />
               </div>
               <span className="bg-surface-container-high text-on-surface px-2.5 py-0.5 rounded-lg text-xs font-bold flex items-center">
-                +28%
+                {formatChangePct(kpis.totalSubmissionsChangePct)}
               </span>
             </div>
             <h3 className="text-secondary text-xs font-bold mb-1 relative z-10 uppercase tracking-wider">Total Submissions</h3>
-            <p className="text-3xl font-extrabold text-on-surface relative z-10">89k</p>
+            <p className="text-3xl font-extrabold text-on-surface relative z-10">{formatCount(kpis.totalSubmissions)}</p>
           </div>
         </section>
 
