@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClass } from "@/app/actions/create-class";
+import { archiveClass, unarchiveClass } from "@/app/actions/archive-class";
+import { deleteClass } from "@/app/actions/delete-class";
 import { toast } from "sonner";
-import { School, Copy, Users, Calendar, Plus } from "lucide-react";
+import { School, Copy, Users, Calendar, Plus, Archive, ArchiveRestore, Trash2 } from "lucide-react";
 
 interface InstructorClass {
   id: string;
@@ -57,6 +59,29 @@ export function ClassesList({ initialClasses, archivedClasses }: ClassesListProp
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success("Join code copied to clipboard!");
+  };
+
+  const handleArchiveToggle = async (cls: InstructorClass) => {
+    const result = cls.archived ? await unarchiveClass(cls.id) : await archiveClass(cls.id);
+    if (result.success) {
+      toast.success(cls.archived ? "Class restored" : "Class archived");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to update class");
+    }
+  };
+
+  const handleDelete = async (cls: InstructorClass) => {
+    if (!window.confirm(`Delete "${cls.name}"? This permanently removes the class, its assignments links, and student enrollments. This cannot be undone.`)) {
+      return;
+    }
+    const result = await deleteClass(cls.id);
+    if (result.success) {
+      toast.success("Class deleted");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to delete class");
+    }
   };
 
   const visibleClasses = showArchived ? archivedClasses : classes;
@@ -144,17 +169,41 @@ export function ClassesList({ initialClasses, archivedClasses }: ClassesListProp
                   <Users className="h-4 w-4" />
                   <span>{cls.studentCount} students</span>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    copyToClipboard(cls.joinCode);
-                  }}
-                  className="bg-surface-container-low hover:bg-surface-container text-on-surface px-3 py-1.5 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-surface-container"
-                >
-                  Code: {cls.joinCode}
-                  <Copy className="h-3 w-3 text-secondary" />
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      copyToClipboard(cls.joinCode);
+                    }}
+                    className="bg-surface-container-low hover:bg-surface-container text-on-surface px-3 py-1.5 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-surface-container"
+                  >
+                    Code: {cls.joinCode}
+                    <Copy className="h-3 w-3 text-secondary" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleArchiveToggle(cls);
+                    }}
+                    title={cls.archived ? "Restore class" : "Archive class"}
+                    className="p-2 rounded-xl text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer border border-surface-container"
+                  >
+                    {cls.archived ? <ArchiveRestore className="h-3.5 w-3.5" /> : <Archive className="h-3.5 w-3.5" />}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDelete(cls);
+                    }}
+                    title="Delete class"
+                    className="p-2 rounded-xl text-secondary hover:text-red-600 hover:bg-surface-container-low transition-colors cursor-pointer border border-surface-container"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
             </Link>
           ))}

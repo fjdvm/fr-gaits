@@ -28,21 +28,26 @@ export default async function DashboardLayout({
 
   const role = dbUser.role as "student" | "instructor" | "admin";
 
-  let sidebarClasses: { id: string; name: string; archived: boolean }[] = [];
+  let sidebarClasses: { id: string; name: string; archived: boolean; classArchived: boolean }[] = [];
   if (role === "instructor") {
     const classes = await prisma.class.findMany({
       where: { instructorId: user.id },
       select: { id: true, name: true, archived: true },
       orderBy: { createdAt: "desc" },
     });
-    sidebarClasses = classes;
+    sidebarClasses = classes.map((c) => ({ ...c, classArchived: c.archived }));
   } else if (role === "student") {
     const enrollments = await prisma.enrollment.findMany({
       where: { studentId: user.id },
-      select: { archived: true, class: { select: { id: true, name: true } } },
+      select: { archived: true, class: { select: { id: true, name: true, archived: true } } },
       orderBy: { enrolledAt: "desc" },
     });
-    sidebarClasses = enrollments.map((e) => ({ id: e.class.id, name: e.class.name, archived: e.archived }));
+    sidebarClasses = enrollments.map((e) => ({
+      id: e.class.id,
+      name: e.class.name,
+      archived: e.archived || e.class.archived,
+      classArchived: e.class.archived,
+    }));
   }
 
   return (

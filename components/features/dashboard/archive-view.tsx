@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { ArchiveX } from "lucide-react";
 import { archiveClass, unarchiveClass } from "@/app/actions/archive-class";
 import { archiveEnrollment, unarchiveEnrollment } from "@/app/actions/archive-enrollment";
+import { leaveClass } from "@/app/actions/leave-class";
+import { deleteClass } from "@/app/actions/delete-class";
 import { DashboardHeader } from "./dashboard-header";
 import { ClassLink } from "./sidebar-class-list";
 
@@ -12,6 +14,7 @@ interface ArchivedClass {
   id: string;
   name: string;
   archived: boolean;
+  classArchived?: boolean;
 }
 
 interface ArchiveViewProps {
@@ -47,6 +50,26 @@ export function ArchiveView({ role, classes }: ArchiveViewProps) {
     }
   };
 
+  const handleLeave = async (cls: ArchivedClass) => {
+    const result = await leaveClass(cls.id);
+    if (result.success) {
+      toast.success("You left the class");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to leave class");
+    }
+  };
+
+  const handleDelete = async (cls: ArchivedClass) => {
+    const result = await deleteClass(cls.id);
+    if (result.success) {
+      toast.success("Class deleted");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to delete class");
+    }
+  };
+
   return (
     <>
       <DashboardHeader title="Archive" description="Classes you've archived. Restore one to bring it back to your active list." />
@@ -63,9 +86,12 @@ export function ArchiveView({ role, classes }: ArchiveViewProps) {
               <ClassLink
                 key={cls.id}
                 cls={cls}
+                role={role}
                 href={`${basePath}/${cls.id}`}
                 isActive={false}
                 onArchiveToggle={handleArchiveToggle}
+                onLeave={handleLeave}
+                onDelete={handleDelete}
                 muted
               />
             ))}

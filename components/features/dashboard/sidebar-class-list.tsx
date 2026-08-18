@@ -5,14 +5,17 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
-import { ChevronDown, GraduationCap, Archive, ArchiveRestore } from "lucide-react";
+import { ChevronDown, GraduationCap, Archive, ArchiveRestore, LogOut, Trash2 } from "lucide-react";
 import { archiveClass, unarchiveClass } from "@/app/actions/archive-class";
 import { archiveEnrollment, unarchiveEnrollment } from "@/app/actions/archive-enrollment";
+import { leaveClass } from "@/app/actions/leave-class";
+import { deleteClass } from "@/app/actions/delete-class";
 
 interface SidebarClass {
   id: string;
   name: string;
   archived: boolean;
+  classArchived?: boolean;
 }
 
 interface SidebarClassListProps {
@@ -50,6 +53,26 @@ export function SidebarClassList({ role, classes, collapsed }: SidebarClassListP
     }
   };
 
+  const handleLeave = async (cls: SidebarClass) => {
+    const result = await leaveClass(cls.id);
+    if (result.success) {
+      toast.success("You left the class");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to leave class");
+    }
+  };
+
+  const handleDelete = async (cls: SidebarClass) => {
+    const result = await deleteClass(cls.id);
+    if (result.success) {
+      toast.success("Class deleted");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Failed to delete class");
+    }
+  };
+
   return (
     <div className="px-8 mt-8">
       <button
@@ -69,9 +92,12 @@ export function SidebarClassList({ role, classes, collapsed }: SidebarClassListP
               <ClassLink
                 key={cls.id}
                 cls={cls}
+                role={role}
                 href={`${basePath}/${cls.id}`}
                 isActive={pathname === `${basePath}/${cls.id}`}
                 onArchiveToggle={handleArchiveToggle}
+                onLeave={handleLeave}
+                onDelete={handleDelete}
               />
             ))
           )}
@@ -83,17 +109,26 @@ export function SidebarClassList({ role, classes, collapsed }: SidebarClassListP
 
 export function ClassLink({
   cls,
+  role,
   href,
   isActive,
   onArchiveToggle,
+  onLeave,
+  onDelete,
   muted,
 }: {
   cls: SidebarClass;
+  role?: "student" | "instructor" | "admin";
   href: string;
   isActive: boolean;
   onArchiveToggle: (cls: SidebarClass) => void;
+  onLeave?: (cls: SidebarClass) => void;
+  onDelete?: (cls: SidebarClass) => void;
   muted?: boolean;
 }) {
+  const isStudent = role !== "instructor";
+  const instructorArchived = isStudent && cls.classArchived;
+
   return (
     <div className="flex items-center gap-1">
       <Link
@@ -104,18 +139,58 @@ export function ClassLink({
       >
         <GraduationCap className="h-3.5 w-3.5 shrink-0" />
         <span className="truncate">{cls.name}</span>
+        {instructorArchived && (
+          <span className="shrink-0 text-[9px] font-bold uppercase text-secondary/60 border border-surface-container rounded px-1">
+            Archived by instructor
+          </span>
+        )}
       </Link>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onArchiveToggle(cls);
-        }}
-        title={cls.archived ? "Restore class" : "Archive class"}
-        className="shrink-0 text-secondary/60 hover:text-on-surface transition-colors cursor-pointer p-1 rounded-md hover:bg-surface-container-high"
-      >
-        {cls.archived ? <ArchiveRestore className="h-3.5 w-3.5" /> : <Archive className="h-3.5 w-3.5" />}
-      </button>
+
+      {!instructorArchived && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onArchiveToggle(cls);
+          }}
+          title={cls.archived ? "Restore class" : "Archive class"}
+          className="shrink-0 text-secondary/60 hover:text-on-surface transition-colors cursor-pointer p-1 rounded-md hover:bg-surface-container-high"
+        >
+          {cls.archived ? <ArchiveRestore className="h-3.5 w-3.5" /> : <Archive className="h-3.5 w-3.5" />}
+        </button>
+      )}
+
+      {isStudent && onLeave && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.confirm(`Leave "${cls.name}"? You'll need the join code to enroll again.`)) {
+              onLeave(cls);
+            }
+          }}
+          title="Leave class"
+          className="shrink-0 text-secondary/60 hover:text-red-600 transition-colors cursor-pointer p-1 rounded-md hover:bg-surface-container-high"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+        </button>
+      )}
+
+      {!isStudent && onDelete && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.confirm(`Delete "${cls.name}"? This permanently removes the class, its assignments links, and student enrollments. This cannot be undone.`)) {
+              onDelete(cls);
+            }
+          }}
+          title="Delete class"
+          className="shrink-0 text-secondary/60 hover:text-red-600 transition-colors cursor-pointer p-1 rounded-md hover:bg-surface-container-high"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      )}
     </div>
   );
 }

@@ -9,12 +9,17 @@ export default async function StudentArchivePage() {
   if (!user) redirect("/login");
 
   const enrollments = await prisma.enrollment.findMany({
-    where: { studentId: user.id, archived: true },
-    select: { archived: true, class: { select: { id: true, name: true } } },
+    where: { studentId: user.id, OR: [{ archived: true }, { class: { archived: true } }] },
+    select: { archived: true, class: { select: { id: true, name: true, archived: true } } },
     orderBy: { class: { name: "asc" } },
   });
 
-  const classes = enrollments.map((e) => ({ id: e.class.id, name: e.class.name, archived: e.archived }));
+  const classes = enrollments.map((e) => ({
+    id: e.class.id,
+    name: e.class.name,
+    archived: e.archived || e.class.archived,
+    classArchived: e.class.archived,
+  }));
 
   return <ArchiveView role="student" classes={classes} />;
 }

@@ -23,6 +23,7 @@ interface SidebarClass {
   id: string;
   name: string;
   archived: boolean;
+  classArchived?: boolean;
 }
 
 interface AppSidebarProps {

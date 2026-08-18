@@ -27,6 +27,7 @@ interface LeaderboardEntry {
 interface StudentClassViewProps {
   classId: string;
   className: string;
+  classArchived?: boolean;
   initialPosts: StreamPostData[];
   currentUserId: string;
   assignments: StudentAssignment[];
@@ -39,6 +40,7 @@ interface StudentClassViewProps {
 export function StudentClassView({
   classId,
   className,
+  classArchived,
   initialPosts,
   currentUserId,
   assignments,
@@ -53,6 +55,11 @@ export function StudentClassView({
     <>
       <DashboardHeader title={className} description="Class activity, assignments, and classmates" />
       <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col items-center">
+        {classArchived && (
+          <div className="w-full max-w-4xl bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-2xl px-4 py-3">
+            This class has been archived by the instructor. It is now read-only.
+          </div>
+        )}
         <ClassTabs activeTab={activeTab} onChange={setActiveTab} />
 
         {activeTab === "stream" && (

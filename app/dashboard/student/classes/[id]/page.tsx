@@ -49,6 +49,7 @@ export default async function StudentClassDetailPage({ params }: PageProps) {
     <StudentClassView
       classId={id}
       className={cls!.name}
+      classArchived={cls!.archived}
       initialPosts={streamResult.success ? streamResult.posts! : []}
       currentUserId={user.id}
       assignments={assignments}
