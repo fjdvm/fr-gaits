@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
+import { getInstructorAssignments } from "@/app/actions/instructor-assignments";
 import { InstructorView } from "@/components/features/dashboard/instructor-view";
 
 export default async function InstructorDashboardPage() {
@@ -32,42 +33,12 @@ export default async function InstructorDashboardPage() {
     archived: cls.archived,
   }));
 
-  const instructorAssignments = await prisma.assignment.findMany({
-    where: { createdBy: user.id },
-    include: {
-      classes: {
-        include: {
-          class: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
-      _count: {
-        select: {
-          testCases: true,
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  const formattedAssignments = instructorAssignments.map((asm) => ({
-    id: asm.id,
-    title: asm.title,
-    language: asm.language,
-    dueDate: asm.dueDate.toISOString(),
-    heartsCount: asm.heartsCount,
-    heartsRegenMinutes: asm.heartsRegenMinutes,
-    classNames: asm.classes.map((c) => c.class.name),
-    testCaseCount: asm._count.testCases,
-  }));
+  const assignmentsResult = await getInstructorAssignments();
 
   return (
     <InstructorView
       initialClasses={formattedClasses}
-      initialAssignments={formattedAssignments}
+      initialAssignments={assignmentsResult.success ? assignmentsResult.assignments! : []}
     />
   );
 }
