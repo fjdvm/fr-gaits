@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export function LandingHero() {
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center">
+    <section
+      className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center"
+      style={{
+        background:
+          "linear-gradient(160deg, var(--color-primary-fixed) 0%, var(--color-primary-container) 100%)",
+      }}
+    >
       <div
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(160deg, var(--color-primary-fixed) 0%, var(--color-primary-container) 100%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          backgroundImage: "linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px)",
+          backgroundImage:
+            "linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px)",
           backgroundSize: "100px 100px",
         }}
       />
@@ -24,7 +24,8 @@ export function LandingHero() {
         </h1>
 
         <p className="mt-4 text-xl text-secondary max-w-2xl mx-auto mb-10">
-          Experience the next generation of learning with GAITS. Personalized, gamified, and driven by advanced AI.
+          Experience the next generation of learning with GAITS. Personalized,
+          gamified, and driven by advanced AI.
         </p>
 
         <Link
@@ -32,7 +33,9 @@ export function LandingHero() {
           href="/signup"
         >
           Explore all courses
-          <span className="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          <span className="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">
+            arrow_forward
+          </span>
         </Link>
       </div>
     </section>
