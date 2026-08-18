@@ -1,7 +1,8 @@
 import { LandingNav } from "./landing-nav";
 import { LandingHero } from "./landing-hero";
+import { LandingProblem } from "./landing-problem";
+import { LandingHowItWorks } from "./landing-how-it-works";
 import { LandingFeatures } from "./landing-features";
-import { LandingCTA } from "./landing-cta";
 import { LandingFooter } from "./landing-footer";
 
 export function LandingView() {
@@ -10,8 +11,9 @@ export function LandingView() {
       <LandingNav />
       <main className="flex-grow flex flex-col">
         <LandingHero />
+        <LandingProblem />
+        <LandingHowItWorks />
         <LandingFeatures />
-        <LandingCTA />
       </main>
       <LandingFooter />
     </div>
