@@ -216,3 +216,18 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
+.cn-toast {
+  border-width: 2px !important;
+  box-shadow: 0 12px 32px -8px rgba(26, 27, 31, 0.28), 0 4px 12px -2px rgba(26, 27, 31, 0.16) !important;
+  padding: 1rem 1.1rem !important;
+}
+
+.cn-toast-title {
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+}
+
+.cn-toast-description {
+  font-size: 0.8rem !important;
+}
