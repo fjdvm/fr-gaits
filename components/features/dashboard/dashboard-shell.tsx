@@ -20,14 +20,14 @@ interface DashboardShellProps {
 export function DashboardShell({ role, userEmail, userName, classes, children }: DashboardShellProps) {
   return (
     <SidebarCollapseProvider>
-      <div className="flex min-h-screen w-full bg-surface text-on-surface">
+      <div className="flex h-screen w-full overflow-hidden bg-surface text-on-surface">
         {/* Sidebar */}
-        <div className="hidden md:block shrink-0">
+        <div className="hidden md:block shrink-0 h-full">
           <AppSidebar role={role} userEmail={userEmail} userName={userName} classes={classes} />
         </div>
 
         {/* Content wrapper */}
-        <div className="flex-1 flex flex-col min-w-0 bg-surface">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-surface">
           {children}
         </div>
       </div>
