@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isEmailUnconfirmed } from "@/lib/auth-response";
 import { toast } from "sonner";
 import Link from "next/link";
 import { AuthBrandingPane, AuthMobileLogo } from "./auth-branding-pane";
@@ -31,6 +32,9 @@ export function LoginView() {
 
       if (error) {
         toast.error(error.message);
+      } else if (data?.user && isEmailUnconfirmed(data.user)) {
+        await supabase.auth.signOut();
+        toast.error("Please confirm your email before logging in. Check your inbox for the confirmation link.");
       } else if (data?.user) {
         const role = data.user.user_metadata?.role || "student";
         const approvalStatus =

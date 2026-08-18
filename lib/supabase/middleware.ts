@@ -52,6 +52,14 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
+  if (!user.email_confirmed_at && isProtectedRoute) {
+    await supabase.auth.signOut();
+    url.pathname = "/login";
+    const redirectResponse = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie));
+    return redirectResponse;
+  }
+
   const role = user.user_metadata?.role || "student";
   const approvalStatus = user.user_metadata?.approval_status || "approved";
 

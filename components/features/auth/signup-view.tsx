@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { validatePasswordStrength } from "@/lib/password-policy";
+import { isEmailAlreadyRegistered, isEmailUnconfirmed } from "@/lib/auth-response";
 import { toast } from "sonner";
 import Link from "next/link";
 import { AuthBrandingPane, AuthMobileLogo } from "./auth-branding-pane";
 import { RoleSelector } from "./role-selector";
 import { PasswordInput } from "./password-input";
+import { SignupConfirmationSent } from "./signup-confirmation-sent";
 
 export function SignupView() {
   const router = useRouter();
@@ -18,6 +20,7 @@ export function SignupView() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<"student" | "instructor">("student");
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmationSentTo, setConfirmationSentTo] = useState<string | null>(null);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +47,7 @@ export function SignupView() {
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             name: name.trim(),
             role,
@@ -54,6 +58,10 @@ export function SignupView() {
 
       if (error) {
         toast.error(error.message);
+      } else if (isEmailAlreadyRegistered(data?.user)) {
+        toast.error("An account with this email already exists. Log in instead.");
+      } else if (data?.user && isEmailUnconfirmed(data.user)) {
+        setConfirmationSentTo(email);
       } else if (data?.user) {
         toast.success("Account created successfully!");
         setTimeout(() => {
@@ -94,6 +102,12 @@ export function SignupView() {
           </div>
 
           <div className="flex-grow flex flex-col">
+            {confirmationSentTo ? (
+              <div className="flex-grow flex flex-col justify-center max-w-sm">
+                <SignupConfirmationSent email={confirmationSentTo} />
+              </div>
+            ) : (
+            <>
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-2">Create your character</h2>
               <p className="text-sm text-secondary">
@@ -183,6 +197,8 @@ export function SignupView() {
                 </p>
               </div>
             </form>
+            </>
+            )}
           </div>
         </div>
       </main>
