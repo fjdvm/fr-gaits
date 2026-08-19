@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { BarChart2, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { StatsDashboard } from "../stats-dashboard";
 import { SimilarityCheckPanel } from "../similarity-check-panel";
 
@@ -22,12 +27,17 @@ interface ToolsRailProps {
 
 type ActivePanel = "stats" | "similarity" | null;
 
-export function ToolsRail({ assignmentId, students, similarityMatchCount, onSimilarityResult }: ToolsRailProps) {
+export function ToolsRail({
+  assignmentId,
+  students,
+  similarityMatchCount,
+  onSimilarityResult,
+}: ToolsRailProps) {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
   return (
     <>
-      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col justify-end gap-3">
         <RailButton
           icon={<BarChart2 className="h-4 w-4" />}
           label="Generate Stats"
@@ -40,17 +50,32 @@ export function ToolsRail({ assignmentId, students, similarityMatchCount, onSimi
         />
       </div>
 
-      <Sheet open={activePanel === "stats"} onOpenChange={(open) => !open && setActivePanel(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto p-6">
+      <Sheet
+        open={activePanel === "stats"}
+        onOpenChange={(open) => !open && setActivePanel(null)}
+      >
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-lg overflow-y-auto p-6"
+        >
           <SheetHeader className="px-0">
             <SheetTitle>Class Stats Dashboard</SheetTitle>
           </SheetHeader>
-          <StatsDashboard assignmentId={assignmentId} similarityMatchCount={similarityMatchCount} />
+          <StatsDashboard
+            assignmentId={assignmentId}
+            similarityMatchCount={similarityMatchCount}
+          />
         </SheetContent>
       </Sheet>
 
-      <Sheet open={activePanel === "similarity"} onOpenChange={(open) => !open && setActivePanel(null)}>
-        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto p-6">
+      <Sheet
+        open={activePanel === "similarity"}
+        onOpenChange={(open) => !open && setActivePanel(null)}
+      >
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-lg overflow-y-auto p-6"
+        >
           <SheetHeader className="px-0">
             <SheetTitle>Code Similarity Check</SheetTitle>
           </SheetHeader>
@@ -65,15 +90,22 @@ export function ToolsRail({ assignmentId, students, similarityMatchCount, onSimi
   );
 }
 
-function RailButton({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
+function RailButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
   return (
     <Button
-      variant="secondary"
       onClick={onClick}
-      className="group h-10 w-10 hover:w-auto justify-start gap-2 overflow-hidden rounded-full px-2.5 shadow-md transition-all duration-200"
+      className="group h-10 w-10 hover:w-auto justify-center gap-0 hover:gap-2 overflow-hidden rounded-full px-0 hover:px-2.5 shadow-md transition-all duration-200 bg-gradient-to-r from-primary to-primary-container text-on-primary hover:from-primary hover:to-primary border-0"
     >
       <span className="shrink-0">{icon}</span>
-      <span className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-bold opacity-0 transition-all duration-200 group-hover:max-w-xs group-hover:opacity-100 group-hover:pr-1">
+      <span className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-bold opacity-0 transition-all duration-200 group-hover:max-w-xs group-hover:opacity-100">
         {label}
       </span>
     </Button>
