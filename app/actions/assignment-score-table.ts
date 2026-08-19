@@ -17,7 +17,7 @@ export async function getAssignmentScoreTable(assignmentId: string) {
         classes: {
           include: {
             class: {
-              include: { enrollments: { include: { student: { select: { id: true, email: true } } } } },
+              include: { enrollments: { include: { student: { select: { id: true, email: true, name: true } } } } },
             },
           },
         },
@@ -31,7 +31,7 @@ export async function getAssignmentScoreTable(assignmentId: string) {
 
     const submissions = await prisma.submission.findMany({
       where: { assignmentId },
-      include: { student: { select: { id: true, email: true } } },
+      include: { student: { select: { id: true, email: true, name: true } } },
     });
 
     const allStudents = activeClassLinks.flatMap((c) => c.class.enrollments.map((e) => e.student));
@@ -42,6 +42,7 @@ export async function getAssignmentScoreTable(assignmentId: string) {
       return {
         studentId: student.id,
         email: student.email,
+        name: student.name,
         score: sub?.score ?? null,
         submittedAt: sub?.submittedAt?.toISOString() ?? null,
         hasSubmission: !!sub,

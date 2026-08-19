@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { CommentData, RosterStudent, RosterInstructor, StreamPostData } from "./types";
+import { getDisplayName } from "@/lib/display-name";
 
 function toCommentData(comment: { id: string; authorId: string; body: string; createdAt: Date }): CommentData {
   return { id: comment.id, authorId: comment.authorId, body: comment.body, createdAt: comment.createdAt.toISOString() };
@@ -46,7 +47,7 @@ export function CommentThread({ post, isInstructor, currentUserId, roster, instr
     }
     const studentThreads = (roster ?? []).map((s) => ({
       key: `private:${s.id}`,
-      label: `Private · ${s.email}`,
+      label: `Private · ${getDisplayName(s)}`,
       visibility: "private" as const,
       targetStudentId: s.id,
     }));

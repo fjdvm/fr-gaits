@@ -22,48 +22,52 @@ export function TestCaseRow({
   removeTestCase,
 }: TestCaseRowProps) {
   return (
-    <div className="grid grid-cols-12 gap-3 items-end bg-surface-container-low p-4 rounded-2xl border border-surface-container">
-      <div className="col-span-5 space-y-1">
-        <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Input</label>
-        <input
-          placeholder="stdin (optional)"
-          value={tc.input}
-          onChange={(e) => updateTestCase(index, "input", e.target.value)}
-          disabled={isCreating}
-          className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
-        />
+    <div className="flex items-end gap-2 bg-surface-container-low p-4 rounded-2xl border border-surface-container max-w-full">
+      <div className="flex-1 min-w-0 w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="grid grid-cols-12 gap-3 items-end min-w-[420px]">
+          <div className="col-span-5 space-y-1">
+            <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Input</label>
+            <input
+              placeholder="stdin (optional)"
+              value={tc.input}
+              onChange={(e) => updateTestCase(index, "input", e.target.value)}
+              disabled={isCreating}
+              className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
+            />
+          </div>
+          <div className="col-span-5 space-y-1">
+            <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Expected Output</label>
+            <input
+              placeholder="stdout"
+              value={tc.expectedOutput}
+              onChange={(e) => updateTestCase(index, "expectedOutput", e.target.value)}
+              required
+              disabled={isCreating}
+              className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
+            />
+          </div>
+          <div className="col-span-2 flex items-center h-8 mt-auto pl-2">
+            <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer select-none text-on-surface">
+              <input
+                type="checkbox"
+                checked={tc.visible}
+                onChange={(e) => updateTestCase(index, "visible", e.target.checked)}
+                disabled={isCreating}
+                className="rounded border-surface-container text-primary focus:ring-primary-container"
+              />
+              Vis
+            </label>
+          </div>
+        </div>
       </div>
-      <div className="col-span-5 space-y-1">
-        <label className="text-[10px] text-secondary font-bold uppercase tracking-wider block pl-1">Expected Output</label>
-        <input
-          placeholder="stdout"
-          value={tc.expectedOutput}
-          onChange={(e) => updateTestCase(index, "expectedOutput", e.target.value)}
-          required
-          disabled={isCreating}
-          className="w-full bg-white rounded-lg px-3 py-1.5 text-xs text-on-surface border border-surface-container focus:outline-none focus:ring-2 focus:ring-primary-container"
-        />
-      </div>
-      <div className="col-span-2 flex items-center justify-between h-8 mt-auto pl-2">
-        <label className="flex items-center gap-1.5 text-xs font-semibold cursor-pointer select-none text-on-surface">
-          <input
-            type="checkbox"
-            checked={tc.visible}
-            onChange={(e) => updateTestCase(index, "visible", e.target.checked)}
-            disabled={isCreating}
-            className="rounded border-surface-container text-primary focus:ring-primary-container"
-          />
-          Vis
-        </label>
-        <button
-          type="button"
-          onClick={() => removeTestCase(index)}
-          disabled={isCreating}
-          className="text-secondary hover:text-destructive p-1 rounded-md transition-colors cursor-pointer"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={() => removeTestCase(index)}
+        disabled={isCreating}
+        className="shrink-0 text-secondary hover:text-destructive p-1 rounded-md transition-colors cursor-pointer h-8"
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
     </div>
   );
 }

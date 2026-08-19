@@ -1,4 +1,5 @@
 import type { RosterStudent, RosterInstructor } from "./types";
+import { getDisplayName } from "@/lib/display-name";
 
 export interface AuthorDisplay {
   name: string;
@@ -11,9 +12,9 @@ export function resolveAuthorDisplay(
   instructor: RosterInstructor | undefined,
   roster: RosterStudent[] | undefined
 ): AuthorDisplay {
-  if (instructor?.id === authorId) return { name: instructor.name || instructor.email, email: instructor.name ? instructor.email : null };
+  if (instructor?.id === authorId) return { name: getDisplayName(instructor), email: instructor.email };
   const student = roster?.find((s) => s.id === authorId);
-  if (student) return { name: student.name || student.email, email: student.name ? student.email : null };
+  if (student) return { name: getDisplayName(student), email: student.email };
   if (authorId === currentUserId) return { name: "You", email: null };
   return { name: "Unknown", email: null };
 }

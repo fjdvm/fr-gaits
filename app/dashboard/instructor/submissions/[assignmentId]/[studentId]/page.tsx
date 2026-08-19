@@ -26,13 +26,14 @@ export default async function SubmissionDetailPage({ params }: PageProps) {
     orderBy: { createdAt: "asc" },
   });
 
-  const student = await prisma.user.findUnique({ where: { id: studentId }, select: { email: true } });
+  const student = await prisma.user.findUnique({ where: { id: studentId }, select: { email: true, name: true } });
 
   return (
     <SubmissionDetailView
       assignmentTitle={assignment.title}
       assignmentLanguage={assignment.language}
       studentEmail={student?.email || "Unknown"}
+      studentName={student?.name ?? null}
       submission={submission ? {
         code: submission.code,
         score: submission.score,

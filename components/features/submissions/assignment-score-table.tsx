@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { BarChart3, CheckCircle2, AlertCircle, Clock, Calendar, ArrowRight } from "lucide-react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
+import { getDisplayName } from "@/lib/display-name";
 
 interface StudentRow {
   studentId: string;
   email: string;
+  name: string | null;
   score: number | null;
   submittedAt: string | null;
   hasSubmission: boolean;
@@ -106,7 +108,8 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
             {sortedStudents.map((s, index) => {
               const rank = index + 1;
               const isTopThree = rank <= 3 && s.hasSubmission;
-              const displayInitials = s.email.substring(0, 2).toUpperCase();
+              const displayName = getDisplayName(s);
+              const displayInitials = displayName.substring(0, 2).toUpperCase();
 
               return (
                 <div
@@ -142,9 +145,9 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
                         href={`/dashboard/instructor/submissions/${assignmentId}/${s.studentId}`}
                         className="text-sm font-bold text-on-surface hover:text-primary transition-colors block truncate"
                       >
-                        {s.email}
+                        {displayName}
                       </Link>
-                      <p className="text-[10px] text-secondary font-mono mt-0.5">ID: {s.studentId.substring(0, 8)}</p>
+                      <p className="text-[10px] text-secondary truncate mt-0.5">{s.email}</p>
                     </div>
                   </div>
 

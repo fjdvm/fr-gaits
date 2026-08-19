@@ -60,7 +60,6 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
         toast.success("Assignment created successfully!");
         onCancel();
         router.refresh();
-        setTimeout(() => window.location.reload(), 800);
       } else {
         toast.error(result.error || "Failed to create assignment");
       }
@@ -101,8 +100,8 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-surface-container p-6 shadow-sm flex flex-col">
-      <div className="mb-6 flex items-start justify-between gap-3">
+    <div className="max-w-3xl w-full mx-auto bg-white rounded-3xl border border-surface-container p-6 shadow-sm flex flex-col max-h-[80vh] min-w-0">
+      <div className="mb-6 flex items-start justify-between gap-3 shrink-0">
         <div>
           <h3 className="font-bold text-lg text-on-surface">Create Assignment</h3>
           <p className="text-xs text-secondary mt-1">Configure instructions, programming language, classes, and test cases.</p>
@@ -116,72 +115,74 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
           <Sparkles className="h-3.5 w-3.5" /> Fill Demo Data
         </button>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <AssignmentFormFields
-          title={title}
-          setTitle={setTitle}
-          instructions={instructions}
-          setInstructions={setInstructions}
-          language={language}
-          setLanguage={setLanguage}
-          dueDate={dueDate}
-          setDueDate={setDueDate}
-          heartsCount={heartsCount}
-          setHeartsCount={setHeartsCount}
-          heartsRegen={heartsRegen}
-          setHeartsRegen={setHeartsRegen}
-          isCreating={isCreating}
-        />
+      <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 min-w-0">
+        <div className="space-y-6 overflow-y-auto overflow-x-auto flex-1 min-h-0 min-w-0 pr-1">
+          <AssignmentFormFields
+            title={title}
+            setTitle={setTitle}
+            instructions={instructions}
+            setInstructions={setInstructions}
+            language={language}
+            setLanguage={setLanguage}
+            dueDate={dueDate}
+            setDueDate={setDueDate}
+            heartsCount={heartsCount}
+            setHeartsCount={setHeartsCount}
+            heartsRegen={heartsRegen}
+            setHeartsRegen={setHeartsRegen}
+            isCreating={isCreating}
+          />
 
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-on-surface pl-1 block">Assign to Classes</label>
-          {classes.length === 0 ? (
-            <p className="text-xs text-destructive pl-1">You must create a class first!</p>
-          ) : (
-            <div className="flex flex-wrap gap-4 pt-1 pl-1">
-              {classes.map((cls) => (
-                <label key={cls.id} className="flex items-center gap-2 text-sm font-semibold cursor-pointer text-on-surface">
-                  <input
-                    type="checkbox"
-                    checked={selectedClasses.includes(cls.id)}
-                    onChange={() => handleClassToggle(cls.id)}
-                    disabled={isCreating}
-                    className="rounded border-surface-container text-primary focus:ring-primary-container"
-                  />
-                  {cls.name}
-                </label>
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-on-surface pl-1 block">Assign to Classes</label>
+            {classes.length === 0 ? (
+              <p className="text-xs text-destructive pl-1">You must create a class first!</p>
+            ) : (
+              <div className="flex flex-wrap gap-4 pt-1 pl-1">
+                {classes.map((cls) => (
+                  <label key={cls.id} className="flex items-center gap-2 text-sm font-semibold cursor-pointer text-on-surface">
+                    <input
+                      type="checkbox"
+                      checked={selectedClasses.includes(cls.id)}
+                      onChange={() => handleClassToggle(cls.id)}
+                      disabled={isCreating}
+                      className="rounded border-surface-container text-primary focus:ring-primary-container"
+                    />
+                    {cls.name}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-center pl-1">
+              <label className="text-xs font-bold text-on-surface">Test Cases</label>
+              <button
+                type="button"
+                onClick={addTestCase}
+                disabled={isCreating}
+                className="px-3.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1"
+              >
+                <Plus className="h-3.5 w-3.5" /> Add Case
+              </button>
+            </div>
+            <div className="space-y-3">
+              {testCases.map((tc, index) => (
+                <TestCaseRow
+                  key={index}
+                  index={index}
+                  tc={tc}
+                  isCreating={isCreating}
+                  updateTestCase={updateTestCase}
+                  removeTestCase={removeTestCase}
+                />
               ))}
             </div>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex justify-between items-center pl-1">
-            <label className="text-xs font-bold text-on-surface">Test Cases</label>
-            <button
-              type="button"
-              onClick={addTestCase}
-              disabled={isCreating}
-              className="px-3.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1"
-            >
-              <Plus className="h-3.5 w-3.5" /> Add Case
-            </button>
-          </div>
-          <div className="space-y-3">
-            {testCases.map((tc, index) => (
-              <TestCaseRow
-                key={index}
-                index={index}
-                tc={tc}
-                isCreating={isCreating}
-                updateTestCase={updateTestCase}
-                removeTestCase={removeTestCase}
-              />
-            ))}
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-surface-container">
+        <div className="flex justify-end gap-3 pt-6 border-t border-surface-container shrink-0">
           <button
             type="button"
             onClick={onCancel}

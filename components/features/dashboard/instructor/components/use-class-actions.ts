@@ -25,7 +25,6 @@ export function useClassActions() {
       if (result.success && result.class) {
         toast.success(`Class "${className}" created successfully!`);
         router.refresh();
-        setTimeout(() => window.location.reload(), 800);
         return true;
       }
       toast.error(result.error || "Failed to create class");

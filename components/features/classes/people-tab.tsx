@@ -1,5 +1,6 @@
 import { User, Crown } from "lucide-react";
 import type { RosterStudent, RosterInstructor } from "./types";
+import { getDisplayName } from "@/lib/display-name";
 
 interface PeopleTabProps {
   instructor: RosterInstructor;
@@ -14,7 +15,10 @@ export function PeopleTab({ instructor, roster }: PeopleTabProps) {
         <div className="w-9 h-9 rounded-full bg-primary-container/20 flex items-center justify-center text-primary shrink-0">
           <Crown className="h-4 w-4" />
         </div>
-        <p className="text-sm font-semibold text-on-surface">{instructor.name || instructor.email}</p>
+        <div>
+          <p className="text-sm font-semibold text-on-surface">{getDisplayName(instructor)}</p>
+          <p className="text-[10px] text-secondary">{instructor.email}</p>
+        </div>
       </div>
 
       <div className="border-t border-surface-container my-4" />
@@ -33,7 +37,10 @@ export function PeopleTab({ instructor, roster }: PeopleTabProps) {
             <div className="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-secondary shrink-0">
               <User className="h-4 w-4" />
             </div>
-            <p className="text-sm font-semibold text-on-surface">{student.name || student.email}</p>
+            <div>
+              <p className="text-sm font-semibold text-on-surface">{getDisplayName(student)}</p>
+              <p className="text-[10px] text-secondary">{student.email}</p>
+            </div>
           </div>
         ))
       )}

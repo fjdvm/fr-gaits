@@ -126,14 +126,14 @@ async function checkAndAwardBadges(studentId: string) {
 export async function getClassLeaderboard(classId: string, limit?: number) {
   const enrollments = await prisma.enrollment.findMany({
     where: { classId },
-    select: { studentId: true, student: { select: { email: true } } },
+    select: { studentId: true, student: { select: { email: true, name: true } } },
   });
 
   const leaderboard = await Promise.all(
     enrollments.map(async (e) => {
       const classXp = await getClassXp(e.studentId, classId);
       const levelInfo = computeLevel(classXp);
-      return { studentId: e.studentId, email: e.student.email, totalXp: classXp, level: levelInfo.level };
+      return { studentId: e.studentId, email: e.student.email, name: e.student.name, totalXp: classXp, level: levelInfo.level };
     })
   );
 

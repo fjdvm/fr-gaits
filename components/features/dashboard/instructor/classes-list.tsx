@@ -11,7 +11,6 @@ interface ClassesListProps {
 }
 
 export function ClassesList({ initialClasses, archivedClasses }: ClassesListProps) {
-  const [classes] = useState<InstructorClass[]>(initialClasses);
   const [className, setClassName] = useState("");
   const [showArchived, setShowArchived] = useState(false);
   const { isCreatingClass, handleCreateClass, handleArchiveToggle, handleDelete, copyToClipboard } = useClassActions();
@@ -25,7 +24,7 @@ export function ClassesList({ initialClasses, archivedClasses }: ClassesListProp
     if (created) setClassName("");
   };
 
-  const visibleClasses = showArchived ? archivedClasses : classes;
+  const visibleClasses = showArchived ? archivedClasses : initialClasses;
 
   return (
     <div className="space-y-6">
@@ -57,7 +56,7 @@ export function ClassesList({ initialClasses, archivedClasses }: ClassesListProp
             !showArchived ? "bg-white text-on-surface shadow-sm" : "text-secondary hover:text-on-surface"
           }`}
         >
-          Active ({classes.length})
+          Active ({initialClasses.length})
         </button>
         <button
           onClick={() => setShowArchived(true)}

@@ -7,6 +7,7 @@ import { CheckCircle2, Brain, MessageSquare, AlertCircle } from "lucide-react";
 import { BehaviorTab } from "./components/behavior-tab";
 import { TutorLogTab } from "./components/tutor-log-tab";
 import { TestResultsTab } from "./components/test-results-tab";
+import { getDisplayName } from "@/lib/display-name";
 
 const MONACO_LANGUAGE_MAP: Record<string, string> = {
   Python: "python",
@@ -42,6 +43,7 @@ interface SubmissionDetailViewProps {
   assignmentTitle: string;
   assignmentLanguage: string;
   studentEmail: string;
+  studentName: string | null;
   submission: {
     code: string;
     score: number;
@@ -56,15 +58,17 @@ export function SubmissionDetailView({
   assignmentTitle,
   assignmentLanguage,
   studentEmail,
+  studentName,
   submission,
   chatMessages,
 }: SubmissionDetailViewProps) {
   const [activeTab, setActiveTab] = useState<"tests" | "behavior" | "chat">("tests");
+  const studentDisplayName = getDisplayName({ name: studentName, email: studentEmail });
 
   if (!submission) {
     return (
       <>
-        <DashboardHeader title={`${studentEmail} — ${assignmentTitle}`} description="Submission details" />
+        <DashboardHeader title={`${studentDisplayName} — ${assignmentTitle}`} description={studentEmail} />
         <main className="p-6 md:p-10 flex-grow">
           <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center">
             <AlertCircle className="h-12 w-12 text-secondary/30 mb-4" />
@@ -79,8 +83,8 @@ export function SubmissionDetailView({
   return (
     <>
       <DashboardHeader
-        title={`${studentEmail} — ${assignmentTitle}`}
-        description={`Submitted at: ${new Date(submission.submittedAt).toLocaleString()}`}
+        title={`${studentDisplayName} — ${assignmentTitle}`}
+        description={`${studentEmail} · Submitted at: ${new Date(submission.submittedAt).toLocaleString()}`}
       />
       <main className="flex-grow overflow-hidden p-6 md:p-10 flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
         {/* Left Pane: Code Viewer */}
