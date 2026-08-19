@@ -16,9 +16,10 @@ interface MobileSidebarDrawerProps {
   userEmail?: string;
   userName?: string | null;
   classes?: SidebarClass[];
+  studentXp?: { totalXp: number; level: number };
 }
 
-export function MobileSidebarDrawer({ role, userEmail, userName, classes }: MobileSidebarDrawerProps) {
+export function MobileSidebarDrawer({ role, userEmail, userName, classes, studentXp }: MobileSidebarDrawerProps) {
   const { mobileOpen, setMobileOpen } = useSidebarCollapse();
 
   return (
@@ -33,6 +34,7 @@ export function MobileSidebarDrawer({ role, userEmail, userName, classes }: Mobi
           userEmail={userEmail}
           userName={userName}
           classes={classes}
+          studentXp={studentXp}
           forceExpanded
           onNavigate={() => setMobileOpen(false)}
         />

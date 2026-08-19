@@ -27,6 +27,11 @@ export async function getTotalXp(studentId: string): Promise<number> {
   return result._sum.xpAmount || 0;
 }
 
+export async function getClassXp(studentId: string, classId: string): Promise<number> {
+  const result = await prisma.xpEvent.aggregate({ where: { studentId, classId }, _sum: { xpAmount: true } });
+  return result._sum.xpAmount || 0;
+}
+
 function getISOWeekYear(date: Date): number {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -64,8 +69,16 @@ export async function awardSubmissionXp(studentId: string, assignmentId: string,
   }
 
   if (events.length > 0) {
+    const assignmentClasses = await prisma.assignmentClass.findMany({
+      where: { assignmentId },
+      select: { classId: true },
+    });
+    const classIds = assignmentClasses.length > 0 ? assignmentClasses.map((ac) => ac.classId) : [null];
+
     await prisma.xpEvent.createMany({
-      data: events.map((e) => ({ studentId, assignmentId, eventType: e.eventType, xpAmount: e.xpAmount })),
+      data: classIds.flatMap((classId) =>
+        events.map((e) => ({ studentId, assignmentId, classId, eventType: e.eventType, xpAmount: e.xpAmount }))
+      ),
     });
   }
 
@@ -118,9 +131,9 @@ export async function getClassLeaderboard(classId: string, limit?: number) {
 
   const leaderboard = await Promise.all(
     enrollments.map(async (e) => {
-      const totalXp = await getTotalXp(e.studentId);
-      const levelInfo = computeLevel(totalXp);
-      return { studentId: e.studentId, email: e.student.email, totalXp, level: levelInfo.level };
+      const classXp = await getClassXp(e.studentId, classId);
+      const levelInfo = computeLevel(classXp);
+      return { studentId: e.studentId, email: e.student.email, totalXp: classXp, level: levelInfo.level };
     })
   );
 

@@ -151,6 +151,7 @@ model XpEvent {
   eventType String @map("event_type")
   xpAmount Int @map("xp_amount")
   assignmentId String? @map("assignment_id")
+  classId String? @map("class_id")
   createdAt DateTime @default(now()) @map("created_at")
   student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
 

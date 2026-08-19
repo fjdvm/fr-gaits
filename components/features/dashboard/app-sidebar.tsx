@@ -31,6 +31,7 @@ interface AppSidebarProps {
   userEmail?: string;
   userName?: string | null;
   classes?: SidebarClass[];
+  studentXp?: { totalXp: number; level: number };
   forceExpanded?: boolean;
   onNavigate?: () => void;
 }
@@ -52,7 +53,7 @@ const adminMenuItems = [
   { title: "Settings", url: "/dashboard/admin/settings", icon: Settings },
 ];
 
-export function AppSidebar({ role, userEmail, userName, classes = [], forceExpanded, onNavigate }: AppSidebarProps) {
+export function AppSidebar({ role, userEmail, userName, classes = [], studentXp, forceExpanded, onNavigate }: AppSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { collapsed: collapsedFromContext } = useSidebarCollapse();
@@ -159,9 +160,16 @@ export function AppSidebar({ role, userEmail, userName, classes = [], forceExpan
             <div className="bg-surface-container-low rounded-2xl p-4 border border-surface-container flex flex-col gap-1">
               <p className="truncate text-xs font-semibold text-on-surface">{userName || userEmail}</p>
               {userName && <p className="truncate text-[10px] text-secondary">{userEmail}</p>}
-              <span className="inline-block self-start rounded-full bg-primary-container px-2.5 py-0.5 text-[10px] font-bold text-on-primary-container uppercase">
-                {roleLabel}
-              </span>
+              <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                <span className="inline-block self-start rounded-full bg-primary-container px-2.5 py-0.5 text-[10px] font-bold text-on-primary-container uppercase">
+                  {roleLabel}
+                </span>
+                {studentXp && (
+                  <span className="inline-block self-start rounded-full bg-surface-container px-2.5 py-0.5 text-[10px] font-bold text-secondary">
+                    Lvl {studentXp.level} · {studentXp.totalXp} XP
+                  </span>
+                )}
+              </div>
             </div>
           )}
 

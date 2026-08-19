@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/features/dashboard/dashboard-shell";
+import { computeLevel, getTotalXp } from "@/lib/gamification";
 
 export default async function DashboardLayout({
   children,
@@ -29,6 +30,7 @@ export default async function DashboardLayout({
   const role = dbUser.role as "student" | "instructor" | "admin";
 
   let sidebarClasses: { id: string; name: string; archived: boolean; classArchived: boolean }[] = [];
+  let studentXp: { totalXp: number; level: number } | undefined;
   if (role === "instructor") {
     const classes = await prisma.class.findMany({
       where: { instructorId: user.id },
@@ -48,10 +50,13 @@ export default async function DashboardLayout({
       archived: e.archived || e.class.archived,
       classArchived: e.class.archived,
     }));
+
+    const totalXp = await getTotalXp(user.id);
+    studentXp = { totalXp, level: computeLevel(totalXp).level };
   }
 
   return (
-    <DashboardShell role={role} userEmail={dbUser.email} userName={dbUser.name} classes={sidebarClasses}>
+    <DashboardShell role={role} userEmail={dbUser.email} userName={dbUser.name} classes={sidebarClasses} studentXp={studentXp}>
       {children}
     </DashboardShell>
   );

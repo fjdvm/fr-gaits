@@ -31,8 +31,8 @@ describe("getClassLeaderboardTabData", () => {
     await prisma.enrollment.createMany({ data: [{ studentId: studentAId, classId }, { studentId: studentBId, classId }] });
     await prisma.xpEvent.createMany({
       data: [
-        { studentId: studentAId, eventType: "pass_case", xpAmount: 100 },
-        { studentId: studentBId, eventType: "pass_case", xpAmount: 50 },
+        { studentId: studentAId, classId, eventType: "pass_case", xpAmount: 100 },
+        { studentId: studentBId, classId, eventType: "pass_case", xpAmount: 50 },
       ],
     });
   });
