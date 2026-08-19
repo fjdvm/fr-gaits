@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { runCode } from "@/app/actions/run-code";
 import { submitCode } from "@/app/actions/submit-code";
 import { WorkspaceHeader } from "./workspace-header";
+import { BackButton } from "@/components/features/dashboard/back-button";
 import { WorkspaceInstructions } from "./workspace-instructions";
 import { WorkspaceEditor } from "./workspace-editor";
 import { WorkspaceChat } from "./workspace-chat";
@@ -150,6 +151,7 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
   return (
     <div className="flex flex-col h-screen bg-surface-container-low text-on-surface overflow-hidden">
       <WorkspaceHeader title={assignment.title} language={assignment.language} dueDate={assignment.dueDate} heartsCount={hearts.currentCount} maxHearts={assignment.heartsCount} timeToRegen={timeToRegen} isSubmitted={!!submission} autosaveStatus={autosaveStatus} />
+      <BackButton href="/dashboard/student" />
       <div className="flex flex-1 overflow-hidden p-6">
         <ResizablePanelGroup orientation="horizontal">
           <ResizablePanel defaultSize={33} minSize={20}>

@@ -72,6 +72,7 @@ describe("submitCode behavioral signals", () => {
       keystrokeCount: 5,
       wpm: 10,
       totalFocusTimeSecs: 30,
+      tabSwitchCount: 0,
       events: [
         { type: "paste", timestamp: 0, length: 40, charsAtTimeOfPaste: 0 },
         { type: "submit", timestamp: 5_000 },
@@ -104,6 +105,7 @@ describe("submitCode behavioral signals", () => {
       keystrokeCount: 0,
       wpm: 0,
       totalFocusTimeSecs: 5,
+      tabSwitchCount: 0,
       events: [
         { type: "paste", timestamp: 0, length: 1000, charsAtTimeOfPaste: 0 },
         { type: "submit", timestamp: 1_000 },

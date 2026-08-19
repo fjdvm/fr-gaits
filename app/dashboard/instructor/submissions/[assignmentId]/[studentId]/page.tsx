@@ -30,8 +30,10 @@ export default async function SubmissionDetailPage({ params }: PageProps) {
 
   return (
     <SubmissionDetailView
+      assignmentId={assignmentId}
       assignmentTitle={assignment.title}
       assignmentLanguage={assignment.language}
+      studentId={studentId}
       studentEmail={student?.email || "Unknown"}
       studentName={student?.name ?? null}
       submission={submission ? {

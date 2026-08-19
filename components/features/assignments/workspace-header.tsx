@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Heart, Calendar, Cloud, CloudUpload, CloudAlert } from "lucide-react";
+import { Heart, Calendar, Cloud, CloudUpload, CloudAlert } from "lucide-react";
 import type { AutosaveStatus } from "./use-autosave";
 
 interface WorkspaceHeaderProps {
@@ -28,13 +27,6 @@ export function WorkspaceHeader({
   return (
     <header className="flex h-[72px] items-center justify-between px-6 border-b border-surface-container bg-white shrink-0 shadow-sm">
       <div className="flex items-center gap-4 flex-wrap">
-        <Link
-          href="/dashboard/student"
-          className="text-xs text-secondary hover:text-primary transition-colors flex items-center gap-1.5 font-bold"
-        >
-          <ArrowLeft className="h-4 w-4" /> Dashboard
-        </Link>
-        <span className="text-surface-container-high font-normal">|</span>
         <h1 className="text-sm font-bold text-on-surface tracking-tight">{title}</h1>
         <span className="bg-primary-container text-on-primary-container text-[10px] px-2.5 py-0.5 rounded-md font-bold uppercase tracking-wider font-mono">
           {language}

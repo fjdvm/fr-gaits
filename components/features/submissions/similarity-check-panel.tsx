@@ -24,7 +24,11 @@ interface SimilarityPair {
   similarity: number;
 }
 
-export function SimilarityCheckPanel({ assignmentId, students, onResult }: SimilarityCheckPanelProps) {
+export function SimilarityCheckPanel({
+  assignmentId,
+  students,
+  onResult,
+}: SimilarityCheckPanelProps) {
   const [isChecking, setIsChecking] = useState(false);
   const [pairs, setPairs] = useState<SimilarityPair[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,12 +51,16 @@ export function SimilarityCheckPanel({ assignmentId, students, onResult }: Simil
 
   return (
     <div className="bg-white rounded-[24px] border border-surface-container shadow-sm p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-2">
         <div className="flex items-center gap-2.5">
           <ShieldAlert className="h-5 w-5 text-primary" />
           <div>
-            <h3 className="font-bold text-sm text-on-surface">Code Similarity Check</h3>
-            <p className="text-[10px] text-secondary mt-0.5">Compare submissions within this assignment for matching code</p>
+            <h3 className="font-bold text-sm text-on-surface">
+              Code Similarity Check
+            </h3>
+            <p className="text-[10px] text-secondary mt-0.5">
+              Compare submissions within this assignment for matching code
+            </p>
           </div>
         </div>
         <button
@@ -65,10 +73,14 @@ export function SimilarityCheckPanel({ assignmentId, students, onResult }: Simil
         </button>
       </div>
 
-      {error && <p className="text-xs text-destructive font-semibold">{error}</p>}
+      {error && (
+        <p className="text-xs text-destructive font-semibold">{error}</p>
+      )}
 
       {pairs !== null && pairs.length === 0 && !error && (
-        <p className="text-xs text-secondary">No similar submission pairs found above the threshold.</p>
+        <p className="text-xs text-secondary">
+          No similar submission pairs found above the threshold.
+        </p>
       )}
 
       {pairs !== null && pairs.length > 0 && (
@@ -82,11 +94,17 @@ export function SimilarityCheckPanel({ assignmentId, students, onResult }: Simil
                 className="flex items-center justify-between p-3 rounded-2xl bg-surface-container-low border border-surface-container"
               >
                 <div className="flex items-center gap-2 text-xs font-semibold text-on-surface">
-                  <Link href={`/dashboard/instructor/submissions/${assignmentId}/${pair.studentAId}`} className="hover:text-primary">
+                  <Link
+                    href={`/dashboard/instructor/submissions/${assignmentId}/${pair.studentAId}`}
+                    className="hover:text-primary"
+                  >
                     {studentA ? getDisplayName(studentA) : pair.studentAId}
                   </Link>
                   <span className="text-secondary">↔</span>
-                  <Link href={`/dashboard/instructor/submissions/${assignmentId}/${pair.studentBId}`} className="hover:text-primary">
+                  <Link
+                    href={`/dashboard/instructor/submissions/${assignmentId}/${pair.studentBId}`}
+                    className="hover:text-primary"
+                  >
                     {studentB ? getDisplayName(studentB) : pair.studentBId}
                   </Link>
                 </div>

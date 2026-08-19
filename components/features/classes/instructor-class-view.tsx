@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
+import { BackButton } from "@/components/features/dashboard/back-button";
 import { ClassTabs, type ClassTab } from "./class-tabs";
 import { StreamTab } from "./stream-tab";
 import { ClassworkTab } from "./classwork-tab";
@@ -57,6 +58,7 @@ export function InstructorClassView({
   return (
     <>
       <DashboardHeader title={className} description={`Join code: ${joinCode}`} />
+      <BackButton href="/dashboard/instructor" />
       <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col items-center">
         <ClassTabs activeTab={activeTab} onChange={setActiveTab} />
 
@@ -73,7 +75,7 @@ export function InstructorClassView({
         {activeTab === "classwork" && (
           <ClassworkTab classId={classId} className={className} assignments={assignments} />
         )}
-        {activeTab === "people" && <PeopleTab instructor={instructor} roster={roster} />}
+        {activeTab === "people" && <PeopleTab classId={classId} instructor={instructor} roster={roster} />}
         {activeTab === "leaderboard" && <ClassLeaderboardTab leaderboard={leaderboard} myRank={myRank} />}
       </main>
     </>

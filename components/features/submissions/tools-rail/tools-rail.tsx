@@ -37,7 +37,7 @@ export function ToolsRail({
 
   return (
     <>
-      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col justify-end gap-3">
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col items-end justify-end gap-3">
         <RailButton
           icon={<BarChart2 className="h-4 w-4" />}
           label="Generate Stats"
@@ -56,7 +56,7 @@ export function ToolsRail({
       >
         <SheetContent
           side="right"
-          className="w-full sm:max-w-lg overflow-y-auto p-6"
+          className="data-[side=right]:w-full data-[side=right]:sm:w-1/2 data-[side=right]:lg:w-2/5 data-[side=right]:xl:w-1/3 sm:max-w-none data-[side=right]:sm:max-w-none overflow-y-auto p-6"
         >
           <SheetHeader className="px-0">
             <SheetTitle>Class Stats Dashboard</SheetTitle>
@@ -74,7 +74,7 @@ export function ToolsRail({
       >
         <SheetContent
           side="right"
-          className="w-full sm:max-w-lg overflow-y-auto p-6"
+          className="data-[side=right]:w-full data-[side=right]:sm:w-1/2 data-[side=right]:lg:w-2/5 data-[side=right]:xl:w-1/3 sm:max-w-none data-[side=right]:sm:max-w-none overflow-y-auto p-6"
         >
           <SheetHeader className="px-0">
             <SheetTitle>Code Similarity Check</SheetTitle>

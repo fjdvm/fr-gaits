@@ -15,6 +15,8 @@ export function useBehavioralTracking(disabled: boolean) {
     typingStartTime: 0,
     focusStartTime: 0,
     totalFocusTimeSecs: 0,
+    tabSwitchCount: 0,
+    hiddenAtTime: 0,
     events: [] as BehavioralEvent[],
   });
 
@@ -38,6 +40,28 @@ export function useBehavioralTracking(disabled: boolean) {
     window.addEventListener("focus", onFocus);
     window.addEventListener("blur", onBlur);
     return () => { window.removeEventListener("focus", onFocus); window.removeEventListener("blur", onBlur); };
+  }, [disabled]);
+
+  useEffect(() => {
+    if (disabled) return;
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        trackingRef.current.hiddenAtTime = Date.now();
+        return;
+      }
+      if (trackingRef.current.hiddenAtTime > 0) {
+        const awayDurationSecs = (Date.now() - trackingRef.current.hiddenAtTime) / 1000;
+        trackingRef.current.tabSwitchCount += 1;
+        trackingRef.current.events.push({
+          type: "tab_switch",
+          timestamp: Date.now(),
+          awayDurationSecs: Math.round(awayDurationSecs),
+        });
+        trackingRef.current.hiddenAtTime = 0;
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange);
   }, [disabled]);
 
   const handleEditorMount: OnMount = useCallback((editor) => {
@@ -85,6 +109,7 @@ export function useBehavioralTracking(disabled: boolean) {
       keystrokeCount: trackingRef.current.keystrokeCount,
       wpm,
       totalFocusTimeSecs: Math.round(trackingRef.current.totalFocusTimeSecs),
+      tabSwitchCount: trackingRef.current.tabSwitchCount,
       events: trackingRef.current.events,
     };
   }, []);

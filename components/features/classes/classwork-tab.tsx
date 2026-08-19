@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Plus, Layers } from "lucide-react";
+import { BookOpen, Plus, Layers, Trash2 } from "lucide-react";
 import { CreateAssignmentForm } from "@/components/features/dashboard/instructor/create-assignment-form";
+import { useAssignmentActions } from "@/components/features/dashboard/instructor/components/use-assignment-actions";
+import { DeleteAssignmentDialog } from "@/components/features/submissions/delete-assignment-dialog";
 
 interface ClassworkAssignment {
   id: string;
@@ -22,6 +24,7 @@ interface ClassworkTabProps {
 
 export function ClassworkTab({ classId, className, assignments }: ClassworkTabProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const { pendingDelete, isDeleting, requestDelete, cancelDelete, confirmDelete } = useAssignmentActions();
 
   if (showCreateForm) {
     return (
@@ -71,10 +74,29 @@ export function ClassworkTab({ classId, className, assignments }: ClassworkTabPr
                   </p>
                 </div>
               </div>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  requestDelete(asm);
+                }}
+                title="Delete assignment"
+                className="p-2 rounded-xl text-secondary hover:text-red-600 hover:bg-surface-container-low transition-colors cursor-pointer shrink-0"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </Link>
           ))}
         </div>
       )}
+
+      <DeleteAssignmentDialog
+        open={!!pendingDelete}
+        onOpenChange={(open) => { if (!open) cancelDelete(); }}
+        onConfirm={confirmDelete}
+        assignmentTitle={pendingDelete?.title ?? ""}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

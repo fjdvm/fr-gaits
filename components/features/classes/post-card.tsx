@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Megaphone, BookOpen, Trash2, Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 import { CommentThread } from "./comment-thread";
+import { DeletePostDialog } from "./delete-post-dialog";
 import { resolveAuthorDisplay } from "./comment-utils";
 import type { RosterStudent, RosterInstructor, StreamPostData } from "./types";
 
@@ -18,12 +19,17 @@ interface PostCardProps {
 
 export function PostCard({ post, isInstructor, currentUserId, roster, instructor, onDeletePost }: PostCardProps) {
   const [showThreads, setShowThreads] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const isAssignmentPost = post.type === "assignment_created";
   const canDelete = isInstructor && post.authorId === currentUserId;
   const authorDisplay = resolveAuthorDisplay(post.authorId, currentUserId, instructor, roster);
 
   const handleDelete = () => {
-    if (!window.confirm("Delete this post?")) return;
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = () => {
+    setShowDeleteDialog(false);
     onDeletePost(post.id);
   };
 
@@ -82,6 +88,11 @@ export function PostCard({ post, isInstructor, currentUserId, roster, instructor
           )}
         </div>
       </div>
+      <DeletePostDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

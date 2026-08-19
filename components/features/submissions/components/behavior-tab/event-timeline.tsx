@@ -15,6 +15,8 @@ function describeEvent(event: BehavioralEvent): string {
       return "Editor unfocused";
     case "run_attempt":
       return `Run attempt (${event.passedCount}/${event.totalCount} passed)`;
+    case "tab_switch":
+      return `Switched away from tab (${event.awayDurationSecs}s)`;
     case "submit":
       return "Submitted";
   }

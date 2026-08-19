@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { BarChart2, Loader2 } from "lucide-react";
-import { getAssignmentStats, type AssignmentStats } from "@/app/actions/assignment-stats";
+import {
+  getAssignmentStats,
+  type AssignmentStats,
+} from "@/app/actions/assignment-stats";
 import { NarrativeReport } from "./stats-dashboard/narrative-report";
 
 interface StatsDashboardProps {
@@ -10,7 +13,10 @@ interface StatsDashboardProps {
   similarityMatchCount: number | null;
 }
 
-export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDashboardProps) {
+export function StatsDashboard({
+  assignmentId,
+  similarityMatchCount,
+}: StatsDashboardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState<AssignmentStats | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -29,12 +35,16 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
 
   return (
     <div className="bg-white rounded-[24px] border border-surface-container shadow-sm p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 gap-2">
         <div className="flex items-center gap-2.5">
           <BarChart2 className="h-5 w-5 text-primary" />
           <div>
-            <h3 className="font-bold text-sm text-on-surface">Class Stats Dashboard</h3>
-            <p className="text-[10px] text-secondary mt-0.5">Deterministic performance and integrity breakdown</p>
+            <h3 className="font-bold text-sm text-on-surface">
+              Class Stats Dashboard
+            </h3>
+            <p className="text-[10px] text-secondary mt-0.5">
+              Deterministic performance and integrity breakdown
+            </p>
           </div>
         </div>
         <button
@@ -47,7 +57,9 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
         </button>
       </div>
 
-      {error && <p className="text-xs text-destructive font-semibold">{error}</p>}
+      {error && (
+        <p className="text-xs text-destructive font-semibold">{error}</p>
+      )}
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -60,7 +72,11 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
           />
           <StatTile
             label="Most Failed Test Case"
-            value={stats.mostFailedTestCase ? `${stats.mostFailedTestCase.failCount} fails` : "None"}
+            value={
+              stats.mostFailedTestCase
+                ? `${stats.mostFailedTestCase.failCount} fails`
+                : "None"
+            }
           />
           <StatTile
             label="Submitted in Last Hour"
@@ -68,7 +84,11 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
           />
           <StatTile
             label="Similarity Matches"
-            value={similarityMatchCount === null ? "Not yet checked" : `${similarityMatchCount}`}
+            value={
+              similarityMatchCount === null
+                ? "Not yet checked"
+                : `${similarityMatchCount}`
+            }
           />
           {stats.hintUsageCorrelation.map((entry) => (
             <StatTile
@@ -78,7 +98,11 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
             />
           ))}
           {Object.entries(stats.riskFlagCounts).map(([flag, count]) => (
-            <StatTile key={flag} label={`${flag} Risk Submissions`} value={`${count}`} />
+            <StatTile
+              key={flag}
+              label={`${flag} Risk Submissions`}
+              value={`${count}`}
+            />
           ))}
         </div>
       )}
@@ -88,10 +112,20 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
   );
 }
 
-function StatTile({ label, value, hint }: { label: string; value: string; hint?: string }) {
+function StatTile({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
   return (
     <div className="bg-surface-container-low p-4 rounded-2xl border border-surface-container">
-      <p className="text-[10px] text-secondary font-bold uppercase tracking-wider mb-1">{label}</p>
+      <p className="text-[10px] text-secondary font-bold uppercase tracking-wider mb-1">
+        {label}
+      </p>
       <span className="text-xl font-extrabold text-on-surface">{value}</span>
       {hint && <p className="text-[9px] text-secondary mt-1">{hint}</p>}
     </div>

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
+import { BackButton } from "@/components/features/dashboard/back-button";
 import Editor from "@monaco-editor/react";
-import { CheckCircle2, Brain, MessageSquare, AlertCircle } from "lucide-react";
-import { BehaviorTab } from "./components/behavior-tab";
+import { CheckCircle2, Sparkles, MessageSquare, AlertCircle } from "lucide-react";
+import { AnalysisTab } from "./components/analysis-tab";
 import { TutorLogTab } from "./components/tutor-log-tab";
 import { TestResultsTab } from "./components/test-results-tab";
 import { getDisplayName } from "@/lib/display-name";
@@ -33,8 +34,10 @@ interface ChatMsg {
 }
 
 interface SubmissionDetailViewProps {
+  assignmentId: string;
   assignmentTitle: string;
   assignmentLanguage: string;
+  studentId: string;
   studentEmail: string;
   studentName: string | null;
   submission: {
@@ -48,20 +51,26 @@ interface SubmissionDetailViewProps {
 }
 
 export function SubmissionDetailView({
+  assignmentId,
   assignmentTitle,
   assignmentLanguage,
+  studentId,
   studentEmail,
   studentName,
   submission,
   chatMessages,
 }: SubmissionDetailViewProps) {
-  const [activeTab, setActiveTab] = useState<"tests" | "behavior" | "chat">("tests");
+  const [activeTab, setActiveTab] = useState<"tests" | "analysis" | "chat">("tests");
   const studentDisplayName = getDisplayName({ name: studentName, email: studentEmail });
 
   if (!submission) {
     return (
       <>
-        <DashboardHeader title={`${studentDisplayName} — ${assignmentTitle}`} description={studentEmail} />
+        <DashboardHeader
+          title={`${studentDisplayName} — ${assignmentTitle}`}
+          description={studentEmail}
+        />
+        <BackButton href={`/dashboard/instructor/submissions/${assignmentId}`} />
         <main className="p-6 md:p-10 flex-grow">
           <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center">
             <AlertCircle className="h-12 w-12 text-secondary/30 mb-4" />
@@ -79,6 +88,7 @@ export function SubmissionDetailView({
         title={`${studentDisplayName} — ${assignmentTitle}`}
         description={`${studentEmail} · Submitted at: ${new Date(submission.submittedAt).toLocaleString()}`}
       />
+      <BackButton href={`/dashboard/instructor/submissions/${assignmentId}`} />
       <main className="flex-grow overflow-hidden p-6 md:p-10 flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
         {/* Left Pane: Code Viewer */}
         <section className="flex-grow lg:flex-[3] bg-white rounded-3xl border border-surface-container flex flex-col overflow-hidden shadow-sm">
@@ -122,13 +132,13 @@ export function SubmissionDetailView({
               Test Results
             </button>
             <button
-              onClick={() => setActiveTab("behavior")}
+              onClick={() => setActiveTab("analysis")}
               className={`flex-1 py-3 text-xs font-bold rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                activeTab === "behavior" ? "bg-white text-primary shadow-sm" : "text-secondary hover:text-on-surface"
+                activeTab === "analysis" ? "bg-white text-primary shadow-sm" : "text-secondary hover:text-on-surface"
               }`}
             >
-              <Brain className="h-4 w-4" />
-              Behavior
+              <Sparkles className="h-4 w-4" />
+              Analysis
             </button>
             <button
               onClick={() => setActiveTab("chat")}
@@ -147,8 +157,12 @@ export function SubmissionDetailView({
               <TestResultsTab testResults={submission.testResults} />
             )}
 
-            {activeTab === "behavior" && (
-              <BehaviorTab behavioralSignals={submission.behavioralSignals} />
+            {activeTab === "analysis" && (
+              <AnalysisTab
+                assignmentId={assignmentId}
+                studentId={studentId}
+                behavioralSignals={submission.behavioralSignals}
+              />
             )}
 
             {activeTab === "chat" && (

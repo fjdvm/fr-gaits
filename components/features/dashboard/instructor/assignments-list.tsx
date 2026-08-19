@@ -1,7 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { BookOpen, Calendar, Cpu, Heart, Plus, Code } from "lucide-react";
+import { useMemo, useState } from "react";
+import { BookOpen, Plus, Filter } from "lucide-react";
+import { useAssignmentActions } from "./components/use-assignment-actions";
+import { AssignmentCard } from "./components/assignment-card";
+import { DeleteAssignmentDialog } from "@/components/features/submissions/delete-assignment-dialog";
 
 interface InstructorAssignment {
   id: string;
@@ -20,6 +23,41 @@ interface AssignmentsListProps {
 }
 
 export function AssignmentsList({ assignments, onCreateClick }: AssignmentsListProps) {
+  const { pendingDelete, isDeleting, requestDelete, cancelDelete, confirmDelete } = useAssignmentActions();
+  const [selectedClass, setSelectedClass] = useState<string>("all");
+
+  const allClassNames = useMemo(() => {
+    const names = new Set<string>();
+    for (const asm of assignments) {
+      for (const name of asm.classNames) {
+        names.add(name);
+      }
+    }
+    return Array.from(names).sort();
+  }, [assignments]);
+
+  const filteredAssignments = useMemo(() => {
+    if (selectedClass === "all") return assignments;
+    return assignments.filter((asm) => asm.classNames.includes(selectedClass));
+  }, [assignments, selectedClass]);
+
+  const groupedByClass = useMemo(() => {
+    const groups: Record<string, InstructorAssignment[]> = {};
+    for (const asm of filteredAssignments) {
+      const classKey = selectedClass !== "all" ? selectedClass : asm.classNames[0] || "Unassigned";
+      if (selectedClass === "all") {
+        for (const name of asm.classNames) {
+          if (!groups[name]) groups[name] = [];
+          groups[name].push(asm);
+        }
+      } else {
+        if (!groups[classKey]) groups[classKey] = [];
+        groups[classKey].push(asm);
+      }
+    }
+    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+  }, [filteredAssignments, selectedClass]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -33,7 +71,23 @@ export function AssignmentsList({ assignments, onCreateClick }: AssignmentsListP
         </button>
       </div>
 
-      {assignments.length === 0 ? (
+      {allClassNames.length > 0 && (
+        <div className="flex items-center gap-2.5">
+          <Filter className="h-4 w-4 text-secondary" />
+          <select
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+            className="bg-white border border-surface-container rounded-xl px-4 py-2 text-xs font-bold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container transition-shadow cursor-pointer"
+          >
+            <option value="all">All Classes</option>
+            {allClassNames.map((name) => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {filteredAssignments.length === 0 ? (
         <div className="bg-white border border-surface-container rounded-[24px] p-12 text-center flex flex-col items-center">
           <BookOpen className="h-12 w-12 text-secondary/30 mb-4" />
           <h3 className="font-bold text-lg">No assignments created</h3>
@@ -42,53 +96,31 @@ export function AssignmentsList({ assignments, onCreateClick }: AssignmentsListP
           </p>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {assignments.map((asm) => (
-            <Link
-              key={asm.id}
-              href={`/dashboard/instructor/submissions/${asm.id}`}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-surface-container flex flex-col relative overflow-hidden group hover:border-outline-variant hover:shadow-md transition-all"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
-              <div className="flex justify-between items-start mb-4 relative z-10">
-                <div className="bg-primary-container/10 p-3 rounded-xl">
-                  <Code className="h-6 w-6 text-primary" />
-                </div>
-                <span className="bg-surface-container-low text-on-surface px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-surface-container font-mono uppercase">
-                  {asm.language}
-                </span>
+        <div className="space-y-8">
+          {groupedByClass.map(([className, classAssignments]) => (
+            <section key={className}>
+              <div className="flex items-center gap-3 mb-4">
+                <h3 className="text-sm font-bold text-on-surface">{className}</h3>
+                <div className="flex-1 h-px bg-surface-container" />
+                <span className="text-[10px] text-secondary font-bold">{classAssignments.length} assignment{classAssignments.length !== 1 ? "s" : ""}</span>
               </div>
-              <div className="mb-4 relative z-10 flex-grow">
-                <h4 className="font-bold text-base text-on-surface mb-1 group-hover:text-primary transition-colors">{asm.title}</h4>
-                <p className="text-[10px] text-secondary flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
-                  Due: {new Date(asm.dueDate).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
-                </p>
+              <div className="grid gap-6 md:grid-cols-2">
+                {classAssignments.map((asm) => (
+                  <AssignmentCard key={asm.id} assignment={asm} onDelete={requestDelete} />
+                ))}
               </div>
-              <div className="mt-4 pt-4 border-t border-surface-container grid grid-cols-3 gap-2 text-center relative z-10">
-                <div className="bg-surface-container-low p-2 rounded-xl border border-surface-container">
-                  <span className="block text-[9px] text-secondary font-bold uppercase">Classes</span>
-                  <span className="block text-xs font-bold text-on-surface mt-0.5 truncate" title={asm.classNames.join(", ")}>
-                    {asm.classNames.join(", ") || "None"}
-                  </span>
-                </div>
-                <div className="bg-surface-container-low p-2 rounded-xl border border-surface-container">
-                  <span className="block text-[9px] text-secondary font-bold uppercase">Test Cases</span>
-                  <span className="block text-xs font-bold text-on-surface mt-0.5">{asm.testCaseCount}</span>
-                </div>
-                <div className="bg-surface-container-low p-2 rounded-xl border border-surface-container">
-                  <span className="block text-[9px] text-secondary font-bold uppercase flex items-center justify-center gap-0.5">
-                    <Heart className="h-2.5 w-2.5 fill-destructive text-destructive" /> Hearts
-                  </span>
-                  <span className="block text-[10px] font-bold text-on-surface mt-0.5 leading-none">
-                    {asm.heartsCount} ({asm.heartsRegenMinutes}m)
-                  </span>
-                </div>
-              </div>
-            </Link>
+            </section>
           ))}
         </div>
       )}
+
+      <DeleteAssignmentDialog
+        open={!!pendingDelete}
+        onOpenChange={(open) => { if (!open) cancelDelete(); }}
+        onConfirm={confirmDelete}
+        assignmentTitle={pendingDelete?.title ?? ""}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

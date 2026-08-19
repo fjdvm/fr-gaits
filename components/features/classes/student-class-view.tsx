@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
+import { BackButton } from "@/components/features/dashboard/back-button";
 import { ClassTabs, type ClassTab } from "./class-tabs";
 import { StreamTab } from "./stream-tab";
 import { StudentClassworkTab } from "./student-classwork-tab";
@@ -55,6 +56,7 @@ export function StudentClassView({
   return (
     <>
       <DashboardHeader title={className} description="Class activity, assignments, and classmates" />
+      <BackButton href="/dashboard/student" />
       <main className="flex-grow overflow-y-auto p-6 md:p-10 space-y-6 flex flex-col items-center">
         {classArchived && (
           <div className="w-full max-w-4xl bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-2xl px-4 py-3">

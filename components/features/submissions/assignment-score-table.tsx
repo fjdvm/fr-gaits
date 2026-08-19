@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Clock, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Clock, ArrowRight, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
+import { BackButton } from "@/components/features/dashboard/back-button";
 import { getDisplayName } from "@/lib/display-name";
 import { ToolsRail } from "./tools-rail/tools-rail";
 import { SubmissionsSummary } from "./submissions-summary";
+import { DeleteAssignmentDialog } from "./delete-assignment-dialog";
+import { deleteAssignment } from "@/app/actions/delete-assignment";
 
 interface StudentRow {
   studentId: string;
@@ -24,7 +29,23 @@ interface AssignmentScoreTableProps {
 }
 
 export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }: AssignmentScoreTableProps) {
+  const router = useRouter();
   const [similarityMatchCount, setSimilarityMatchCount] = useState<number | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    const result = await deleteAssignment(assignmentId);
+    if (result.success) {
+      toast.success("Assignment deleted");
+      router.push("/dashboard/instructor/submissions");
+    } else {
+      toast.error(result.error || "Failed to delete assignment");
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
 
   // Sort students by score (null/missing scores at the bottom) to calculate rank
   const sortedStudents = [...students].sort((a, b) => {
@@ -45,7 +66,20 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
 
   return (
     <>
-      <DashboardHeader title={`Submissions: ${assignmentTitle}`} description="Review student submissions and performance metrics." />
+      <DashboardHeader
+        title={`Submissions: ${assignmentTitle}`}
+        description="Review student submissions and performance metrics."
+      />
+      <div className="flex items-center justify-between">
+        <BackButton href="/dashboard/instructor/submissions" />
+        <button
+          onClick={() => setShowDeleteDialog(true)}
+          className="hidden sm:inline-flex items-center gap-1.5 px-4 md:px-10 pt-4 text-xs font-bold text-secondary hover:text-red-600 transition-colors cursor-pointer"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+          Delete
+        </button>
+      </div>
       <main className="flex-grow overflow-y-auto p-6 md:p-10 flex flex-col items-center">
         <div className="w-full max-w-6xl space-y-8">
         <SubmissionsSummary
@@ -153,6 +187,13 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
         />
         </div>
       </main>
+      <DeleteAssignmentDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        assignmentTitle={assignmentTitle}
+        isDeleting={isDeleting}
+      />
     </>
   );
 }
