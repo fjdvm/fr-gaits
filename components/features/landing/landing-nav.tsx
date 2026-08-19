@@ -24,7 +24,7 @@ export function LandingNav() {
               className="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-full text-on-primary-container bg-primary-container hover:bg-primary-fixed transition-colors shadow-sm hover:shadow-md"
               href="/signup"
             >
-              Get started
+              Try the prototype
             </Link>
           </div>
 

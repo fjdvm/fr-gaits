@@ -70,7 +70,7 @@ export function LandingMobileNav() {
               />
             }
           >
-            Get started
+            Try the prototype
           </SheetClose>
         </div>
       </SheetContent>
