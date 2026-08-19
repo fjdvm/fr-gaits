@@ -1,24 +1,45 @@
 const features = [
   {
-    icon: "bolt",
+    icon: "code",
     iconBg: "bg-primary-container/20",
     iconColor: "text-primary-container",
-    title: "Gamification",
-    description: "Earn XP, maintain daily streaks, and unlock achievements as you progress through your personalized curriculum.",
+    title: "Integrated Code Editor",
+    description: "Write, run, and submit code in Python, C, JavaScript, or C# — directly in your browser. No setup, no extra apps.",
   },
   {
     icon: "smart_toy",
     iconBg: "bg-surface-container-highest",
     iconColor: "text-on-surface",
-    title: "AI Instructor",
-    description: "Get instant, personalized feedback on assignments and concepts from our advanced AI tutor, available 24/7.",
+    title: "Guided AI Tutor",
+    description: "Ask the AI tutor when you're stuck. It responds with hints and guiding questions — never just handing you the answer — so you genuinely learn.",
+  },
+  {
+    icon: "favorite",
+    iconBg: "bg-surface-container-high",
+    iconColor: "text-on-surface",
+    title: "Hearts System",
+    description: "Each assignment comes with a limited number of AI interactions (hearts). Spend them wisely — this encourages you to think before you ask.",
+  },
+  {
+    icon: "assignment",
+    iconBg: "bg-primary-container/10",
+    iconColor: "text-primary-container",
+    title: "Assignment Module",
+    description: "Instructors create and manage programming tasks with instructions, test cases, and due dates — all visible to students in one place.",
   },
   {
     icon: "leaderboard",
     iconBg: "bg-surface-container-high",
     iconColor: "text-on-surface",
-    title: "Leaderboards",
-    description: "Compete with friends and learners worldwide in weekly challenges to climb the ranks and earn exclusive rewards.",
+    title: "Class Leaderboard",
+    description: "Track your standing within your class and stay motivated to improve your scores and submission quality.",
+  },
+  {
+    icon: "school",
+    iconBg: "bg-primary-container/20",
+    iconColor: "text-primary-container",
+    title: "Student & Instructor Dashboards",
+    description: "Separate views tailored for students and instructors — with class management, assignment tracking, and submission review built in.",
   },
 ];
 
@@ -27,8 +48,8 @@ export function LandingFeatures() {
     <section id="features" className="py-24 bg-surface-container-lowest">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-on-surface mb-4">Powerful Features for Faster Learning</h2>
-          <p className="text-lg text-secondary">Everything you need to stay motivated and achieve your learning goals.</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-on-surface mb-4">Everything You Need in One Platform</h2>
+          <p className="text-lg text-secondary">GAITS replaces your fragmented LMS-IDE workflow with a single, purpose-built environment for programming education.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">

@@ -1,8 +1,8 @@
 const steps = [
-  { number: 1, title: "Sign Up", description: "Create your free account and set up your learning profile." },
-  { number: 2, title: "Choose a Course", description: "Browse our extensive library and pick what you want to learn." },
-  { number: 3, title: "Learn with AI", description: "Engage with your AI tutor for personalized lessons and feedback." },
-  { number: 4, title: "Earn Rewards", description: "Gain XP, unlock achievements, and climb the leaderboard." },
+  { number: 1, title: "Sign Up & Join a Class", description: "Create your account and enroll in a class using a class code shared by your instructor." },
+  { number: 2, title: "Receive Your Assignment", description: "Instructors post programming assignments with instructions, test cases, and a due date — all in one place." },
+  { number: 3, title: "Code in the Browser", description: "Write and run your code directly inside GAITS — no separate IDE or document editor needed." },
+  { number: 4, title: "Ask Your AI Tutor", description: "Stuck? Use your hearts to consult the AI tutor. It guides you with hints and questions, not ready-made answers." },
 ];
 
 export function LandingHowItWorks() {
@@ -11,7 +11,7 @@ export function LandingHowItWorks() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-extrabold text-on-surface mb-4">How It Works</h2>
-          <p className="text-lg text-secondary">Your journey to mastery in four simple steps.</p>
+          <p className="text-lg text-secondary">From sign-up to submission — everything in four steps.</p>
         </div>
 
         <div className="grid md:grid-cols-4 gap-8">

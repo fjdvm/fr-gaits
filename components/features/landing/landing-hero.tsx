@@ -30,19 +30,19 @@ export function LandingHero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold text-on-surface tracking-tight mb-6 max-w-4xl mx-auto leading-tight">
-          Master your craft with <br className="hidden md:block" /> AI Tutor
+          Code. Learn. Grow. <br className="hidden md:block" /> With Your AI Tutor
         </h1>
 
         <p className="mt-4 text-xl text-secondary max-w-2xl mx-auto mb-10">
-          Experience the next generation of learning with GAITS. Personalized,
-          gamified, and driven by advanced AI.
+          GAITS brings your IDE, assignments, and AI tutor into one platform —
+          so you can focus on learning to code, not juggling tools.
         </p>
 
         <Link
           className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-semibold rounded-full text-white bg-on-background hover:bg-surface-tint transition-all shadow-lg hover:shadow-xl group"
           href="/signup"
         >
-          Explore all courses
+          Get started for free
           <span className="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">
             arrow_forward
           </span>

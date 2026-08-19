@@ -15,8 +15,10 @@ export function LandingFooter() {
               className="h-8 w-auto mb-4 brightness-0 invert"
             />
             <p className="text-secondary-fixed-dim text-sm max-w-sm mb-6">
-              Gamified AI-Assisted Integrated Tutoring System. Revolutionizing
-              the way you learn through technology and engagement.
+              Guided AI-Assisted Integrated Tutoring System — a web-based
+              platform for programming education that integrates a browser-based
+              code editor, instructor assignment module, and a hint-based AI
+              tutor into one place.
             </p>
             <div className="flex space-x-4">
               <a
@@ -59,15 +61,15 @@ export function LandingFooter() {
             <ul className="space-y-3 text-sm text-secondary-fixed-dim">
               <li>
                 <a className="hover:text-white transition-colors" href="#features">
-                  Courses
+                  Features
                 </a>
               </li>
               <li>
                 <a
                   className="hover:text-white transition-colors"
-                  href="#features"
+                  href="#how-it-works"
                 >
-                  Features
+                  How It Works
                 </a>
               </li>
             </ul>
@@ -80,7 +82,7 @@ export function LandingFooter() {
             <ul className="space-y-3 text-sm text-secondary-fixed-dim">
               <li>
                 <a className="hover:text-white transition-colors" href="#problem">
-                  About Us
+                  About
                 </a>
               </li>
               <li>
@@ -103,7 +105,7 @@ export function LandingFooter() {
         </div>
 
         <div className="pt-8 border-t border-surface-dim text-center text-sm text-secondary-fixed-dim">
-          © 2026 GAITS. All rights reserved.
+          © 2026 GAITS — Guided AI-Assisted Integrated Tutoring System. An undergraduate research project by Martin, Dumlao & Gabayno. Polytechnic University of the Philippines.
         </div>
       </div>
     </footer>

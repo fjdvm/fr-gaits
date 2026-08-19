@@ -12,7 +12,8 @@ export function LandingNav() {
           <nav className="hidden md:flex space-x-8">
             <Link className="text-sm font-medium text-on-surface hover:text-primary transition-colors" href="/">Home</Link>
             <a className="text-sm font-medium text-secondary hover:text-primary transition-colors" href="#problem">About</a>
-            <a className="text-sm font-medium text-secondary hover:text-primary transition-colors" href="#features">Feature</a>
+            <a className="text-sm font-medium text-secondary hover:text-primary transition-colors" href="#how-it-works">How It Works</a>
+            <a className="text-sm font-medium text-secondary hover:text-primary transition-colors" href="#features">Features</a>
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
@@ -23,7 +24,7 @@ export function LandingNav() {
               className="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-semibold rounded-full text-on-primary-container bg-primary-container hover:bg-primary-fixed transition-colors shadow-sm hover:shadow-md"
               href="/signup"
             >
-              Join now
+              Get started
             </Link>
           </div>
 

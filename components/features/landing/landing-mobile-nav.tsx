@@ -9,7 +9,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetCl
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "#problem" },
-  { label: "Feature", href: "#features" },
+  { label: "How It Works", href: "#how-it-works" },
+  { label: "Features", href: "#features" },
 ];
 
 export function LandingMobileNav() {
@@ -69,7 +70,7 @@ export function LandingMobileNav() {
               />
             }
           >
-            Join now
+            Get started
           </SheetClose>
         </div>
       </SheetContent>
