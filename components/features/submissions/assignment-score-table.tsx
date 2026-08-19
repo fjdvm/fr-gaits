@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { BarChart3, CheckCircle2, AlertCircle, Clock, Calendar, ArrowRight } from "lucide-react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
 import { getDisplayName } from "@/lib/display-name";
 import { SimilarityCheckPanel } from "./similarity-check-panel";
+import { StatsDashboard } from "./stats-dashboard";
 
 interface StudentRow {
   studentId: string;
@@ -22,6 +24,8 @@ interface AssignmentScoreTableProps {
 }
 
 export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }: AssignmentScoreTableProps) {
+  const [similarityMatchCount, setSimilarityMatchCount] = useState<number | null>(null);
+
   // Sort students by score (null/missing scores at the bottom) to calculate rank
   const sortedStudents = [...students].sort((a, b) => {
     if (a.score === null) return 1;
@@ -186,9 +190,12 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
           </div>
         </div>
 
+        <StatsDashboard assignmentId={assignmentId} similarityMatchCount={similarityMatchCount} />
+
         <SimilarityCheckPanel
           assignmentId={assignmentId}
           students={students.filter((s) => s.hasSubmission).map((s) => ({ studentId: s.studentId, email: s.email, name: s.name }))}
+          onResult={(pairs) => setSimilarityMatchCount(pairs.length)}
         />
         </div>
       </main>

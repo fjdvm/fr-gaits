@@ -15,6 +15,7 @@ interface StudentInfo {
 interface SimilarityCheckPanelProps {
   assignmentId: string;
   students: StudentInfo[];
+  onResult?: (pairs: SimilarityPair[]) => void;
 }
 
 interface SimilarityPair {
@@ -23,7 +24,7 @@ interface SimilarityPair {
   similarity: number;
 }
 
-export function SimilarityCheckPanel({ assignmentId, students }: SimilarityCheckPanelProps) {
+export function SimilarityCheckPanel({ assignmentId, students, onResult }: SimilarityCheckPanelProps) {
   const [isChecking, setIsChecking] = useState(false);
   const [pairs, setPairs] = useState<SimilarityPair[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +36,9 @@ export function SimilarityCheckPanel({ assignmentId, students }: SimilarityCheck
     setError(null);
     const result = await checkSimilarity(assignmentId);
     if (result.success) {
-      setPairs(result.pairs || []);
+      const resultPairs = result.pairs || [];
+      setPairs(resultPairs);
+      onResult?.(resultPairs);
     } else {
       setError(result.error || "Failed to check similarity");
     }
