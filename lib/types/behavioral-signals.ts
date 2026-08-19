@@ -14,7 +14,8 @@ export type BehavioralEvent =
   | { type: "run_attempt"; timestamp: number; passedCount: number; totalCount: number }
   | { type: "submit"; timestamp: number };
 
-export interface StoredBehavioralSignals extends BehavioralSignals {
+export interface StoredBehavioralSignals extends Omit<BehavioralSignals, "events"> {
+  events?: BehavioralEvent[];
   riskScore?: {
     total: number;
     flag: "Low" | "Medium" | "High";

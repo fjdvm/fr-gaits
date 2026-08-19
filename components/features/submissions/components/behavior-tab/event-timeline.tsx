@@ -2,7 +2,7 @@ import { History } from "lucide-react";
 import type { BehavioralEvent } from "@/lib/types/behavioral-signals";
 
 interface EventTimelineProps {
-  events: BehavioralEvent[];
+  events?: BehavioralEvent[];
 }
 
 function describeEvent(event: BehavioralEvent): string {
@@ -28,7 +28,7 @@ function formatRelativeTime(timestamp: number, startTimestamp: number): string {
 }
 
 export function EventTimeline({ events }: EventTimelineProps) {
-  if (events.length === 0) {
+  if (!events || events.length === 0) {
     return null;
   }
 
