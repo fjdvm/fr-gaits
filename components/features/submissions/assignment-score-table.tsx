@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BarChart3, CheckCircle2, AlertCircle, Clock, Calendar, ArrowRight } from "lucide-react";
 import { DashboardHeader } from "@/components/features/dashboard/dashboard-header";
 import { getDisplayName } from "@/lib/display-name";
+import { SimilarityCheckPanel } from "./similarity-check-panel";
 
 interface StudentRow {
   studentId: string;
@@ -184,6 +185,11 @@ export function AssignmentScoreTable({ assignmentId, assignmentTitle, students }
             })}
           </div>
         </div>
+
+        <SimilarityCheckPanel
+          assignmentId={assignmentId}
+          students={students.filter((s) => s.hasSubmission).map((s) => ({ studentId: s.studentId, email: s.email, name: s.name }))}
+        />
         </div>
       </main>
     </>
