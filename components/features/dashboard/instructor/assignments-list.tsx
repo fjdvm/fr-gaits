@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { BookOpen, Calendar, Cpu, Heart, Plus, Code } from "lucide-react";
 
 interface InstructorAssignment {
@@ -43,9 +44,10 @@ export function AssignmentsList({ assignments, onCreateClick }: AssignmentsListP
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {assignments.map((asm) => (
-            <div
+            <Link
               key={asm.id}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-surface-container flex flex-col relative overflow-hidden group hover:border-outline-variant transition-colors"
+              href={`/dashboard/instructor/submissions/${asm.id}`}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-surface-container flex flex-col relative overflow-hidden group hover:border-outline-variant hover:shadow-md transition-all"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110"></div>
               <div className="flex justify-between items-start mb-4 relative z-10">
@@ -83,7 +85,7 @@ export function AssignmentsList({ assignments, onCreateClick }: AssignmentsListP
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
