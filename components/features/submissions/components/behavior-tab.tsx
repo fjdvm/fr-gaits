@@ -1,12 +1,5 @@
 import { Sparkles, Clock } from "lucide-react";
-
-interface BehavioralSignals {
-  pasteCount: number;
-  pasteLength: number;
-  keystrokeCount: number;
-  wpm: number;
-  totalFocusTimeSecs: number;
-}
+import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
 
 interface BehaviorTabProps {
   behavioralSignals: BehavioralSignals;

@@ -8,6 +8,7 @@ import { BehaviorTab } from "./components/behavior-tab";
 import { TutorLogTab } from "./components/tutor-log-tab";
 import { TestResultsTab } from "./components/test-results-tab";
 import { getDisplayName } from "@/lib/display-name";
+import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
 
 const MONACO_LANGUAGE_MAP: Record<string, string> = {
   Python: "python",
@@ -23,14 +24,6 @@ interface TestResult {
   actualOutput: string;
   passed: boolean;
   visible?: boolean;
-}
-
-interface BehavioralSignals {
-  pasteCount: number;
-  pasteLength: number;
-  keystrokeCount: number;
-  wpm: number;
-  totalFocusTimeSecs: number;
 }
 
 interface ChatMsg {

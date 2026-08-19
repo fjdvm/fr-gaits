@@ -4,14 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { awardSubmissionXp } from "@/lib/gamification";
 import { createNotification } from "@/lib/notifications";
-
-interface BehavioralSignals {
-  pasteCount: number;
-  pasteLength: number;
-  keystrokeCount: number;
-  wpm: number;
-  totalFocusTimeSecs: number;
-}
+import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
 
 const LANGUAGE_MAP: Record<string, number> = {
   Python: 100,      // Python (3.12.5)

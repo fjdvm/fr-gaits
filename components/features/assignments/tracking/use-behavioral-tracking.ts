@@ -3,14 +3,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditorNS } from "monaco-editor";
+import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
 
-export interface BehavioralSignals {
-  pasteCount: number;
-  pasteLength: number;
-  keystrokeCount: number;
-  wpm: number;
-  totalFocusTimeSecs: number;
-}
+export type { BehavioralSignals };
 
 export function useBehavioralTracking(disabled: boolean) {
   const trackingRef = useRef({
