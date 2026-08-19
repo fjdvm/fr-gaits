@@ -71,6 +71,8 @@ model Assignment {
   heartsRegenMinutes Int @default(30) @map("hearts_regen_minutes")
   createdBy String @map("created_by")
   createdAt DateTime @default(now()) @map("created_at")
+  statsReportNarrative String? @map("stats_report_narrative")
+  statsReportGeneratedAt DateTime? @map("stats_report_generated_at")
   instructor User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   classes AssignmentClass[]
   testCases TestCase[]

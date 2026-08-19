@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BarChart2, Loader2 } from "lucide-react";
 import { getAssignmentStats, type AssignmentStats } from "@/app/actions/assignment-stats";
+import { NarrativeReport } from "./stats-dashboard/narrative-report";
 
 interface StatsDashboardProps {
   assignmentId: string;
@@ -81,6 +82,8 @@ export function StatsDashboard({ assignmentId, similarityMatchCount }: StatsDash
           ))}
         </div>
       )}
+
+      <NarrativeReport assignmentId={assignmentId} hasStats={!!stats} />
     </div>
   );
 }
