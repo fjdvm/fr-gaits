@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAssignment } from "@/app/actions/create-assignment";
 import { toast } from "sonner";
-import { Calendar, Heart, Shield, Plus } from "lucide-react";
+import { Calendar, Heart, Shield, Plus, Sparkles } from "lucide-react";
 import { TestCaseRow } from "./components/test-case-row";
 import { AssignmentFormFields } from "./components/assignment-form-fields";
+import { getDemoAssignment } from "./demo-assignment";
 
 interface TestCaseForm {
   input: string;
@@ -86,11 +87,34 @@ export function CreateAssignmentForm({ classes, onCancel }: CreateAssignmentForm
     setTestCases((prev) => prev.map((tc, i) => (i === index ? { ...tc, [field]: value } : tc)));
   };
 
+  const fillDemoData = () => {
+    const demo = getDemoAssignment();
+    setTitle(demo.title);
+    setInstructions(demo.instructions);
+    setLanguage(demo.language);
+    setDueDate(demo.dueDate);
+    setHeartsCount(demo.heartsCount);
+    setHeartsRegen(demo.heartsRegen);
+    setTestCases(demo.testCases);
+    if (classes.length > 0) setSelectedClasses([classes[0].id]);
+    toast.success("Demo data filled in");
+  };
+
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-surface-container p-6 shadow-sm flex flex-col">
-      <div className="mb-6">
-        <h3 className="font-bold text-lg text-on-surface">Create Assignment</h3>
-        <p className="text-xs text-secondary mt-1">Configure instructions, programming language, classes, and test cases.</p>
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div>
+          <h3 className="font-bold text-lg text-on-surface">Create Assignment</h3>
+          <p className="text-xs text-secondary mt-1">Configure instructions, programming language, classes, and test cases.</p>
+        </div>
+        <button
+          type="button"
+          onClick={fillDemoData}
+          disabled={isCreating}
+          className="px-3.5 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-xl font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1 shrink-0"
+        >
+          <Sparkles className="h-3.5 w-3.5" /> Fill Demo Data
+        </button>
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         <AssignmentFormFields
