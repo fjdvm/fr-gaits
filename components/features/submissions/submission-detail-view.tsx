@@ -8,7 +8,7 @@ import { BehaviorTab } from "./components/behavior-tab";
 import { TutorLogTab } from "./components/tutor-log-tab";
 import { TestResultsTab } from "./components/test-results-tab";
 import { getDisplayName } from "@/lib/display-name";
-import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
+import type { StoredBehavioralSignals } from "@/lib/types/behavioral-signals";
 
 const MONACO_LANGUAGE_MAP: Record<string, string> = {
   Python: "python",
@@ -41,7 +41,7 @@ interface SubmissionDetailViewProps {
     code: string;
     score: number;
     testResults: TestResult[];
-    behavioralSignals: BehavioralSignals;
+    behavioralSignals: StoredBehavioralSignals;
     submittedAt: string;
   } | null;
   chatMessages: ChatMsg[];

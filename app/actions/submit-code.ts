@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { awardSubmissionXp } from "@/lib/gamification";
 import { createNotification } from "@/lib/notifications";
+import { computeRiskScore } from "@/lib/risk-score";
 import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
 
 const LANGUAGE_MAP: Record<string, number> = {
@@ -147,7 +148,13 @@ export async function submitCode(
         code,
         score: scorePercentage,
         testResults: results as any,
-        behavioralSignals: behavioralSignals as any,
+        behavioralSignals: {
+          ...behavioralSignals,
+          riskScore: computeRiskScore(behavioralSignals.events, {
+            finalCodeLength: code.length,
+            keystrokeCount: behavioralSignals.keystrokeCount,
+          }),
+        } as any,
       },
     });
 

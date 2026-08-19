@@ -54,7 +54,7 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
   const isLoading = status === "submitted" || status === "streaming";
   const isStreaming = status === "streaming";
 
-  const { handleEditorMount, recordKeystroke, collectSignals } = useBehavioralTracking(!!submission);
+  const { handleEditorMount, recordKeystroke, recordRunAttempt, collectSignals } = useBehavioralTracking(!!submission);
 
   const handleCodeChange = useCallback((value: string | undefined) => {
     if (submission) return;
@@ -69,6 +69,8 @@ export function WorkspaceView({ assignment, initialHearts, visibleTestCases, ini
       const response = await runCode(assignment.id, code);
       if (response.success && response.results) {
         setRunResults(response.results as TestRunResult[]);
+        const passedCount = response.results.filter((r: any) => r.passed).length;
+        recordRunAttempt(passedCount, response.results.length);
         const compileErr = response.results.find((r: any) => r.compileOutput);
         const generalErr = response.results.find((r: any) => r.stderr);
         if (compileErr) {

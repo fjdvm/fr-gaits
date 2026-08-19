@@ -1,8 +1,10 @@
 import { Sparkles, Clock } from "lucide-react";
-import type { BehavioralSignals } from "@/lib/types/behavioral-signals";
+import type { StoredBehavioralSignals } from "@/lib/types/behavioral-signals";
+import { RiskFlagCard } from "./behavior-tab/risk-flag-card";
+import { EventTimeline } from "./behavior-tab/event-timeline";
 
 interface BehaviorTabProps {
-  behavioralSignals: BehavioralSignals;
+  behavioralSignals: StoredBehavioralSignals;
 }
 
 export function BehaviorTab({ behavioralSignals }: BehaviorTabProps) {
@@ -15,6 +17,8 @@ export function BehaviorTab({ behavioralSignals }: BehaviorTabProps) {
           <p className="text-xs text-secondary mt-1">Behavioral signals recorded from student workspace activities.</p>
         </div>
       </div>
+
+      {behavioralSignals.riskScore && <RiskFlagCard riskScore={behavioralSignals.riskScore} />}
 
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-surface-container-low p-4 rounded-2xl border border-surface-container">
@@ -49,6 +53,8 @@ export function BehaviorTab({ behavioralSignals }: BehaviorTabProps) {
           {Math.round(behavioralSignals.totalFocusTimeSecs / 60)} minutes
         </span>
       </div>
+
+      <EventTimeline events={behavioralSignals.events} />
     </div>
   );
 }
