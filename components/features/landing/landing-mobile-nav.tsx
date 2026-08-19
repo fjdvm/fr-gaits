@@ -36,6 +36,7 @@ export function LandingMobileNav() {
           {navLinks.map((link) => (
             <SheetClose
               key={link.label}
+              nativeButton={false}
               render={
                 <Link
                   href={link.href}
@@ -49,6 +50,7 @@ export function LandingMobileNav() {
         </nav>
         <div className="flex flex-col gap-2 px-4 mt-4 border-t border-surface-container pt-4">
           <SheetClose
+            nativeButton={false}
             render={
               <Link
                 href="/login"
@@ -59,6 +61,7 @@ export function LandingMobileNav() {
             Log in
           </SheetClose>
           <SheetClose
+            nativeButton={false}
             render={
               <Link
                 href="/signup"

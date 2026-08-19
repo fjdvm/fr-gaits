@@ -9,11 +9,15 @@ interface ClassTabsProps {
 
 export function ClassTabs({ activeTab, onChange }: ClassTabsProps) {
   return (
-    <div className="flex bg-surface-container-low p-1.5 rounded-2xl border border-surface-container w-max">
-      <TabButton active={activeTab === "stream"} onClick={() => onChange("stream")} icon={MessageSquare} label="Stream" />
-      <TabButton active={activeTab === "classwork"} onClick={() => onChange("classwork")} icon={BookOpen} label="Classwork" />
-      <TabButton active={activeTab === "people"} onClick={() => onChange("people")} icon={Users} label="People" />
-      <TabButton active={activeTab === "leaderboard"} onClick={() => onChange("leaderboard")} icon={Trophy} label="Leaderboard" />
+    <div
+      className="w-full max-w-4xl overflow-x-auto sm:w-max sm:overflow-visible [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      <div className="flex bg-surface-container-low p-1.5 rounded-2xl border border-surface-container w-max">
+        <TabButton active={activeTab === "stream"} onClick={() => onChange("stream")} icon={MessageSquare} label="Stream" />
+        <TabButton active={activeTab === "classwork"} onClick={() => onChange("classwork")} icon={BookOpen} label="Classwork" />
+        <TabButton active={activeTab === "people"} onClick={() => onChange("people")} icon={Users} label="People" />
+        <TabButton active={activeTab === "leaderboard"} onClick={() => onChange("leaderboard")} icon={Trophy} label="Leaderboard" />
+      </div>
     </div>
   );
 }
@@ -32,7 +36,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
+      className={`shrink-0 w-28 sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
         active ? "bg-primary text-white shadow-sm" : "text-secondary hover:text-on-surface"
       }`}
     >
